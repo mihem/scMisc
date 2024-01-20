@@ -322,7 +322,6 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
         geom_point()+
         scale_color_manual(values = color)+
         theme_classic()+
-                                        #    geom_text(vjust = 0, nudge_y = 0.05)+
         ggrepel::geom_text_repel(nudge_y = 0.07)+
         geom_hline(yintercept = -log10(0.05), color = "blue", linetype = "dashed")+ #horizontal line p unadjusted
         geom_hline(yintercept = -log10(0.05/nrow(cl_size)), color = "blue")+
@@ -616,7 +615,6 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
   ggplot(data, aes(x = log2ratio, y = fct_reorder(cluster, log2ratio), color = cluster)) +
     geom_point(size = 5) +
     theme_classic() +
-    geom_vline(xintercept = 0, color = "red", linetype = "dashed") + # vertical line
     geom_vline(xintercept = -1, color = "red", linetype = "dashed") + # vertical line
     geom_vline(xintercept = 1, color = "red", linetype = "dashed") + # vertical line
     scale_color_manual(values = color) +
