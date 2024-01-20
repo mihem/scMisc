@@ -326,8 +326,8 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
         ggrepel::geom_text_repel(nudge_y = 0.07)+
         geom_hline(yintercept = -log10(0.05), color = "blue", linetype = "dashed")+ #horizontal line p unadjusted
         geom_hline(yintercept = -log10(0.05/nrow(cl_size)), color = "blue")+
-        geom_vline(xintercept = -1, color = "red", linetype = "dashed")+ #vertical line
-        geom_vline(xintercept = 1, color = "red", linetype = "dashed")+ #vertical line
+        geom_vline(xintercept = -1, color = "red", linetype = "dashed")+
+        geom_vline(xintercept = 1, color = "red", linetype = "dashed")+ 
         xlab(bquote(~Log[2]~ 'fold change'))+
         ylab(bquote(-Log[10]~ "p value")) +
         theme(legend.position = "none") #remove guide
@@ -493,7 +493,7 @@ signif <- vector("list")
 f_str <- paste0("x_axis" ~ "module")
 if(length(unique(data_module$x_axis)) > 2) {
     stats <- rstatix::dunn_test(as.formula(f_str), data = data_module, p.adjust.method = "BH") |>
-        dplyr::filter(p.adj < 0.05) |
+        dplyr::filter(p.adj < 0.05) |>
         mutate(p.adj.signif = as.character(symnum(p.adj, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 1), symbols = c("***", "**", "*", " "))))
 
     signif$annotation <- stats$p.adj.signif
@@ -617,8 +617,8 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
     geom_point(size = 5) +
     theme_classic() +
     geom_vline(xintercept = 0, color = "red", linetype = "dashed") + # vertical line
-    geom_vline(xintercept = -1, color = "red", linetype = "dashed") + 
-    geom_vline(xintercept = 1, color = "red", linetype = "dashed") + 
+    geom_vline(xintercept = -1, color = "red", linetype = "dashed") + # vertical line
+    geom_vline(xintercept = 1, color = "red", linetype = "dashed") + # vertical line
     scale_color_manual(values = color) +
     xlab("Log2 fold change") +
     ylab(NULL) +
