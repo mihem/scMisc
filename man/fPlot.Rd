@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualization.R
 \name{fPlot}
 \alias{fPlot}
-\title{nice Seurat feature plot}
+\title{Seurat feature plot}
 \usage{
 fPlot(
   path,
@@ -10,7 +10,8 @@ fPlot(
   par,
   reduction,
   width = 16,
-  height = ceiling(length(genes_found)/4) * 3
+  height = ceiling(length(genes_found)/4) * 3,
+  order
 )
 }
 \arguments{
@@ -25,10 +26,15 @@ fPlot(
 \item{width}{width of output plot (default: 16)}
 
 \item{height}{height of output plot (default: length of genes divided by four, ceiling, times three)}
+
+\item{order}{should the feature plot be ordered in order of expression}
 }
 \value{
 save feature plot to folder \verb{/results/featureplot/}
 }
 \description{
 create and save a nice Seurat feature plot in folder \code{featureplot}
+}
+\examples{
+\dontrun{fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")}
 }

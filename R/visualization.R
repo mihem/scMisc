@@ -26,12 +26,13 @@ theme_rect <-function() {
 #' @param reduction a character string specifying the dimension reduction
 #' @param width width of output plot (default: 16)
 #' @param height height of output plot (default: length of genes divided by four, ceiling, times three)
+#' @param order should the feature plot be ordered in order of expression 
 #' @return save feature plot to folder `/results/featureplot/`
 #' @importFrom ggplot2 theme element_blank element_rect ggsave
 #' @examples \dontrun{fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")}
 #' @export
 
-fPlot <- function(path, object, par, reduction,  width = 16, height = ceiling(length(genes_found) / 4) * 3) {
+fPlot <- function(path, object, par, reduction,  width = 16, height = ceiling(length(genes_found) / 4) * 3, order) {
   if (!methods::is(object) == "Seurat") {
     stop("Object must be a Seurat object")
   }
@@ -46,7 +47,7 @@ fPlot <- function(path, object, par, reduction,  width = 16, height = ceiling(le
   available_genes <- rownames(object)
   genes_found <- genes[genes %in% available_genes]
   object_parse <- deparse(substitute(object))
-  fp <- Seurat::FeaturePlot(object = object, features = unique(genes), cols = c("#F0F0F0", "#CB181D"), reduction = reduction, pt.size = .1, order = FALSE, coord.fixed = TRUE, ncol = 4, raster = FALSE) &
+  fp <- Seurat::FeaturePlot(object = object, features = unique(genes), cols = c("#F0F0F0", "#CB181D"), reduction = reduction, pt.size = .1, order = order, coord.fixed = TRUE, ncol = 4, raster = FALSE) &
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank(),
