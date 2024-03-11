@@ -46,7 +46,7 @@ fPlot <- function(path, object, par, reduction,  width = 16, height = ceiling(le
   available_genes <- rownames(object)
   genes_found <- genes[genes %in% available_genes]
   object_parse <- deparse(substitute(object))
-  fp <- Seurat::FeaturePlot(object = object, features = unique(genes), cols = c("#F0F0F0", "#CB181D"), reduction = reduction, pt.size = .1, order = FALSE, coord.fixed = TRUE, ncol = 4, raster = FALSE, alpha = 0.2) &
+  fp <- Seurat::FeaturePlot(object = object, features = unique(genes), cols = c("#F0F0F0", "#CB181D"), reduction = reduction, pt.size = .1, order = FALSE, coord.fixed = TRUE, ncol = 4, raster = FALSE) &
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank(),
