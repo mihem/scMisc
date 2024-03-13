@@ -137,7 +137,7 @@ dotPlot <- function(path, object, par, dot_min, ortho = "none", width = 10, heig
         genes <- homologene::human2mouse(genes, db = homologene::homologeneData2)$mouseGene
         message("genes converted from human to mouse")
     } else if (ortho == "none") {
-        message("no genes werte converted")
+        message("no genes were converted")
     }
     object_parse <- deparse(substitute(object))
     dp <- Seurat::DotPlot(object, features = unique(genes), dot.scale = 10, scale.by = "size", dot.min = dot_min) +
