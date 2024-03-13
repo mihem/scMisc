@@ -106,6 +106,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' @param width width of output plot (default: 10)
 #' @param height height of output plot (default: 10)
 #' @param ortho convert to orthologues? Allowed values: `none`, `mouse2human` or `human2mouse`
+#' @param scale should the values be scaled? (default: TRUE)
 #' @return save dot plot to folder `results/dotplot/`
 #' @importFrom ggplot2 ggplot scale_size theme xlab ylab element_text ggsave
 #' @examples
@@ -114,7 +115,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' }
 #' @export
 
-dotPlot <- function(path, object, par, dot_min, ortho = "none", width = 10, height = 10) {
+dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", width = 10, height = 10) {
     if(!methods::is(object) == "Seurat") {
         stop("Object must be a Seurat object")
     }
@@ -140,7 +141,7 @@ dotPlot <- function(path, object, par, dot_min, ortho = "none", width = 10, heig
         message("no genes were converted")
     }
     object_parse <- deparse(substitute(object))
-    dp <- Seurat::DotPlot(object, features = unique(genes), dot.scale = 10, scale.by = "size", dot.min = dot_min) +
+    dp <- Seurat::DotPlot(object, features = unique(genes), dot.scale = 10, scale.by = "size", dot.min = dot_min, scale = scale) +
         viridis::scale_color_viridis(option = "viridis") +
         scale_size(range=c(0,10))+
         theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "italic"))+
