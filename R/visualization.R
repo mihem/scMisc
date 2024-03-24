@@ -620,8 +620,8 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
     geom_point(size = 5) +
     theme_classic() +
     geom_vline(xintercept = 0, color = "red", linetype = "solid") + # vertical line
-    geom_vline(xintercept = -1, color = "red", linetype = "dashed") + # vertical line
-    geom_vline(xintercept = 1, color = "red", linetype = "dashed") + # vertical line
+    # geom_vline(xintercept = -1, color = "red", linetype = "dashed") + # vertical line
+    # geom_vline(xintercept = 1, color = "red", linetype = "dashed") + # vertical line
     scale_color_manual(values = color) +
     xlab("Log2 fold change") +
     ylab(NULL) +
