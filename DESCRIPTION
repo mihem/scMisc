@@ -43,4 +43,5 @@ Imports:
     stringr,
     RColorBrewer,
     factoextra,
-    FactoMineR
+    FactoMineR,
+    Matrix
