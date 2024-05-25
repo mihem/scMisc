@@ -220,3 +220,85 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
     tibble::tibble()
   return(propeller_result)
 }
+
+################################################################################
+# read cellbender data, modified from scCustomize
+################################################################################
+
+#' Load CellBender h5 matrices 
+#'
+#' Extract sparse matrix with corrected counts from CellBender h5 output file.
+#'
+#' @param file_name Path to h5 file.
+#' @param use.names Label row names with feature names rather than ID numbers (default TRUE).
+#' @param unique.features Make feature names unique (default TRUE).
+#'
+#' @return sparse matrix
+#'
+#' @references Code used in function has been modified from `Seurat::Read10X_h5` function of
+#' Seurat package \url{https://github.com/satijalab/seurat} (License: GPL-3).
+#'
+#' @import Matrix
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' mat <- ReadCellBender_h5(file_name = "/SampleA_out_filtered.h5")
+#' }
+#'
+#' 
+
+ReadCellBender_h5 <- function(
+  file_name,
+  use.names = TRUE,
+  unique.features = TRUE
+) {
+  # Check hdf5r installed
+  if (!requireNamespace('hdf5r', quietly = TRUE)) {
+    cli::cli_abort(message = c("Please install hdf5r to read HDF5 files",
+                          "i" = "`install.packages('hdf5r')`")
+    )
+  }
+  # Check file
+  if (!file.exists(file_name)) {
+    stop("File not found")
+  }
+
+  if (use.names) {
+    feature_slot <- 'features/name'
+  } else {
+    feature_slot <- 'features/id'
+  }
+
+  # Read file
+  infile <- hdf5r::H5File$new(filename = file_name, mode = "r")
+
+  counts <- infile[["matrix/data"]]
+  indices <- infile[["matrix/indices"]]
+  indptr <- infile[["matrix/indptr"]]
+  shp <- infile[["matrix/shape"]]
+  features <- infile[[paste0("matrix/", feature_slot)]][]
+  barcodes <- infile[["matrix/barcodes"]]
+
+
+  sparse.mat <- Matrix::sparseMatrix(
+    i = indices[] + 1,
+    p = indptr[],
+    x = as.numeric(x = counts[]),
+    dims = shp[],
+    repr = "T"
+  )
+
+  if (unique.features) {
+    features <- make.unique(names = features)
+  }
+
+  rownames(x = sparse.mat) <- features
+  colnames(x = sparse.mat) <- barcodes[]
+  sparse.mat <- as.sparse(x = sparse.mat)
+
+  infile$close_all()
+
+  return(sparse.mat)
+}
