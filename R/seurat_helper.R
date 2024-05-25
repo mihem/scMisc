@@ -68,7 +68,7 @@ findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, m
     if(is.null(assay)) {
     stop("Please provide assay information")
     }
-    result <- SeuratWrappers::RunPresto(object, ident.1 = ident1, ident.2 = ident2, min.pct = min_pct, logfc.threshold = logfc_threshold, only.pos = only_pos, assay = assay) |>
+    result <- Seurat::FindMarkers(object, ident.1 = ident1, ident.2 = ident2, min.pct = min_pct, logfc.threshold = logfc_threshold, only.pos = only_pos, assay = assay) |>
         tibble::rownames_to_column("gene") |>
         dplyr::filter(p_val_adj < 0.05) |>
         dplyr::relocate(gene, avg_log2FC, p_val, p_val_adj) |>
