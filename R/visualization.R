@@ -465,7 +465,8 @@ abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
       geom_line(aes(group = patient)) +
       theme_bw()+
       ggtitle(var) +
-      theme(legend.position = "none")+
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3)) +
       xlab("") +
       ylab("percentage")+
       scale_fill_manual(values = color)
