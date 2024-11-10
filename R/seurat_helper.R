@@ -10,7 +10,12 @@
 #' @param slot which slot to use
 #' @param ortho convert to orthologues? Allowed values: `none`, `mouse2human` or `human2mouse`
 #' @return matrix with genes as rows and identity clases as columns
-#' @examples \dontrun{szabo_tc_tc_avg <- avgExp("szabo_tc", object = sc_tc_fil, assay = "RNA", slot = "data")}
+#' @examples 
+#' library(Seurat)
+#' markers <- data.frame(Bc = c("CD19", "MS4A1", "CD79B"))
+#' write.csv(markers, "markers.csv")
+#' avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data")
+#' unlink("markers.csv") 
 #' @export 
 
 avgExp <- function(par, object, assay, slot, ortho = "none") {
