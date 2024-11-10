@@ -36,15 +36,15 @@ Imports:
     patchwork,
     rstatix,
     readxl,
-    scales,
     tidyr,
     speckle,
     limma,
-    stringr,
     RColorBrewer,
     factoextra,
     FactoMineR,
     Matrix,
-    scales,
-    stringr
+    cli,
+    ggpubr,
+    hdf5r,
+    enrichR
 Remotes: wjawaid/enrichR
