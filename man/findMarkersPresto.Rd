@@ -36,6 +36,6 @@ data frame with significant DE genes arranged by log2FC
 find significant DE genes using presto
 }
 \examples{
-library(Seurat)
+library(Seurat, quietly = TRUE)
 findMarkersPresto(ident1 = "0", ident2 = "1", object = pbmc_small, assay = "RNA")
 }

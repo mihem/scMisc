@@ -11,7 +11,7 @@
 #' @param ortho convert to orthologues? Allowed values: `none`, `mouse2human` or `human2mouse`
 #' @return matrix with genes as rows and identity clases as columns
 #' @examples 
-#' library(Seurat)
+#' library(Seurat, quietly = TRUE)
 #' markers <- data.frame(Bc = c("CD19", "MS4A1", "CD79B"))
 #' write.csv(markers, "markers.csv")
 #' avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data")
@@ -64,7 +64,7 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
 #' @param assay which assay to use in DE testing (e.g. RNA or SCT)
 #' @return data frame with significant DE genes arranged by log2FC
 #' @examples 
-#' library(Seurat)
+#' library(Seurat, quietly = TRUE)
 #' findMarkersPresto(ident1 = "0", ident2 = "1", object = pbmc_small, assay = "RNA")
 #' @export 
 
