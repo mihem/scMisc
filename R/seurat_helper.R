@@ -10,43 +10,43 @@
 #' @param slot which slot to use
 #' @param ortho convert to orthologues? Allowed values: `none`, `mouse2human` or `human2mouse`
 #' @return matrix with genes as rows and identity clases as columns
-#' @examples 
+#' @examples
 #' library(Seurat)
 #' markers <- data.frame(Bc = c("CD19", "MS4A1", "CD79B"))
 #' write.csv(markers, "markers.csv")
 #' avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data")
-#' unlink("markers.csv") 
-#' @export 
+#' unlink("markers.csv")
+#' @export
 
 avgExp <- function(par, object, assay, slot, ortho = "none") {
-    if(!file.exists("markers.csv")) {
-        stop("Please make sure that markers.csv file exists")
-    }
-    if(!methods::is(object) == "Seurat") {
-        stop("Object must be a Seurat object")
-    }
-    markers <- readr::read_csv("markers.csv") |>
+  if (!file.exists("markers.csv")) {
+    stop("Please make sure that markers.csv file exists")
+  }
+  if (!methods::is(object) == "Seurat") {
+    stop("Object must be a Seurat object")
+  }
+  markers <- readr::read_csv("markers.csv") |>
     as.list(markers) |>
     lapply(function(x) x[!is.na(x)])
-    genes <- markers[[par]]
-    if(is.null(genes)) {
-        stop("No genes were found. Make sure that `par` exists in `markers.csv`")
-}
+  genes <- markers[[par]]
+  if (is.null(genes)) {
+    stop("No genes were found. Make sure that `par` exists in `markers.csv`")
+  }
 
-    if(!(ortho %in% c("none", "mouse2human", "human2mouse"))) {
-        stop("ortho must take values: `none`, `mouse2human` or `human2mouse`")
-    }
-    if (ortho == "mouse2human") {
-        genes <- homologene::mouse2human(genes, db = homologene::homologeneData2)$humanGene
-    }
-    if (ortho == "human2mouse") {
-        genes <- homologene::human2mouse(genes, db = homologene::homologeneData2)$mouseGene
-    }
-    if (ortho == "none") {
+  if (!(ortho %in% c("none", "mouse2human", "human2mouse"))) {
+    stop("ortho must take values: `none`, `mouse2human` or `human2mouse`")
+  }
+  if (ortho == "mouse2human") {
+    genes <- homologene::mouse2human(genes, db = homologene::homologeneData2)$humanGene
+  }
+  if (ortho == "human2mouse") {
+    genes <- homologene::human2mouse(genes, db = homologene::homologeneData2)$mouseGene
+  }
+  if (ortho == "none") {
     genes <- genes
-    }
+  }
 
-    Seurat::AverageExpression(object, features = genes, slot = slot, assay = assay)[[assay]]
+  Seurat::AverageExpression(object, features = genes, slot = slot, assay = assay)[[assay]]
 }
 
 ################################################################################
@@ -63,24 +63,24 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
 #' @param logfc_threshold minimum x-fold difference (default: 0.25)
 #' @param assay which assay to use in DE testing (e.g. RNA or SCT)
 #' @return data frame with significant DE genes arranged by log2FC
-#' @examples 
+#' @examples
 #' library(Seurat)
 #' findMarkersPresto(ident1 = "0", ident2 = "1", object = pbmc_small, assay = "RNA")
-#' @export 
+#' @export
 
 findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, min_pct = 0.1, logfc_threshold = 0.25, assay = assay) {
-    if(!methods::is(object) == "Seurat") {
-        stop("Object must be a Seurat object")
-    }
-    if(is.null(assay)) {
+  if (!methods::is(object) == "Seurat") {
+    stop("Object must be a Seurat object")
+  }
+  if (is.null(assay)) {
     stop("Please provide assay information")
-    }
-    result <- Seurat::FindMarkers(object, ident.1 = ident1, ident.2 = ident2, min.pct = min_pct, logfc.threshold = logfc_threshold, only.pos = only_pos, assay = assay) |>
-        tibble::rownames_to_column("gene") |>
-        dplyr::filter(p_val_adj < 0.05) |>
-        dplyr::relocate(gene, avg_log2FC, p_val, p_val_adj) |>
-        dplyr::arrange(desc(avg_log2FC))
-    return(result)
+  }
+  result <- Seurat::FindMarkers(object, ident.1 = ident1, ident.2 = ident2, min.pct = min_pct, logfc.threshold = logfc_threshold, only.pos = only_pos, assay = assay) |>
+    tibble::rownames_to_column("gene") |>
+    dplyr::filter(p_val_adj < 0.05) |>
+    dplyr::relocate(gene, avg_log2FC, p_val, p_val_adj) |>
+    dplyr::arrange(desc(avg_log2FC))
+  return(result)
 }
 
 ################################################################################
@@ -93,26 +93,26 @@ findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, m
 #' @param row_var variable in meta data that will represent the rows
 #' @param col_var variable in meta data that will represent the columns
 #' @param target_dir target directory to save the results (default: .)
-#' @examples 
+#' @examples
 #' library(Seurat)
 #' abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
 #' unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
-#' @export 
+#' @export
 
 abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
-    if(!methods::is(object) == "Seurat") {
-        stop("Object must be a Seurat object")
-    }
-    object_parse <- deparse(substitute(object))
-    result_abs <- as.data.frame.matrix(table(object@meta.data[[row_var]], object@meta.data[[col_var]])) |>
-        tibble::rownames_to_column("cell") 
+  if (!methods::is(object) == "Seurat") {
+    stop("Object must be a Seurat object")
+  }
+  object_parse <- deparse(substitute(object))
+  result_abs <- as.data.frame.matrix(table(object@meta.data[[row_var]], object@meta.data[[col_var]])) |>
+    tibble::rownames_to_column("cell")
 
-    result_pct <- result_abs |>
-        dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) x/sum(x)*100)) |>
-        dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) round(x, 2)))
-    
-    file_path <- file.path(target_dir, glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx"))
-    writexl::write_xlsx(list("absolute" = result_abs, "percentage" = result_pct), file_path)
+  result_pct <- result_abs |>
+    dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) x / sum(x) * 100)) |>
+    dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) round(x, 2)))
+
+  file_path <- file.path(target_dir, glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx"))
+  writexl::write_xlsx(list("absolute" = result_abs, "percentage" = result_pct), file_path)
 }
 
 ################################################################################
@@ -127,33 +127,35 @@ abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
 #' @param sheet sheet name in excel file
 #' @param remove_rp_mt remove ribosomal and mitochondrial genes? (boolean value)
 #' @return save enrichrment analysis in excel sheet with multiple sheets in the folder `results/enrichr`
-#' @examples \dontrun{enrichrFun(filename = "de_ALZ_Naive_blood", dbs = dbs, fc_thresh = 1, p_thresh = 0.001, sheet = "pDC", remove_rp_mt = TRUE)}
+#' @examples \dontrun{
+#' enrichrFun(filename = "de_ALZ_Naive_blood", dbs = dbs, fc_thresh = 1, p_thresh = 0.001, sheet = "pDC", remove_rp_mt = TRUE)
+#' }
 #' @export
 
 enrichrRun <- function(sheet, filename, dbs, fc_thresh = 1, p_thresh = 0.001, remove_rp_mt) {
-   input <- readxl::read_excel(file.path("results", "de", glue::glue("{filename}.xlsx")), sheet = sheet)
-if (remove_rp_mt == TRUE) {
+  input <- readxl::read_excel(file.path("results", "de", glue::glue("{filename}.xlsx")), sheet = sheet)
+  if (remove_rp_mt == TRUE) {
     input <- dplyr::filter(input, !grepl(x = gene, pattern = "(MT-)|(^RP)"))
-}
-   input_pos <- input |>
-       dplyr::filter(avg_log2FC > fc_thresh) |>
-       dplyr::filter(p_val_adj < p_thresh)
-   input_neg <- input |>
-       dplyr::filter(avg_log2FC < -fc_thresh) |>
-       dplyr::filter(p_val_adj < p_thresh)
-   input_merge <- list(pos = input_pos, neg = input_neg)
-   result <- list()
-   for (i in names(input_merge)) {
-       if(dim(input_merge[[i]])[[1]] != 0) {
-           result[[i]] <- enrichR::enrichr(input_merge[[i]]$gene, dbs)
-           for (j in seq_along(result[[i]])){
-               result[[i]][[j]][c("Old.Adjusted.P.value", "Old.P.value")] <- NULL
-           }#remove old p value
-           names(result[[i]])[names(result[[i]]) == "TF_Perturbations_Followed_by_Expression"] <- "TF_Pertubations"
-           names(result[[i]])[names(result[[i]]) == "Enrichr_Submissions_TF-Gene_Coocurrence"] <- "Enrichr_Submissions_TF"
-           writexl::write_xlsx(result[[i]], file.path("results", "enrichr", glue::glue("enrichr_{filename}_{i}_{sheet}.xlsx")))
-       }
-   }
+  }
+  input_pos <- input |>
+    dplyr::filter(avg_log2FC > fc_thresh) |>
+    dplyr::filter(p_val_adj < p_thresh)
+  input_neg <- input |>
+    dplyr::filter(avg_log2FC < -fc_thresh) |>
+    dplyr::filter(p_val_adj < p_thresh)
+  input_merge <- list(pos = input_pos, neg = input_neg)
+  result <- list()
+  for (i in names(input_merge)) {
+    if (dim(input_merge[[i]])[[1]] != 0) {
+      result[[i]] <- enrichR::enrichr(input_merge[[i]]$gene, dbs)
+      for (j in seq_along(result[[i]])) {
+        result[[i]][[j]][c("Old.Adjusted.P.value", "Old.P.value")] <- NULL
+      } # remove old p value
+      names(result[[i]])[names(result[[i]]) == "TF_Perturbations_Followed_by_Expression"] <- "TF_Pertubations"
+      names(result[[i]])[names(result[[i]]) == "Enrichr_Submissions_TF-Gene_Coocurrence"] <- "Enrichr_Submissions_TF"
+      writexl::write_xlsx(result[[i]], file.path("results", "enrichr", glue::glue("enrichr_{filename}_{i}_{sheet}.xlsx")))
+    }
+  }
 }
 
 
@@ -173,18 +175,20 @@ if (remove_rp_mt == TRUE) {
 #' @param min_cells A numeric value indicating the minimum number of cells in a cluster that should be included in the analysis
 #' @return A dataframe containing the results of the t-test
 
-#' @examples \dontrun{pnp_ctrl_csf_sex_age <- propellerCalc(
-#'                                       seu_obj1 = sc_final,
-#'                                      condition1 = "CSF_PNP",
-#'                                      condition2 = "CSF_CTRL", 
-#'                                      cluster_col = "cluster",
-#'                                      meta_col = "tissue_level1",
-#'                                      lookup = propeller_lookup,
-#'                                      sample_col = "patient",
-#'                                      lookup_col = "tissue_level1_CSF",
-#'                                      min_cells = 30)
-#'}
-#' @examples 
+#' @examples \dontrun{
+#' pnp_ctrl_csf_sex_age <- propellerCalc(
+#'   seu_obj1 = sc_final,
+#'   condition1 = "CSF_PNP",
+#'   condition2 = "CSF_CTRL",
+#'   cluster_col = "cluster",
+#'   meta_col = "tissue_level1",
+#'   lookup = propeller_lookup,
+#'   sample_col = "patient",
+#'   lookup_col = "tissue_level1_CSF",
+#'   min_cells = 30
+#' )
+#' }
+#' @examples
 #' set.seed(123)
 #' library(Seurat)
 #' pbmc_small$condition <- factor(sample(c("diseaseA", "diseaseB"), nrow(pbmc_small), replace = TRUE))
@@ -192,24 +196,24 @@ if (remove_rp_mt == TRUE) {
 #' pbmc_small$patient <- rep(paste0("P", 0:9), each = 8, length.out = ncol(pbmc_small))
 #' lookup <- data.frame(patient = paste0("P", 0:9), condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE))
 #' propellerCalc(
-#'  seu_obj1 = pbmc_small,
-#' condition1 = "diseaseA",
-#' condition2 = "diseaseB",
-#' cluster_col = "cluster",
-#' meta_col = "condition",
-#' lookup = lookup,
-#' sample_col = "patient",
-#' formula = "~ 0 + condition",
-#' min_cells = 30
+#'   seu_obj1 = pbmc_small,
+#'   condition1 = "diseaseA",
+#'   condition2 = "diseaseB",
+#'   cluster_col = "cluster",
+#'   meta_col = "condition",
+#'   lookup = lookup,
+#'   sample_col = "patient",
+#'   formula = "~ 0 + condition",
+#'   min_cells = 30
 #' )
 #' @export
 
 
 propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_col, lookup, sample_col, formula, min_cells = 30) {
   # filter cells of condition1 and condition2
-  seu_obj2 <- seu_obj1[,seu_obj1@meta.data[[meta_col]] %in% c(condition1, condition2)]
+  seu_obj2 <- seu_obj1[, seu_obj1@meta.data[[meta_col]] %in% c(condition1, condition2)]
 
-# filter clusters with less than min_cells
+  # filter clusters with less than min_cells
   cl_interest <-
     as.data.frame.matrix(table(seu_obj2@meta.data[[cluster_col]], seu_obj2@meta.data[[meta_col]])) |>
     tibble::rownames_to_column("cluster") |>
@@ -227,7 +231,8 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
   # create lookup table
   meta_lookup <-
     tibble::tibble(
-      !!sample_col := colnames(props$TransformedProps)) |>
+      !!sample_col := colnames(props$TransformedProps)
+    ) |>
     dplyr::left_join(lookup, by = sample_col) |>
     dplyr::distinct(.data[[sample_col]], .keep_all = TRUE)
 
@@ -237,9 +242,9 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
   my_args <- list(my_contrasts, levels = my_design)
   my_contr <- do.call(limma::makeContrasts, my_args)
 
-  #calculate propeller t test
+  # calculate propeller t test
   propeller_result <-
-    speckle::propeller.ttest(prop.list = props, design = my_design, contrast = my_contr, robust = TRUE, trend = FALSE, sort= TRUE) |>
+    speckle::propeller.ttest(prop.list = props, design = my_design, contrast = my_contr, robust = TRUE, trend = FALSE, sort = TRUE) |>
     tibble::rownames_to_column("cluster") |>
     dplyr::filter(cluster %in% cl_interest) |>
     dplyr::mutate(log2ratio = log2(PropRatio)) |>
@@ -252,7 +257,7 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 # read cellbender data, modified from scCustomize
 ################################################################################
 
-#' Load CellBender h5 matrices 
+#' Load CellBender h5 matrices
 #'
 #' Extract sparse matrix with corrected counts from CellBender h5 output file.
 #'
@@ -274,18 +279,15 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 #' mat <- ReadCellBender_h5(file_name = "/SampleA_out_filtered.h5")
 #' }
 #'
-#' 
-
 ReadCellBender_h5 <- function(
-  file_name,
-  use.names = TRUE,
-  unique.features = TRUE
-) {
+    file_name,
+    use.names = TRUE,
+    unique.features = TRUE) {
   # Check hdf5r installed
-  if (!requireNamespace('hdf5r', quietly = TRUE)) {
+  if (!requireNamespace("hdf5r", quietly = TRUE)) {
     cli::cli_abort(message = c("Please install hdf5r to read HDF5 files",
-                          "i" = "`install.packages('hdf5r')`")
-    )
+      "i" = "`install.packages('hdf5r')`"
+    ))
   }
   # Check file
   if (!file.exists(file_name)) {
@@ -293,9 +295,9 @@ ReadCellBender_h5 <- function(
   }
 
   if (use.names) {
-    feature_slot <- 'features/name'
+    feature_slot <- "features/name"
   } else {
-    feature_slot <- 'features/id'
+    feature_slot <- "features/id"
   }
 
   # Read file

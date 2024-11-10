@@ -7,11 +7,13 @@
 #' @importFrom ggplot2 theme element_blank element_rect
 #' @export
 
-theme_rect <-function() {
-    theme(axis.text = element_blank(),
-          axis.ticks = element_blank(),
-          panel.border = element_rect(color = "black", size = 1, fill = NA),
-          aspect.ratio = 1)
+theme_rect <- function() {
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.border = element_rect(color = "black", size = 1, fill = NA),
+    aspect.ratio = 1
+  )
 }
 
 ################################################################################
@@ -26,13 +28,15 @@ theme_rect <-function() {
 #' @param reduction a character string specifying the dimension reduction
 #' @param width width of output plot (default: 16)
 #' @param height height of output plot (default: length of genes divided by four, ceiling, times three)
-#' @param order should the feature plot be ordered in order of expression 
+#' @param order should the feature plot be ordered in order of expression
 #' @return save feature plot to folder `/results/featureplot/`
 #' @importFrom ggplot2 theme element_blank element_rect ggsave
-#' @examples \dontrun{fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")}
+#' @examples \dontrun{
+#' fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")
+#' }
 #' @export
 
-fPlot <- function(path, object, par, reduction,  width = 16, height = ceiling(length(genes_found) / 4) * 3, order) {
+fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3, order) {
   if (!methods::is(object) == "Seurat") {
     stop("Object must be a Seurat object")
   }
@@ -116,40 +120,39 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' @export
 
 dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", width = 10, height = 10) {
-    if(!methods::is(object) == "Seurat") {
-        stop("Object must be a Seurat object")
-    }
-    dir.create(file.path("results", "dotplot"), showWarnings = FALSE)
-    markers <- readr::read_csv(path) |>
-        as.list(markers) |>
-        lapply(function(x) x[!is.na(x)])
-    genes <- markers[[par]]
+  if (!methods::is(object) == "Seurat") {
+    stop("Object must be a Seurat object")
+  }
+  dir.create(file.path("results", "dotplot"), showWarnings = FALSE)
+  markers <- readr::read_csv(path) |>
+    as.list(markers) |>
+    lapply(function(x) x[!is.na(x)])
+  genes <- markers[[par]]
 
-    if(is.null(genes)) {
-        stop("No genes were found. Make sure that `par` exists in markers.csv")
+  if (is.null(genes)) {
+    stop("No genes were found. Make sure that `par` exists in markers.csv")
+  }
+  if (!(ortho %in% c("none", "mouse2human", "human2mouse"))) {
+    stop("ortho must take values: `none`, `mouse2human` or `human2mouse`")
+  }
+  if (ortho == "mouse2human") {
+    genes <- homologene::mouse2human(genes, db = homologene::homologeneData2)$humanGene
+    message("genes converted from mouse to human")
+  } else if (ortho == "human2mouse") {
+    genes <- homologene::human2mouse(genes, db = homologene::homologeneData2)$mouseGene
+    message("genes converted from human to mouse")
+  } else if (ortho == "none") {
+    message("no genes were converted")
+  }
+  object_parse <- deparse(substitute(object))
+  dp <- Seurat::DotPlot(object, features = unique(genes), dot.scale = 10, scale.by = "size", dot.min = dot_min, scale = scale) +
+    viridis::scale_color_viridis(option = "viridis") +
+    scale_size(range = c(0, 10)) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "italic")) +
+    xlab(NULL) +
+    ylab(NULL)
+  ggsave(file.path("results", "dotplot", glue::glue("dp_{object_parse}_{par}.pdf")), width = width, height = height, limitsize = FALSE)
 }
-    if(!(ortho %in% c("none", "mouse2human", "human2mouse"))) {
-        stop("ortho must take values: `none`, `mouse2human` or `human2mouse`")
-    }
-    if (ortho == "mouse2human") {
-        genes <- homologene::mouse2human(genes, db = homologene::homologeneData2)$humanGene
-        message("genes converted from mouse to human")
-    } else if (ortho == "human2mouse") {
-        genes <- homologene::human2mouse(genes, db = homologene::homologeneData2)$mouseGene
-        message("genes converted from human to mouse")
-    } else if (ortho == "none") {
-        message("no genes were converted")
-    }
-    object_parse <- deparse(substitute(object))
-    dp <- Seurat::DotPlot(object, features = unique(genes), dot.scale = 10, scale.by = "size", dot.min = dot_min, scale = scale) +
-        viridis::scale_color_viridis(option = "viridis") +
-        scale_size(range=c(0,10))+
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "italic"))+
-        xlab(NULL)+
-        ylab(NULL)
-    ggsave(file.path("results", "dotplot", glue::glue("dp_{object_parse}_{par}.pdf")), width = width, height = height, limitsize = FALSE)
-}
-
 
 ################################################################################
 # pheatmap
@@ -173,30 +176,30 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
 #' @examples \dontrun{pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)}
 #' @export
 
-pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix)/3), width = ceiling(ncol(matrix)/2), cellwidth = 10, cellheight = 10, treeheight_row = 10, treeheight_col = 10, fontsize = 10, cluster_rows = TRUE, cluster_cols = TRUE, annotation_row = NA) {
-    dir.create(file.path("results", "heatmap"), showWarnings = FALSE)
-    matrix_parse <- deparse(substitute(matrix))
-    matrix <- matrix[!rowSums(matrix) == 0,] # filter rows with only zeros
-    break_max <- round(max(abs(c(max(scale_mat(matrix, scale = scale)), min(scale_mat(matrix, scale = scale)))))-0.1,1) #use internal function to get scaled matrix and max value for color legend
-    break_min <- -break_max
-    phmap <- pheatmap::pheatmap(matrix,
-                                color = viridis::viridis(100),
-                                scale = scale,
-                                cellwidth = cellwidth,
-                                cellheight = cellheight,
-                                fontsize = fontsize,
-                                treeheight_row = treeheight_row,
-                                treeheight_col = treeheight_col,
-                                cluster_rows = cluster_rows,
-                                cluster_cols = cluster_cols,
-                                clustering_method = "complete",
-                                border_color = NA,
-                                legend_breaks = seq(break_min, break_max, length = 3),
-                                annotation_row = annotation_row
-                                )
-    pdf(file.path("results", "heatmap", glue::glue("hm_{matrix_parse}.pdf")), width = width, height = height)
-    print(phmap)
-    dev.off()
+pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3), width = ceiling(ncol(matrix) / 2), cellwidth = 10, cellheight = 10, treeheight_row = 10, treeheight_col = 10, fontsize = 10, cluster_rows = TRUE, cluster_cols = TRUE, annotation_row = NA) {
+  dir.create(file.path("results", "heatmap"), showWarnings = FALSE)
+  matrix_parse <- deparse(substitute(matrix))
+  matrix <- matrix[!rowSums(matrix) == 0, ] # filter rows with only zeros
+  break_max <- round(max(abs(c(max(scale_mat(matrix, scale = scale)), min(scale_mat(matrix, scale = scale))))) - 0.1, 1) # use internal function to get scaled matrix and max value for color legend
+  break_min <- -break_max
+  phmap <- pheatmap::pheatmap(matrix,
+    color = viridis::viridis(100),
+    scale = scale,
+    cellwidth = cellwidth,
+    cellheight = cellheight,
+    fontsize = fontsize,
+    treeheight_row = treeheight_row,
+    treeheight_col = treeheight_col,
+    cluster_rows = cluster_rows,
+    cluster_cols = cluster_cols,
+    clustering_method = "complete",
+    border_color = NA,
+    legend_breaks = seq(break_min, break_max, length = 3),
+    annotation_row = annotation_row
+  )
+  pdf(file.path("results", "heatmap", glue::glue("hm_{matrix_parse}.pdf")), width = width, height = height)
+  print(phmap)
+  dev.off()
 }
 
 ################################################################################
@@ -228,28 +231,28 @@ pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix)/3), w
 #' @export
 
 stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, height = 10) {
-    if(!methods::is(object) == "Seurat") {
-        stop("Object must be a Seurat object")
-    }
-    dir.create(file.path("results", "abundance"), showWarnings = FALSE)
-    object_parse <- deparse(substitute(object))
-    result_wide <- as.data.frame.matrix(table(object@meta.data[[y_axis]], object@meta.data[[x_axis]])) |>
-        rownames_to_column("cell") |>
-        mutate(across(where(is.numeric), function(x) x/sum(x)*100))
-    result_long <- result_wide |>
-        pivot_longer(!cell, names_to = "type", values_to = "count") |>
-        mutate(cell = factor(cell, levels = y_order)) |>
-        mutate(type = factor(type, levels = x_order)) |>
-        dplyr::filter(count != 0)
-    sbp <- ggplot(data = result_long)+
-        geom_col(aes(x = type, y = count, fill = cell), color = "black", size = 0.1, position = "fill")+
-        scale_fill_manual(values = color)+
-        guides(fill = guide_legend(title = NULL))+ #remove guide label
-        theme_classic()+ #remove background
-        ylab("Proportion of cells")+
-        xlab("")+
-        theme(axis.text.x=element_text(angle = 90, hjust = 1, vjust = 0.3))
-    ggsave(file.path("results", "abundance", glue::glue("stacked_barplot_{object_parse}_{x_axis}.pdf")), sbp, width = width, height = height)
+  if (!methods::is(object) == "Seurat") {
+    stop("Object must be a Seurat object")
+  }
+  dir.create(file.path("results", "abundance"), showWarnings = FALSE)
+  object_parse <- deparse(substitute(object))
+  result_wide <- as.data.frame.matrix(table(object@meta.data[[y_axis]], object@meta.data[[x_axis]])) |>
+    rownames_to_column("cell") |>
+    mutate(across(where(is.numeric), function(x) x / sum(x) * 100))
+  result_long <- result_wide |>
+    pivot_longer(!cell, names_to = "type", values_to = "count") |>
+    mutate(cell = factor(cell, levels = y_order)) |>
+    mutate(type = factor(type, levels = x_order)) |>
+    dplyr::filter(count != 0)
+  sbp <- ggplot(data = result_long) +
+    geom_col(aes(x = type, y = count, fill = cell), color = "black", size = 0.1, position = "fill") +
+    scale_fill_manual(values = color) +
+    guides(fill = guide_legend(title = NULL)) + # remove guide label
+    theme_classic() + # remove background
+    ylab("Proportion of cells") +
+    xlab("") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3))
+  ggsave(file.path("results", "abundance", glue::glue("stacked_barplot_{object_parse}_{x_axis}.pdf")), sbp, width = width, height = height)
 }
 
 ################################################################################
@@ -287,53 +290,53 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 
 
 abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group1, group2, color, width = 5, height = 5, min_cells = 10, paired = FALSE) {
-    if(!methods::is(object) == "Seurat") {
-        stop("Object must be a Seurat object")
-    }
-    dir.create(file.path("results", "abundance"), showWarnings = FALSE)
-    object_parse <- deparse(substitute(object))
+  if (!methods::is(object) == "Seurat") {
+    stop("Object must be a Seurat object")
+  }
+  dir.create(file.path("results", "abundance"), showWarnings = FALSE)
+  object_parse <- deparse(substitute(object))
 
-    cl_size_ind <- as.data.frame.matrix(table(object@meta.data[[cluster_idents]], object@meta.data[[sample]])) |>
-        rownames_to_column("cluster") |>
-        mutate(across(where(is.numeric), function(x) x/sum(x)*100)) |>
-        pivot_longer(!cluster, names_to = "sample", values_to = "count") |>
-        left_join(unique(tibble(sample = object@meta.data[[sample]], group_by = object@meta.data[[group_by]]))) |>
-        dplyr::filter(group_by == group1 | group_by == group2)
+  cl_size_ind <- as.data.frame.matrix(table(object@meta.data[[cluster_idents]], object@meta.data[[sample]])) |>
+    rownames_to_column("cluster") |>
+    mutate(across(where(is.numeric), function(x) x / sum(x) * 100)) |>
+    pivot_longer(!cluster, names_to = "sample", values_to = "count") |>
+    left_join(unique(tibble(sample = object@meta.data[[sample]], group_by = object@meta.data[[group_by]]))) |>
+    dplyr::filter(group_by == group1 | group_by == group2)
 
-    pvalue_res <- vector("double") # define output
+  pvalue_res <- vector("double") # define output
 
-    for (i in cluster_order) {
-        out1 <- cl_size_ind[cl_size_ind$cluster == i,]
-        pvalue_res[i] <- wilcox.test(count ~ group_by, data = out1, paired = paired)$p.value
-    }
+  for (i in cluster_order) {
+    out1 <- cl_size_ind[cl_size_ind$cluster == i, ]
+    pvalue_res[i] <- wilcox.test(count ~ group_by, data = out1, paired = paired)$p.value
+  }
 
-                                        #wilcox_res <- p.adjust(wilcox_res, "BH")
-    pvalue_cl <- data.frame(cluster = cluster_order, pvalue = pvalue_res)
+  # wilcox_res <- p.adjust(wilcox_res, "BH")
+  pvalue_cl <- data.frame(cluster = cluster_order, pvalue = pvalue_res)
 
-    cl_size <- as.data.frame.matrix(table(object@meta.data[[cluster_idents]], object@meta.data[[group_by]])) |>
-        rownames_to_column("cluster") |> 
-        mutate(cluster = factor(cluster, levels = cluster_order)) |>
-        dplyr::filter(.data[[group1]] > min_cells & .data[[group2]] > min_cells) |>
-        mutate(across(where(is.numeric), function(x) x/sum(x)*100)) |>
-        mutate(logratio = log2(.data[[group1]]/.data[[group2]])) |>
-        left_join(pvalue_cl, by = "cluster") |>
-        mutate(log_pvalue = -log10(pvalue))
-      
+  cl_size <- as.data.frame.matrix(table(object@meta.data[[cluster_idents]], object@meta.data[[group_by]])) |>
+    rownames_to_column("cluster") |>
+    mutate(cluster = factor(cluster, levels = cluster_order)) |>
+    dplyr::filter(.data[[group1]] > min_cells & .data[[group2]] > min_cells) |>
+    mutate(across(where(is.numeric), function(x) x / sum(x) * 100)) |>
+    mutate(logratio = log2(.data[[group1]] / .data[[group2]])) |>
+    left_join(pvalue_cl, by = "cluster") |>
+    mutate(log_pvalue = -log10(pvalue))
 
-    p1 <- ggplot(cl_size, aes(x = logratio, y = log_pvalue, color = cluster, size = 3, label = cluster))+
-        geom_point()+
-        scale_color_manual(values = color)+
-        theme_classic()+
-        ggrepel::geom_text_repel(nudge_y = 0.07)+
-        geom_hline(yintercept = -log10(0.05), color = "blue", linetype = "dashed")+ #horizontal line p unadjusted
-        geom_hline(yintercept = -log10(0.05/nrow(cl_size)), color = "blue")+
-        geom_vline(xintercept = 0, color = "red", linetype = "solid")+
-        geom_vline(xintercept = -1, color = "red", linetype = "dashed")+
-        geom_vline(xintercept = 1, color = "red", linetype = "dashed")+ 
-        xlab(bquote(~Log[2]~ 'fold change'))+
-        ylab(bquote(-Log[10]~ "p value")) +
-        theme(legend.position = "none") #remove guide
-    ggsave(file.path("results", "abundance", glue::glue("volcano_plot_{cluster_idents}_{object_parse}_{group1}_{group2}.pdf")), width = width, height = height)
+
+  p1 <- ggplot(cl_size, aes(x = logratio, y = log_pvalue, color = cluster, size = 3, label = cluster)) +
+    geom_point() +
+    scale_color_manual(values = color) +
+    theme_classic() +
+    ggrepel::geom_text_repel(nudge_y = 0.07) +
+    geom_hline(yintercept = -log10(0.05), color = "blue", linetype = "dashed") + # horizontal line p unadjusted
+    geom_hline(yintercept = -log10(0.05 / nrow(cl_size)), color = "blue") +
+    geom_vline(xintercept = 0, color = "red", linetype = "solid") +
+    geom_vline(xintercept = -1, color = "red", linetype = "dashed") +
+    geom_vline(xintercept = 1, color = "red", linetype = "dashed") +
+    xlab(bquote(~ Log[2] ~ "fold change")) +
+    ylab(bquote(-Log[10] ~ "p value")) +
+    theme(legend.position = "none") # remove guide
+  ggsave(file.path("results", "abundance", glue::glue("volcano_plot_{cluster_idents}_{object_parse}_{group1}_{group2}.pdf")), width = width, height = height)
 }
 
 ################################################################################
@@ -648,26 +651,28 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
 #' @export
 
 plotSlingshot <- function(object, lineage) {
-    if(!methods::is(object) == "Seurat") {
-        stop("Object must be a Seurat object")
-    }
-    my_curves <- dplyr::filter(curves, Lineage == lineage)
-sds_plot <-
+  if (!methods::is(object) == "Seurat") {
+    stop("Object must be a Seurat object")
+  }
+  my_curves <- dplyr::filter(curves, Lineage == lineage)
+  sds_plot <-
     Embeddings(object, "umap") |>
-    tibble::as_tibble() |> 
-    dplyr::mutate(color = pt[,lineage])|>
+    tibble::as_tibble() |>
+    dplyr::mutate(color = pt[, lineage]) |>
     tidyr::drop_na(color) |>
     ggplot(aes(x = UMAP_1, y = UMAP_2)) +
-    geom_point(aes(color = color), size = 0.1)+
-    geom_path(data = my_curves, aes(group = Lineage))+
-    viridis::scale_color_viridis(name = "pseudotime")+
+    geom_point(aes(color = color), size = 0.1) +
+    geom_path(data = my_curves, aes(group = Lineage)) +
+    viridis::scale_color_viridis(name = "pseudotime") +
     theme_classic() +
-    theme(axis.text = element_blank(),
-          axis.ticks = element_blank(),
-          panel.border = element_rect(color = "black", linewidth = 1, fill = NA),
-          aspect.ratio = 1)+
+    theme(
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      panel.border = element_rect(color = "black", linewidth = 1, fill = NA),
+      aspect.ratio = 1
+    ) +
     ggtitle(lineage)
-return(sds_plot)
+  return(sds_plot)
 }
 
 
@@ -697,7 +702,7 @@ return(sds_plot)
 #' @importFrom ggplot2 aes geom_point geom_path ggtitle theme_classic element_blank element_rect
 #' @export
 
-pcaSeurat <-function(object, cluster, sample, condition, width = 20, height = 5) {
+pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5) {
   dir.create(file.path("results", "pca"), showWarnings = FALSE)
   object_parse <- deparse(substitute(object))
   cl_size <-
@@ -706,17 +711,17 @@ pcaSeurat <-function(object, cluster, sample, condition, width = 20, height = 5)
 
   colnames(cl_size) <- levels(object@meta.data[[cluster]])
 
-  pca_result <-FactoMineR::PCA(cl_size, scale.unit = TRUE, ncp = 30, graph = FALSE)
-  pca_eigen <- factoextra::fviz_eig(pca_result, addlabels = TRUE, ylim = c(0,50), ncp = 7)
+  pca_result <- FactoMineR::PCA(cl_size, scale.unit = TRUE, ncp = 30, graph = FALSE)
+  pca_eigen <- factoextra::fviz_eig(pca_result, addlabels = TRUE, ylim = c(0, 50), ncp = 7)
 
-pca_var_plot <-
-  factoextra::fviz_pca_var(
-    pca_result,
-    col.var = "contrib",
-    gradient.cols = viridis::viridis(100),
-    repel = TRUE
-  ) +
-    labs(title = "")+
+  pca_var_plot <-
+    factoextra::fviz_pca_var(
+      pca_result,
+      col.var = "contrib",
+      gradient.cols = viridis::viridis(100),
+      repel = TRUE
+    ) +
+    labs(title = "") +
     theme_classic()
   # select.var = list(contrib = 15)) # top 15
 
@@ -731,7 +736,7 @@ pca_var_plot <-
     data.frame(cluster = rownames(cl_size)) |>
     left_join(lookup_pre)
 
-factoextra::fviz_pca_ind(pca_result)
+  factoextra::fviz_pca_ind(pca_result)
 
   pca_plot_ind <-
     factoextra::fviz_pca_ind(
@@ -746,14 +751,17 @@ factoextra::fviz_pca_ind(pca_result)
 
   pca_ggplot_ind <-
     ggpubr::ggpar(
-    pca_plot_ind,
-    title = "",
-    xlab = "PC1",
-    ylab = "PC2",
-    ggtheme = theme_bw() +
-      theme(axis.title.x = element_text(size=15),
-            axis.title.y = element_text(size=15),
-            plot.title = element_text(size=25))) +
+      pca_plot_ind,
+      title = "",
+      xlab = "PC1",
+      ylab = "PC2",
+      ggtheme = theme_bw() +
+        theme(
+          axis.title.x = element_text(size = 15),
+          axis.title.y = element_text(size = 15),
+          plot.title = element_text(size = 25)
+        )
+    ) +
     theme_classic()
 
   pca_plot_group <-
@@ -778,12 +786,17 @@ factoextra::fviz_pca_ind(pca_result)
       xlab = "PC1",
       ylab = "PC2",
       ggtheme = theme_bw() +
-        theme(axis.title.x = element_text(size=15),
-              axis.title.y = element_text(size=15),
-              plot.title = element_text(size=25))) +
+        theme(
+          axis.title.x = element_text(size = 15),
+          axis.title.y = element_text(size = 15),
+          plot.title = element_text(size = 25)
+        )
+    ) +
     theme_classic()
 
   pca_plots <- patchwork::wrap_plots(pca_eigen, pca_var_plot, pca_ggplot_ind, pca_ggplot_group, ncol = 4)
-  ggsave(file.path("results", "pca", paste0(object_parse, "_", condition, "_", cluster, ".pdf")), width = width, height = height,
-         plot = pca_plots)
+  ggsave(file.path("results", "pca", paste0(object_parse, "_", condition, "_", cluster, ".pdf")),
+    width = width, height = height,
+    plot = pca_plots
+  )
 }

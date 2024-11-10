@@ -22,13 +22,17 @@ scale_rows <- function(x) {
 #' @description copied from pheatmap for internal use
 #' @param mat matrix input
 #' @param scale should the values be centered and scaled in row, column direction? Allowed: `row`, `column`, `none`
-#' @return matrix scaled 
+#' @return matrix scaled
 
 scale_mat <- function(mat, scale) {
-    if(!(scale %in% c("none", "row", "column"))) {
+    if (!(scale %in% c("none", "row", "column"))) {
         stop("scale argument shoud take values: 'none', 'row' or 'column'")
     }
-    mat <- switch(scale, none = mat, row = scale_rows(mat), column = t(scale_rows(t(mat))))
+    mat <- switch(scale,
+        none = mat,
+        row = scale_rows(mat),
+        column = t(scale_rows(t(mat)))
+    )
     return(mat)
 }
 
@@ -41,12 +45,14 @@ scale_mat <- function(mat, scale) {
 #' @return tibble with environment objects arranged by size
 #' @export
 
-lss <- function () {
-data.frame('object' = ls(".GlobalEnv")) %>% 
-      dplyr::mutate(size_unit = object %>%sapply(. %>% get() %>% object.size %>% format(., unit = 'auto')),
-                    size = sapply(strsplit(size_unit, split = ' '), FUN = function(x) x[1]),
-                    unit = factor(sapply(strsplit(size_unit, split = ' '), FUN = function(x) x[2]), levels = c('Gb', 'Mb', 'Kb', 'bytes'))) %>% 
-      dplyr::arrange(unit, dplyr::desc(size)) %>%
-      dplyr::select(-size_unit) %>%
-    tibble::as_tibble()
+lss <- function() {
+    data.frame("object" = ls(".GlobalEnv")) %>%
+        dplyr::mutate(
+            size_unit = object %>% sapply(. %>% get() %>% object.size() %>% format(., unit = "auto")),
+            size = sapply(strsplit(size_unit, split = " "), FUN = function(x) x[1]),
+            unit = factor(sapply(strsplit(size_unit, split = " "), FUN = function(x) x[2]), levels = c("Gb", "Mb", "Kb", "bytes"))
+        ) %>%
+        dplyr::arrange(unit, dplyr::desc(size)) %>%
+        dplyr::select(-size_unit) %>%
+        tibble::as_tibble()
 }
