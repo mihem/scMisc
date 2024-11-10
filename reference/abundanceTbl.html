@@ -38,7 +38,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">abundanceTbl</span><span class="op">(</span><span class="va">object</span>, <span class="va">row_var</span>, <span class="va">col_var</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">abundanceTbl</span><span class="op">(</span><span class="va">object</span>, <span class="va">row_var</span>, <span class="va">col_var</span>, target_dir <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,11 +56,25 @@
 <dt id="arg-col-var">col_var<a class="anchor" aria-label="anchor" href="#arg-col-var"></a></dt>
 <dd><p>variable in meta data that will represent the columns</p></dd>
 
+
+<dt id="arg-target-dir">target_dir<a class="anchor" aria-label="anchor" href="#arg-target-dir"></a></dt>
+<dd><p>target directory to save the results (default: .)</p></dd>
+
 </dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="fu">abundanceTbl</span><span class="op">(</span>object <span class="op">=</span> <span class="va">aie</span>, row_var <span class="op">=</span> <span class="st">"predicted.id"</span>, col_var <span class="op">=</span> <span class="st">"AIE_type"</span><span class="op">)</span> <span class="co"># \dontrun{}</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ‘SeuratObject’ was built under R 4.4.0 but the current version is</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 4.4.2; it is recomended that you reinstall ‘SeuratObject’ as the ABI</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> for R may have changed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘SeuratObject’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, t</span>
+<span class="r-in"><span><span class="fu">abundanceTbl</span><span class="op">(</span><span class="va">pbmc_small</span>, row_var <span class="op">=</span> <span class="st">"groups"</span>, col_var <span class="op">=</span> <span class="st">"letter.idents"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"abundance_tbl_pbmc_small_letter.idents.xlsx"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
