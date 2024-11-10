@@ -44,5 +44,7 @@ Imports:
     RColorBrewer,
     factoextra,
     FactoMineR,
-    Matrix
+    Matrix,
+    scales,
+    stringr
 Remotes: wjawaid/enrichR
