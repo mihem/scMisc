@@ -92,25 +92,27 @@ findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, m
 #' @param object Seurat object
 #' @param row_var variable in meta data that will represent the rows
 #' @param col_var variable in meta data that will represent the columns
-#' @examples \dontrun{abundanceTbl(object = aie, row_var = "predicted.id", col_var = "AIE_type")}
+#' @param target_dir target directory to save the results (default: .)
+#' @examples 
+#' library(Seurat, quietly = TRUE)
+#' abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
+#' unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
 #' @export 
 
-abundanceTbl <- function(object, row_var, col_var) {
+abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
     if(!methods::is(object) == "Seurat") {
         stop("Object must be a Seurat object")
     }
-    if(!dir.exists(file.path("results", "abundance"))) {
-        stop("Directory `/results/abundance/` must exist")
-    }
     object_parse <- deparse(substitute(object))
     result_abs <- as.data.frame.matrix(table(object@meta.data[[row_var]], object@meta.data[[col_var]])) |>
-        rownames_to_column("cell") 
+        tibble::rownames_to_column("cell") 
 
     result_pct <- result_abs |>
-        mutate(across(where(is.numeric), function(x) x/sum(x)*100)) |>
-        mutate(across(where(is.numeric), function(x) round(x, 2)))
-
-    writexl::write_xlsx(list("absolute" = result_abs, "percentage" = result_pct), file.path("results", "abundance", glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx")))
+        dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) x/sum(x)*100)) |>
+        dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) round(x, 2)))
+    
+    file_path <- file.path(target_dir, glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx"))
+    writexl::write_xlsx(list("absolute" = result_abs, "percentage" = result_pct), file_path)
 }
 
 ################################################################################

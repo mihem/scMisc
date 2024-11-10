@@ -4,7 +4,7 @@
 \alias{abundanceTbl}
 \title{wrapper function to calculate absolute and relative abundance}
 \usage{
-abundanceTbl(object, row_var, col_var)
+abundanceTbl(object, row_var, col_var, target_dir = ".")
 }
 \arguments{
 \item{object}{Seurat object}
@@ -12,10 +12,14 @@ abundanceTbl(object, row_var, col_var)
 \item{row_var}{variable in meta data that will represent the rows}
 
 \item{col_var}{variable in meta data that will represent the columns}
+
+\item{target_dir}{target directory to save the results (default: .)}
 }
 \description{
 wrapper function to calculate absolute and relative abundance
 }
 \examples{
-\dontrun{abundanceTbl(object = aie, row_var = "predicted.id", col_var = "AIE_type")}
+library(Seurat, quietly = TRUE)
+abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
+unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
 }
