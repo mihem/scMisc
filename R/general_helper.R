@@ -26,6 +26,10 @@ scale_rows <- function(x) {
 #' @description copied from pheatmap for internal use
 #' @param mat matrix input
 #' @param scale should the values be centered and scaled in row, column direction? Allowed: `row`, `column`, `none`
+#' @examples
+#' set.seed(123)
+#' mat <- matrix(rnorm(100), 10, 10)
+#' scale_mat(mat, "row")
 #' @return matrix scaled
 
 scale_mat <- function(mat, scale) {
