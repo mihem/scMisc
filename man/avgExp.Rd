@@ -24,7 +24,7 @@ matrix with genes as rows and identity clases as columns
 create average expression matrix with Seurat based on \code{markers.csv}
 }
 \examples{
-library(Seurat, quietly = TRUE)
+library(Seurat)
 markers <- data.frame(Bc = c("CD19", "MS4A1", "CD79B"))
 write.csv(markers, "markers.csv")
 avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data")

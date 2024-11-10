@@ -11,7 +11,7 @@
 #' @param ortho convert to orthologues? Allowed values: `none`, `mouse2human` or `human2mouse`
 #' @return matrix with genes as rows and identity clases as columns
 #' @examples 
-#' library(Seurat, quietly = TRUE)
+#' library(Seurat)
 #' markers <- data.frame(Bc = c("CD19", "MS4A1", "CD79B"))
 #' write.csv(markers, "markers.csv")
 #' avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data")
@@ -64,7 +64,7 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
 #' @param assay which assay to use in DE testing (e.g. RNA or SCT)
 #' @return data frame with significant DE genes arranged by log2FC
 #' @examples 
-#' library(Seurat, quietly = TRUE)
+#' library(Seurat)
 #' findMarkersPresto(ident1 = "0", ident2 = "1", object = pbmc_small, assay = "RNA")
 #' @export 
 
@@ -94,7 +94,7 @@ findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, m
 #' @param col_var variable in meta data that will represent the columns
 #' @param target_dir target directory to save the results (default: .)
 #' @examples 
-#' library(Seurat, quietly = TRUE)
+#' library(Seurat)
 #' abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
 #' unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
 #' @export 
@@ -184,6 +184,24 @@ if (remove_rp_mt == TRUE) {
 #'                                      lookup_col = "tissue_level1_CSF",
 #'                                      min_cells = 30)
 #'}
+#' @examples 
+#' set.seed(123)
+#' library(Seurat)
+#' pbmc_small$condition <- factor(sample(c("diseaseA", "diseaseB"), nrow(pbmc_small), replace = TRUE))
+#' pbmc_small$cluster <- Idents(pbmc_small)
+#' pbmc_small$patient <- rep(paste0("P", 0:9), each = 8, length.out = ncol(pbmc_small))
+#' lookup <- data.frame(patient = paste0("P", 0:9), condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE))
+#' propellerCalc(
+#'  seu_obj1 = pbmc_small,
+#' condition1 = "diseaseA",
+#' condition2 = "diseaseB",
+#' cluster_col = "cluster",
+#' meta_col = "condition",
+#' lookup = lookup,
+#' sample_col = "patient",
+#' formula = "~ 0 + condition",
+#' min_cells = 30
+#' )
 #' @export
 
 
@@ -197,7 +215,7 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
     tibble::rownames_to_column("cluster") |>
     dplyr::mutate(group_sum = .data[[condition1]] + .data[[condition2]]) |>
     dplyr::filter(group_sum > min_cells) |>
-    pull(cluster)
+    dplyr::pull(cluster)
 
   # transform proportions
   props <- speckle::getTransformedProps(

@@ -19,7 +19,7 @@ abundanceTbl(object, row_var, col_var, target_dir = ".")
 wrapper function to calculate absolute and relative abundance
 }
 \examples{
-library(Seurat, quietly = TRUE)
+library(Seurat)
 abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
 unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
 }
