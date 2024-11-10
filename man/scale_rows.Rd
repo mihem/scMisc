@@ -15,8 +15,3 @@ matrix scaled rows
 \description{
 copied from pheatmap for internal use
 }
-\examples{
-set.seed(123)
-x <- matrix(rnorm(100), 10, 10)
-scale_rows(x)
-}

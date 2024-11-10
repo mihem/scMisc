@@ -2,7 +2,7 @@
 % Please edit documentation in R/general_helper.R
 \name{lss}
 \alias{lss}
-\title{pretty function to list environment objects}
+\title{list objects from the environment in a pretty way}
 \usage{
 lss()
 }
@@ -10,5 +10,12 @@ lss()
 tibble with environment objects arranged by size
 }
 \description{
-list objects from the environment, changes to human-readable units and arranges them by size
+list objects from the environment, changes to human-readable units and arranges them by size.
+Taken from https://stackoverflow.com/a/65949488.
+}
+\examples{
+set.seed(123)
+x <- matrix(rnorm(100), 10, 10)
+y <- matrix(rnorm(100), 10, 10)
+lss()
 }
