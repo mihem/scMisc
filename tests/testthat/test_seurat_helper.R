@@ -96,3 +96,11 @@ test_that("enrichrRun works correctly", {
   unlink("enrichr_test_de_neg_Sheet1.xlsx")
   unlink("enrichr_test_de_pos_Sheet1.xlsx")
 })
+
+test_that("ReadCellBender_h5 works correctly", {
+  file_name <- system.file("extdata", "raw_feature_bc_matrix_filtered.h5", package = "scMisc")
+  result <- ReadCellBender_h5(file_name)
+  expect_true(is(result, "dgCMatrix"))
+  expect_true(nrow(result) > 0)
+  expect_true(ncol(result) > 0)
+})
