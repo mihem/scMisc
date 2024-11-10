@@ -17,3 +17,8 @@ matrix scaled
 \description{
 copied from pheatmap for internal use
 }
+\examples{
+set.seed(123)
+mat <- matrix(rnorm(100), 10, 10)
+scale_mat(mat, "row")
+}
