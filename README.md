@@ -1,8 +1,8 @@
 # scMisc
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/mihem/scMisc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mihem/scMisc/actions/workflows/R-CMD-check.yaml)
-<!-- [![codecov](https://codecov.io/github/mihem/CSFAtlasTools/graph/badge.svg)](https://codecov.io/github/mihem/CSFAtlasTools) -->
-  <!-- badges: end -->
+  [![codecov](https://codecov.io/gh/mihem/scMisc/graph/badge.svg?token=D2JF6LGE8B)](https://codecov.io/gh/mihem/scMisc)
+<!-- badges: end -->
 
 `scMisc` is an R package that provides helper functions for scRNA-seq analysis with a focus on Seurat.
 
