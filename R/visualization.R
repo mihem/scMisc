@@ -400,6 +400,7 @@ compStat <- function(x_var, group, data, paired) {
 #' @param width width of output plot (default: 9)
 #' @param height height of output plot (default: length of cluster_idents divided by four, ceiling, times three)
 #' @param paired logical indicating whether you want a paired test (default FALSE)
+#' @param number_of_tests number of tests to be performed
 #' @return save abundance box plot in the folder `/results/abundance`
 #' @examples
 #' \dontrun{
