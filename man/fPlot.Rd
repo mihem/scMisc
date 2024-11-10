@@ -36,5 +36,7 @@ save feature plot to folder \verb{/results/featureplot/}
 create and save a nice Seurat feature plot in folder \code{featureplot}
 }
 \examples{
-\dontrun{fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")}
+\dontrun{
+fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")
+}
 }

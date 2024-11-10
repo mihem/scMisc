@@ -69,16 +69,19 @@ save umap/heatmap plot to folder \verb{/results/clustifyr/}
 create and save clustifyr UMAP and heatmap
 }
 \examples{
-\dontrun{clustifyFun(my_object = tcells,
-           my_annotations = "cluster",
-           ref_object = projectil_til,
-           ref_annotations = "functional.cluster",
-           format = "seurat",
-           ortho = "none",
-           height = 25,
-           width = 10,
-           umap = TRUE,
-           color = col_vector,
-           name = "projectil_til")
+\dontrun{
+clustifyFun(
+    my_object = tcells,
+    my_annotations = "cluster",
+    ref_object = projectil_til,
+    ref_annotations = "functional.cluster",
+    format = "seurat",
+    ortho = "none",
+    height = 25,
+    width = 10,
+    umap = TRUE,
+    color = col_vector,
+    name = "projectil_til"
+)
 }
 }

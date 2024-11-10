@@ -24,7 +24,6 @@ Extract sparse matrix with corrected counts from CellBender h5 output file.
 mat <- ReadCellBender_h5(file_name = "/SampleA_out_filtered.h5")
 }
 
-
 }
 \references{
 Code used in function has been modified from \code{Seurat::Read10X_h5} function of

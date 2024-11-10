@@ -28,5 +28,5 @@ library(Seurat)
 markers <- data.frame(Bc = c("CD19", "MS4A1", "CD79B"))
 write.csv(markers, "markers.csv")
 avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data")
-unlink("markers.csv") 
+unlink("markers.csv")
 }

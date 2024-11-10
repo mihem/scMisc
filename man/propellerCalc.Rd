@@ -42,16 +42,18 @@ A dataframe containing the results of the t-test
 The function calculates differential cell abundance the transformed proportions and performs a t-test based on a given design matrix
 }
 \examples{
-\dontrun{pnp_ctrl_csf_sex_age <- propellerCalc(
-                                      seu_obj1 = sc_final,
-                                     condition1 = "CSF_PNP",
-                                     condition2 = "CSF_CTRL", 
-                                     cluster_col = "cluster",
-                                     meta_col = "tissue_level1",
-                                     lookup = propeller_lookup,
-                                     sample_col = "patient",
-                                     lookup_col = "tissue_level1_CSF",
-                                     min_cells = 30)
+\dontrun{
+pnp_ctrl_csf_sex_age <- propellerCalc(
+  seu_obj1 = sc_final,
+  condition1 = "CSF_PNP",
+  condition2 = "CSF_CTRL",
+  cluster_col = "cluster",
+  meta_col = "tissue_level1",
+  lookup = propeller_lookup,
+  sample_col = "patient",
+  lookup_col = "tissue_level1_CSF",
+  min_cells = 30
+)
 }
 set.seed(123)
 library(Seurat)
@@ -60,14 +62,14 @@ pbmc_small$cluster <- Idents(pbmc_small)
 pbmc_small$patient <- rep(paste0("P", 0:9), each = 8, length.out = ncol(pbmc_small))
 lookup <- data.frame(patient = paste0("P", 0:9), condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE))
 propellerCalc(
- seu_obj1 = pbmc_small,
-condition1 = "diseaseA",
-condition2 = "diseaseB",
-cluster_col = "cluster",
-meta_col = "condition",
-lookup = lookup,
-sample_col = "patient",
-formula = "~ 0 + condition",
-min_cells = 30
+  seu_obj1 = pbmc_small,
+  condition1 = "diseaseA",
+  condition2 = "diseaseB",
+  cluster_col = "cluster",
+  meta_col = "condition",
+  lookup = lookup,
+  sample_col = "patient",
+  formula = "~ 0 + condition",
+  min_cells = 30
 )
 }

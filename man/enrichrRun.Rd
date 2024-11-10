@@ -26,5 +26,7 @@ save enrichrment analysis in excel sheet with multiple sheets in the folder \cod
 wrapper function to perform enrichment analysis with enrichr and save results
 }
 \examples{
-\dontrun{enrichrFun(filename = "de_ALZ_Naive_blood", dbs = dbs, fc_thresh = 1, p_thresh = 0.001, sheet = "pDC", remove_rp_mt = TRUE)}
+\dontrun{
+enrichrFun(filename = "de_ALZ_Naive_blood", dbs = dbs, fc_thresh = 1, p_thresh = 0.001, sheet = "pDC", remove_rp_mt = TRUE)
+}
 }
