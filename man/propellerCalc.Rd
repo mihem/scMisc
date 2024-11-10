@@ -42,19 +42,6 @@ A dataframe containing the results of the t-test
 The function calculates differential cell abundance the transformed proportions and performs a t-test based on a given design matrix
 }
 \examples{
-\dontrun{
-pnp_ctrl_csf_sex_age <- propellerCalc(
-  seu_obj1 = sc_final,
-  condition1 = "CSF_PNP",
-  condition2 = "CSF_CTRL",
-  cluster_col = "cluster",
-  meta_col = "tissue_level1",
-  lookup = propeller_lookup,
-  sample_col = "patient",
-  lookup_col = "tissue_level1_CSF",
-  min_cells = 30
-)
-}
 set.seed(123)
 library(Seurat)
 pbmc_small$condition <- factor(sample(c("diseaseA", "diseaseB"), nrow(pbmc_small), replace = TRUE))

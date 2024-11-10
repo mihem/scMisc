@@ -174,20 +174,6 @@ enrichrRun <- function(sheet, filename, dbs, fc_thresh = 1, p_thresh = 0.001, re
 #' @param formula  A linear model that should be used for the design matrix
 #' @param min_cells A numeric value indicating the minimum number of cells in a cluster that should be included in the analysis
 #' @return A dataframe containing the results of the t-test
-
-#' @examples \dontrun{
-#' pnp_ctrl_csf_sex_age <- propellerCalc(
-#'   seu_obj1 = sc_final,
-#'   condition1 = "CSF_PNP",
-#'   condition2 = "CSF_CTRL",
-#'   cluster_col = "cluster",
-#'   meta_col = "tissue_level1",
-#'   lookup = propeller_lookup,
-#'   sample_col = "patient",
-#'   lookup_col = "tissue_level1_CSF",
-#'   min_cells = 30
-#' )
-#' }
 #' @examples
 #' set.seed(123)
 #' library(Seurat)
