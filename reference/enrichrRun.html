@@ -38,7 +38,16 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">enrichrRun</span><span class="op">(</span><span class="va">sheet</span>, <span class="va">filename</span>, <span class="va">dbs</span>, fc_thresh <span class="op">=</span> <span class="fl">1</span>, p_thresh <span class="op">=</span> <span class="fl">0.001</span>, <span class="va">remove_rp_mt</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">enrichrRun</span><span class="op">(</span></span>
+<span>  <span class="va">sheet</span>,</span>
+<span>  dir_input <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  <span class="va">filename</span>,</span>
+<span>  dir_output <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  <span class="va">dbs</span>,</span>
+<span>  fc_thresh <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  p_thresh <span class="op">=</span> <span class="fl">0.001</span>,</span>
+<span>  <span class="va">remove_rp_mt</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -49,8 +58,16 @@
 <dd><p>sheet name in excel file</p></dd>
 
 
+<dt id="arg-dir-input">dir_input<a class="anchor" aria-label="anchor" href="#arg-dir-input"></a></dt>
+<dd><p>path to the directory where the deg file is located (default: .)</p></dd>
+
+
 <dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
-<dd><p>name of deg file file without extension</p></dd>
+<dd><p>name of deg file file (should be .xlsx) without extension</p></dd>
+
+
+<dt id="arg-dir-output">dir_output<a class="anchor" aria-label="anchor" href="#arg-dir-output"></a></dt>
+<dd><p>path to the directory where the results will be saved (default: .)</p></dd>
 
 
 <dt id="arg-dbs">dbs<a class="anchor" aria-label="anchor" href="#arg-dbs"></a></dt>
@@ -76,9 +93,40 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu">enrichrFun</span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"de_ALZ_Naive_blood"</span>, dbs <span class="op">=</span> <span class="va">dbs</span>, fc_thresh <span class="op">=</span> <span class="fl">1</span>, p_thresh <span class="op">=</span> <span class="fl">0.001</span>, sheet <span class="op">=</span> <span class="st">"pDC"</span>, remove_rp_mt <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">enrichR</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Welcome to enrichR</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checking connection ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Enrichr ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Connection is Live!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> FlyEnrichr ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Connection is Live!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> WormEnrichr ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Connection is Live!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> YeastEnrichr ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Connection is Live!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> FishEnrichr ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Connection is Live!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> OxEnrichr ... </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Connection is Live!</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">deg_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  gene <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pbmc_small</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  avg_log2FC <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pbmc_small</span><span class="op">)</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  p_val_adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">pbmc_small</span><span class="op">)</span><span class="op">)</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">writexl</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/writexl/reference/write_xlsx.html" class="external-link">write_xlsx</a></span><span class="op">(</span><span class="va">deg_data</span>, path <span class="op">=</span> <span class="st">"test_de.xlsx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">enrichrRun</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, dir_input <span class="op">=</span> <span class="st">"."</span>, filename <span class="op">=</span> <span class="st">"test_de"</span>, dbs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KEGG_2019_Human"</span><span class="op">)</span>, fc_thresh <span class="op">=</span> <span class="fl">1</span>, p_thresh <span class="op">=</span> <span class="fl">0.001</span>, remove_rp_mt <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Uploading data to Enrichr... Done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Querying KEGG_2019_Human... Done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parsing results... Done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Uploading data to Enrichr... Done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Querying KEGG_2019_Human... Done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parsing results... Done.</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"test_de.xlsx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"enrichr_test_de_neg_Sheet1.xlsx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"enrichr_test_de_pos_Sheet1.xlsx"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
