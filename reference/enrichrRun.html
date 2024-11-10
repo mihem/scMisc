@@ -117,7 +117,15 @@
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">writexl</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/writexl/reference/write_xlsx.html" class="external-link">write_xlsx</a></span><span class="op">(</span><span class="va">deg_data</span>, path <span class="op">=</span> <span class="st">"test_de.xlsx"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">enrichrRun</span><span class="op">(</span>sheet <span class="op">=</span> <span class="st">"Sheet1"</span>, dir_input <span class="op">=</span> <span class="st">"."</span>, filename <span class="op">=</span> <span class="st">"test_de"</span>, dbs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KEGG_2019_Human"</span><span class="op">)</span>, fc_thresh <span class="op">=</span> <span class="fl">1</span>, p_thresh <span class="op">=</span> <span class="fl">0.001</span>, remove_rp_mt <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">enrichrRun</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  sheet <span class="op">=</span> <span class="st">"Sheet1"</span>,</span></span>
+<span class="r-in"><span>  dir_input <span class="op">=</span> <span class="st">"."</span>,</span></span>
+<span class="r-in"><span>  filename <span class="op">=</span> <span class="st">"test_de"</span>,</span></span>
+<span class="r-in"><span>  dbs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"KEGG_2019_Human"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  fc_thresh <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  p_thresh <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
+<span class="r-in"><span>  remove_rp_mt <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Uploading data to Enrichr... Done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Querying KEGG_2019_Human... Done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Parsing results... Done.</span>
