@@ -58,7 +58,9 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
 #' @param logfc_threshold minimum x-fold difference (default: 0.25)
 #' @param assay which assay to use in DE testing (e.g. RNA or SCT)
 #' @return data frame with significant DE genes arranged by log2FC
-#' @examples \dontrun{findMarkersPresto(ident1 = "biopsy", ident2 = "blood", object = sc_tc_fil, assay = "RNA")}
+#' @examples 
+#' library(Seurat)
+#' findMarkersPresto(ident1 = "0", ident2 = "1", object = pbmc_small, assay = "RNA")
 #' @export 
 
 findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, min_pct = 0.1, logfc_threshold = 0.25, assay = assay) {
