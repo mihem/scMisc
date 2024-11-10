@@ -5,11 +5,15 @@
 #' @title scale rows from pheatmap only internal use
 #' @description copied from pheatmap for internal use
 #' @param x matrix input
+#' @examples
+#' set.seed(123)
+#' x <- matrix(rnorm(100), 10, 10)
+#' scale_rows(x)
 #' @return matrix scaled rows
 
 scale_rows <- function(x) {
-    m <- apply(x, 1, mean, na.rm = T)
-    s <- apply(x, 1, sd, na.rm = T)
+    m <- apply(x, 1, mean, na.rm = TRUE)
+    s <- apply(x, 1, sd, na.rm = TRUE)
     return((x - m) / s)
 }
 
