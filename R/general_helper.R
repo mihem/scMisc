@@ -5,7 +5,6 @@
 #' @title scale rows from pheatmap only internal use
 #' @description copied from pheatmap for internal use
 #' @param x matrix input
-#' @examples
 #' @return matrix scaled rows
 
 scale_rows <- function(x) {
@@ -23,7 +22,6 @@ scale_rows <- function(x) {
 #' @description copied from pheatmap for internal use
 #' @param mat matrix input
 #' @param scale should the values be centered and scaled in row, column direction? Allowed: `row`, `column`, `none`
-#' @examples
 #' @return matrix scaled
 
 scale_mat <- function(mat, scale) {
@@ -46,11 +44,6 @@ scale_mat <- function(mat, scale) {
 #' @description list objects from the environment, changes to human-readable units and arranges them by size.
 #' Taken from https://stackoverflow.com/a/65949488.
 #' @return tibble with environment objects arranged by size
-#' @examples
-#' set.seed(123)
-#' x <- matrix(rnorm(100), 10, 10)
-#' y <- matrix(rnorm(100), 10, 10)
-#' lss()
 #' @export
 
 lss <- function() {

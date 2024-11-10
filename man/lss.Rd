@@ -13,9 +13,3 @@ tibble with environment objects arranged by size
 list objects from the environment, changes to human-readable units and arranges them by size.
 Taken from https://stackoverflow.com/a/65949488.
 }
-\examples{
-set.seed(123)
-x <- matrix(rnorm(100), 10, 10)
-y <- matrix(rnorm(100), 10, 10)
-lss()
-}
