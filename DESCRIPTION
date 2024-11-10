@@ -37,7 +37,6 @@ Imports:
     readxl,
     scales,
     tidyr,
-    enrichR,
     speckle,
     limma,
     stringr,
@@ -45,3 +44,4 @@ Imports:
     factoextra,
     FactoMineR,
     Matrix
+Remotes: wjawaid/enrichR
