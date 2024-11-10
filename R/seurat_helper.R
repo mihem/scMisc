@@ -140,7 +140,15 @@ abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
 #' )
 #'
 #' writexl::write_xlsx(deg_data, path = "test_de.xlsx")
-#' enrichrRun(sheet = "Sheet1", dir_input = ".", filename = "test_de", dbs = c("KEGG_2019_Human"), fc_thresh = 1, p_thresh = 0.001, remove_rp_mt = FALSE)
+#' enrichrRun(
+#'   sheet = "Sheet1",
+#'   dir_input = ".",
+#'   filename = "test_de",
+#'   dbs = c("KEGG_2019_Human"),
+#'   fc_thresh = 1,
+#'   p_thresh = 0.001,
+#'   remove_rp_mt = FALSE
+#' )
 #' unlink("test_de.xlsx")
 #' unlink("enrichr_test_de_neg_Sheet1.xlsx")
 #' unlink("enrichr_test_de_pos_Sheet1.xlsx")

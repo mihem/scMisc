@@ -33,7 +33,7 @@ enrichrRun(
 \item{remove_rp_mt}{remove ribosomal and mitochondrial genes? (boolean value)}
 }
 \value{
-save enrichrment analysis in excel sheet with multiple sheets in the folder \code{results/enrichr}
+save enrichrment analysis in \code{dir_output} in two excel sheets (one for positive and one for negative)
 }
 \description{
 wrapper function to perform enrichment analysis with enrichr and save results
