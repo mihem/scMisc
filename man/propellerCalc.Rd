@@ -47,7 +47,10 @@ library(Seurat)
 pbmc_small$condition <- factor(sample(c("diseaseA", "diseaseB"), nrow(pbmc_small), replace = TRUE))
 pbmc_small$cluster <- Idents(pbmc_small)
 pbmc_small$patient <- rep(paste0("P", 0:9), each = 8, length.out = ncol(pbmc_small))
-lookup <- data.frame(patient = paste0("P", 0:9), condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE))
+lookup <- data.frame(
+  patient = paste0("P", 0:9),
+  condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE)
+)
 propellerCalc(
   seu_obj1 = pbmc_small,
   condition1 = "diseaseA",

@@ -4,12 +4,25 @@
 \alias{enrichrRun}
 \title{enrichment analysis}
 \usage{
-enrichrRun(sheet, filename, dbs, fc_thresh = 1, p_thresh = 0.001, remove_rp_mt)
+enrichrRun(
+  sheet,
+  dir_input = ".",
+  filename,
+  dir_output = ".",
+  dbs,
+  fc_thresh = 1,
+  p_thresh = 0.001,
+  remove_rp_mt
+)
 }
 \arguments{
 \item{sheet}{sheet name in excel file}
 
-\item{filename}{name of deg file file without extension}
+\item{dir_input}{path to the directory where the deg file is located (default: .)}
+
+\item{filename}{name of deg file file (should be .xlsx) without extension}
+
+\item{dir_output}{path to the directory where the results will be saved (default: .)}
 
 \item{dbs}{name of the enrichr libraries}
 
@@ -26,7 +39,18 @@ save enrichrment analysis in excel sheet with multiple sheets in the folder \cod
 wrapper function to perform enrichment analysis with enrichr and save results
 }
 \examples{
-\dontrun{
-enrichrFun(filename = "de_ALZ_Naive_blood", dbs = dbs, fc_thresh = 1, p_thresh = 0.001, sheet = "pDC", remove_rp_mt = TRUE)
-}
+library(Seurat)
+library(enrichR)
+set.seed(123)
+deg_data <- data.frame(
+  gene = rownames(pbmc_small),
+  avg_log2FC = rnorm(length(rownames(pbmc_small)), mean = 0, sd = 3),
+  p_val_adj = runif(length(rownames(pbmc_small)), min = 0, max = 0.01)
+)
+
+writexl::write_xlsx(deg_data, path = "test_de.xlsx")
+enrichrRun(sheet = "Sheet1", dir_input = ".", filename = "test_de", dbs = c("KEGG_2019_Human"), fc_thresh = 1, p_thresh = 0.001, remove_rp_mt = FALSE)
+unlink("test_de.xlsx")
+unlink("enrichr_test_de_neg_Sheet1.xlsx")
+unlink("enrichr_test_de_pos_Sheet1.xlsx")
 }

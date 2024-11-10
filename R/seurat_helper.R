@@ -120,20 +120,34 @@ abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
 ################################################################################
 #' @title enrichment analysis
 #' @description wrapper function to perform enrichment analysis with enrichr and save results
-#' @param filename name of deg file file without extension
+#' @param filename name of deg file file (should be .xlsx) without extension
+#' @param dir_input path to the directory where the deg file is located (default: .)
+#' @param dir_output path to the directory where the results will be saved (default: .)
 #' @param dbs name of the enrichr libraries
 #' @param fc_thresh log fc threshold (default 1)
 #' @param p_thresh p value threshold (default 0.001)
 #' @param sheet sheet name in excel file
 #' @param remove_rp_mt remove ribosomal and mitochondrial genes? (boolean value)
-#' @return save enrichrment analysis in excel sheet with multiple sheets in the folder `results/enrichr`
-#' @examples \dontrun{
-#' enrichrFun(filename = "de_ALZ_Naive_blood", dbs = dbs, fc_thresh = 1, p_thresh = 0.001, sheet = "pDC", remove_rp_mt = TRUE)
-#' }
+#' @return save enrichrment analysis in `dir_output` in two excel sheets (one for positive and one for negative)
+#' @examples
+#' library(Seurat)
+#' library(enrichR)
+#' set.seed(123)
+#' deg_data <- data.frame(
+#'   gene = rownames(pbmc_small),
+#'   avg_log2FC = rnorm(length(rownames(pbmc_small)), mean = 0, sd = 3),
+#'   p_val_adj = runif(length(rownames(pbmc_small)), min = 0, max = 0.01)
+#' )
+#'
+#' writexl::write_xlsx(deg_data, path = "test_de.xlsx")
+#' enrichrRun(sheet = "Sheet1", dir_input = ".", filename = "test_de", dbs = c("KEGG_2019_Human"), fc_thresh = 1, p_thresh = 0.001, remove_rp_mt = FALSE)
+#' unlink("test_de.xlsx")
+#' unlink("enrichr_test_de_neg_Sheet1.xlsx")
+#' unlink("enrichr_test_de_pos_Sheet1.xlsx")
 #' @export
 
-enrichrRun <- function(sheet, filename, dbs, fc_thresh = 1, p_thresh = 0.001, remove_rp_mt) {
-  input <- readxl::read_excel(file.path("results", "de", glue::glue("{filename}.xlsx")), sheet = sheet)
+enrichrRun <- function(sheet, dir_input = ".", filename, dir_output = ".", dbs, fc_thresh = 1, p_thresh = 0.001, remove_rp_mt) {
+  input <- readxl::read_excel(file.path(dir_input, glue::glue("{filename}.xlsx")), sheet = sheet)
   if (remove_rp_mt == TRUE) {
     input <- dplyr::filter(input, !grepl(x = gene, pattern = "(MT-)|(^RP)"))
   }
@@ -153,7 +167,7 @@ enrichrRun <- function(sheet, filename, dbs, fc_thresh = 1, p_thresh = 0.001, re
       } # remove old p value
       names(result[[i]])[names(result[[i]]) == "TF_Perturbations_Followed_by_Expression"] <- "TF_Pertubations"
       names(result[[i]])[names(result[[i]]) == "Enrichr_Submissions_TF-Gene_Coocurrence"] <- "Enrichr_Submissions_TF"
-      writexl::write_xlsx(result[[i]], file.path("results", "enrichr", glue::glue("enrichr_{filename}_{i}_{sheet}.xlsx")))
+      writexl::write_xlsx(result[[i]], file.path(dir_output, glue::glue("enrichr_{filename}_{i}_{sheet}.xlsx")))
     }
   }
 }
@@ -180,7 +194,10 @@ enrichrRun <- function(sheet, filename, dbs, fc_thresh = 1, p_thresh = 0.001, re
 #' pbmc_small$condition <- factor(sample(c("diseaseA", "diseaseB"), nrow(pbmc_small), replace = TRUE))
 #' pbmc_small$cluster <- Idents(pbmc_small)
 #' pbmc_small$patient <- rep(paste0("P", 0:9), each = 8, length.out = ncol(pbmc_small))
-#' lookup <- data.frame(patient = paste0("P", 0:9), condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE))
+#' lookup <- data.frame(
+#'   patient = paste0("P", 0:9),
+#'   condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE)
+#' )
 #' propellerCalc(
 #'   seu_obj1 = pbmc_small,
 #'   condition1 = "diseaseA",
