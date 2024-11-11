@@ -34,7 +34,7 @@ theme_rect <- function() {
 #' @param height height of output plot (default: length of genes divided by four, ceiling, times three)
 #' @param order should the feature plot be ordered in order of expression
 #' @param dir_output directory to save the output plot (default: ".")
-#' @return save feature plot to folder `/results/featureplot/`
+#' @return save feature plot
 #' @importFrom ggplot2 theme element_blank element_rect ggsave
 #' @examples
 #' library(Seurat)
@@ -49,7 +49,6 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
-  dir.create(file.path("results", "featureplot"), showWarnings = FALSE)
   markers <- readr::read_csv(path) |>
     as.list(markers) |>
     lapply(function(x) x[!is.na(x)])
@@ -60,7 +59,17 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
   available_genes <- rownames(object)
   genes_found <- genes[genes %in% available_genes]
   object_parse <- deparse(substitute(object))
-  fp <- Seurat::FeaturePlot(object = object, features = unique(genes), cols = c("#F0F0F0", "#CB181D"), reduction = reduction, pt.size = .1, order = order, coord.fixed = TRUE, ncol = 4, raster = FALSE) &
+  fp <- Seurat::FeaturePlot(
+    object = object,
+    features = unique(genes),
+    cols = c("#F0F0F0", "#CB181D"),
+    reduction = reduction,
+    pt.size = .1,
+    order = order,
+    coord.fixed = TRUE,
+    ncol = 4,
+    raster = FALSE
+  ) &
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank(),
@@ -83,7 +92,7 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
 #' @param reduction a character string specifying the dimension reduction
 #' @param width width of output plot (default: 16)
 #' @param height height of output plot (default: length of genes divided by four, ceiling, times three)
-#' @return save feature plot to folder `/results/featureplot/`
+#' @return save feature plot
 #' @importFrom ggplot2 theme element_blank element_rect ggsave
 #' @examples \dontrun{fPlot(sc_merge, par = "main", filepath = file.path("results", "featureplot", glue::glue("fp_")))}
 #' @export
@@ -92,7 +101,6 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
-  dir.create(file.path("results", "featureplot"), showWarnings = FALSE)
   genes <- markers[markers$cell_source == par, ]$gene
   genes <- genes[!is.na(genes)]
   available_genes <- rownames(object)
@@ -121,7 +129,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' @param height height of output plot (default: 10)
 #' @param ortho convert to orthologues? Allowed values: `none`, `mouse2human` or `human2mouse`
 #' @param scale should the values be scaled? (default: TRUE)
-#' @return save dot plot to folder `results/dotplot/`
+#' @return save dot plot
 #' @importFrom ggplot2 ggplot scale_size theme xlab ylab element_text ggsave
 #' @examples
 #' \dontrun{
@@ -133,7 +141,6 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
-  dir.create(file.path("results", "dotplot"), showWarnings = FALSE)
   markers <- readr::read_csv(path) |>
     as.list(markers) |>
     lapply(function(x) x[!is.na(x)])
@@ -182,12 +189,11 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
 #' @param cluster_rows cluster rows? (default: true)
 #' @param cluster_cols cluster columns? (default: true)
 #' @param annotation_row data frame that contains the annotations. Rows in the data and in the annotation are matched using row names. (default: NA)
-#' @return save heatmap to folder `/results/heatmap`
+#' @return save heatmap to folder
 #' @examples \dontrun{pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)}
 #' @export
 
 pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3), width = ceiling(ncol(matrix) / 2), cellwidth = 10, cellheight = 10, treeheight_row = 10, treeheight_col = 10, fontsize = 10, cluster_rows = TRUE, cluster_cols = TRUE, annotation_row = NA) {
-  dir.create(file.path("results", "heatmap"), showWarnings = FALSE)
   matrix_parse <- deparse(substitute(matrix))
   matrix <- matrix[!rowSums(matrix) == 0, ] # filter rows with only zeros
   break_max <- round(max(abs(c(max(scale_mat(matrix, scale = scale)), min(scale_mat(matrix, scale = scale))))) - 0.1, 1) # use internal function to get scaled matrix and max value for color legend
@@ -226,7 +232,7 @@ pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3),
 #' @param color color palette
 #' @param width width of output plot (default: 10)
 #' @param height height of output plot
-#' @return save stacked abundance barplot to folder `/results/abundance`
+#' @return save stacked abundance barplot
 #' @examples
 #' \dontrun{
 #' stackedPlot(
@@ -244,7 +250,6 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
-  dir.create(file.path("results", "abundance"), showWarnings = FALSE)
   object_parse <- deparse(substitute(object))
   result_wide <- as.data.frame.matrix(table(object@meta.data[[y_axis]], object@meta.data[[x_axis]])) |>
     rownames_to_column("cell") |>
@@ -283,7 +288,7 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 #' @param height height of output plot (default: 5)
 #' @param min_cells remove all clusters that have less than minimal amount of cells (default = 10)
 #' @param paired logical indicating whether you want a paired test (default FALSE)
-#' @return save volcano abundance plot to folder `/results/abundance`
+#' @return save volcano abundance plot
 #' @examples
 #' \dontrun{
 #' abVolPlot(object = aie_sct,
@@ -303,7 +308,6 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
-  dir.create(file.path("results", "abundance"), showWarnings = FALSE)
   object_parse <- deparse(substitute(object))
 
   cl_size_ind <- as.data.frame.matrix(table(object@meta.data[[cluster_idents]], object@meta.data[[sample]])) |>
@@ -414,7 +418,7 @@ compStat <- function(x_var, group, data, paired) {
 #' @param height height of output plot (default: length of cluster_idents divided by four, ceiling, times three)
 #' @param paired logical indicating whether you want a paired test (default FALSE)
 #' @param number_of_tests number of tests to be performed
-#' @return save abundance box plot in the folder `/results/abundance`
+#' @return save abundance box plot
 #' @examples
 #' \dontrun{
 #'abBoxPlot(object = aie_pbmc,
@@ -432,7 +436,6 @@ abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
   if(!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
-  dir.create(file.path("results", "abundance"), showWarnings = FALSE)
   object_parse <- deparse(substitute(object))
   bp_data <-
     table(object@meta.data[[cluster_idents]], object@meta.data[[sample]]) |>
@@ -558,13 +561,12 @@ return(module_plot)
 #' @param sheet name of the excel sheet
 #' @param width width of output plot
 #' @param height height of output plot
-#' @return save enrichr plot in the folder `/results/enrichr`
+#' @return save enrichr plot
 #' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
 #' @examples
 #' \dontrun{plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)}
 #' @export
 plotEnrichr <- function(filename, sheet, width, height) {
-    dir.create(file.path("results", "enrichr"), showWarnings = FALSE)
     colors <- RColorBrewer::brewer.pal(5, "Set2")
     color <- ifelse(grepl(x = filename, pattern = "pos"), colors[[1]], colors[[2]])
     enrichr <- readxl::read_excel(file.path("results", "enrichr", glue::glue("enrichr_{filename}.xlsx")), sheet = sheet) |>
@@ -593,12 +595,12 @@ plotEnrichr <- function(filename, sheet, width, height) {
 #' @param height The height of the plot
 #' @param FDR The FDR threshold for the plot
 #' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
+#' @return save propeller plot
 #' @examples
 #' \dontrun{plotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")}
 #' @export
 
 plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR) {
-  dir.create(file.path("results", "abundance"), showWarnings = FALSE)
   ggplot(data, aes(x = log2ratio, y = FDR_log, color = cluster, size = 3, label = cluster)) +
     geom_point() +
     scale_color_manual(values = color) +
@@ -625,12 +627,12 @@ plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR) {
 #' @param width The width of the plot
 #' @param height The height of the plot
 #' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
+#' @return save propeller abundance barplot
 #' @examples
 #' \dontrun{dotplotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")}
 #' @export
 
 dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
-  dir.create(file.path("results", "abundance"), showWarnings = FALSE)
   ggplot(data, aes(x = log2ratio, y = fct_reorder(cluster, log2ratio), color = cluster)) +
     geom_point(size = 5) +
     theme_classic() +
@@ -713,7 +715,6 @@ plotSlingshot <- function(object, lineage) {
 #' @export
 
 pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5) {
-  dir.create(file.path("results", "pca"), showWarnings = FALSE)
   object_parse <- deparse(substitute(object))
   cl_size <-
     as.data.frame.matrix(table(object@meta.data[[cluster]], object@meta.data[[sample]])) |>

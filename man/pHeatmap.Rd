@@ -45,7 +45,7 @@ pHeatmap(
 \item{annotation_row}{data frame that contains the annotations. Rows in the data and in the annotation are matched using row names. (default: NA)}
 }
 \value{
-save heatmap to folder \verb{/results/heatmap}
+save heatmap to folder
 }
 \description{
 create and save a nice pheatmap in the folder \code{heatmap} using color breaks

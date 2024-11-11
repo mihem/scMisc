@@ -33,7 +33,7 @@ dotPlot(
 \item{height}{height of output plot (default: 10)}
 }
 \value{
-save dot plot to folder \verb{results/dotplot/}
+save dot plot
 }
 \description{
 create and save a nice Seurat dot plot

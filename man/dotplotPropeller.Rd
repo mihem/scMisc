@@ -17,6 +17,9 @@ dotplotPropeller(data, color, filename, width = 5, height = 5)
 
 \item{height}{The height of the plot}
 }
+\value{
+save propeller abundance barplot
+}
 \description{
 The function creates a barplot of the propeller results and saves the plot in results/abundance folder
 }

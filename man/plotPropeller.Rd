@@ -19,6 +19,9 @@ plotPropeller(data, color, filename, width = 5, height = 5, FDR)
 
 \item{FDR}{The FDR threshold for the plot}
 }
+\value{
+save propeller plot
+}
 \description{
 The function creates a volcano plot of the propeller results and saves the plot in results/abundance folder
 }

@@ -16,7 +16,7 @@ plotEnrichr(filename, sheet, width, height)
 \item{height}{height of output plot}
 }
 \value{
-save enrichr plot in the folder \verb{/results/enrichr}
+save enrichr plot
 }
 \description{
 plot enrichr results in a bar plot

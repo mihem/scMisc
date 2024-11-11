@@ -42,7 +42,7 @@ abBoxPlot(
 \item{number_of_tests}{number of tests to be performed}
 }
 \value{
-save abundance box plot in the folder \verb{/results/abundance}
+save abundance box plot
 }
 \description{
 create and save an abundance boxplot in the folder \code{abundance}

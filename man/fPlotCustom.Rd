@@ -27,7 +27,7 @@ fPlotCustom(
 \item{height}{height of output plot (default: length of genes divided by four, ceiling, times three)}
 }
 \value{
-save feature plot to folder \verb{/results/featureplot/}
+save feature plot
 }
 \description{
 create and save a Seurat feature plot in folder \code{featureplot}

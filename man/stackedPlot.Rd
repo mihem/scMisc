@@ -33,7 +33,7 @@ stackedPlot(
 \item{height}{height of output plot}
 }
 \value{
-save stacked abundance barplot to folder \verb{/results/abundance}
+save stacked abundance barplot
 }
 \description{
 create and save an abundance stacked bar plot in the folder \code{abundance}

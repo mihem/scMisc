@@ -45,7 +45,7 @@ abVolPlot(
 \item{paired}{logical indicating whether you want a paired test (default FALSE)}
 }
 \value{
-save volcano abundance plot to folder \verb{/results/abundance}
+save volcano abundance plot
 }
 \description{
 create and save an abundance volcano bar plot in the folder \code{abundance}

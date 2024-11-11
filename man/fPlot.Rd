@@ -33,7 +33,7 @@ fPlot(
 \item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
-save feature plot to folder \verb{/results/featureplot/}
+save feature plot
 }
 \description{
 create and save a nice Seurat feature plot in folder \code{featureplot}
