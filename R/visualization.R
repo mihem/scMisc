@@ -728,7 +728,7 @@ plotSlingshot <- function(object, lineage) {
       aspect.ratio = 1
     ) +
     ggtitle(lineage)
-  -return(sds_plot)
+  return(sds_plot)
 }
 
 
