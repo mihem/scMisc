@@ -42,7 +42,14 @@ create and save a nice Seurat feature plot in folder \code{featureplot}
 library(Seurat)
 markers <- data.frame(B = c("MS4A1", "CD79A"))
 write.csv(markers, "markers.csv")
-fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
+fPlot(
+  path = "markers.csv",
+  object = pbmc_small,
+  par = "B",
+  reduction = "tsne",
+  order = TRUE,
+  dir_output = "."
+)
 unlink("markers.csv")
 unlink("fp_pbmc_small_B.png")
 }
