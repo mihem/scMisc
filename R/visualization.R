@@ -40,7 +40,14 @@ theme_rect <- function() {
 #' library(Seurat)
 #' markers <- data.frame(B = c("MS4A1", "CD79A"))
 #' write.csv(markers, "markers.csv")
-#' fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
+#' fPlot(
+#'   path = "markers.csv",
+#'   object = pbmc_small,
+#'   par = "B",
+#'   reduction = "tsne",
+#'   order = TRUE,
+#'   dir_output = "."
+#' )
 #' unlink("markers.csv")
 #' unlink("fp_pbmc_small_B.png")
 #' @export
@@ -721,7 +728,7 @@ plotSlingshot <- function(object, lineage) {
       aspect.ratio = 1
     ) +
     ggtitle(lineage)
--  return(sds_plot)
+  -return(sds_plot)
 }
 
 
