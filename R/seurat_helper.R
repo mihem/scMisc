@@ -295,9 +295,7 @@ ReadCellBender_h5 <- function(
     unique.features = TRUE) {
   # Check hdf5r installed
   if (!requireNamespace("hdf5r", quietly = TRUE)) {
-    cli::cli_abort(message = c("Please install hdf5r to read HDF5 files",
-      "i" = "`install.packages('hdf5r')`"
-    ))
+    stop("Please install hdf5r to read HDF5 files")
   }
   # Check file
   if (!file.exists(file_name)) {
