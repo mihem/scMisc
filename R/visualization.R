@@ -37,7 +37,7 @@ theme_rect <- function() {
 #' @export
 
 fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3, order) {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   dir.create(file.path("results", "featureplot"), showWarnings = FALSE)
@@ -79,7 +79,7 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
 #' @export
 
 fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3) {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   dir.create(file.path("results", "featureplot"), showWarnings = FALSE)
@@ -120,7 +120,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' @export
 
 dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", width = 10, height = 10) {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   dir.create(file.path("results", "dotplot"), showWarnings = FALSE)
@@ -231,7 +231,7 @@ pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3),
 #' @export
 
 stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, height = 10) {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   dir.create(file.path("results", "abundance"), showWarnings = FALSE)
@@ -290,7 +290,7 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 
 
 abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group1, group2, color, width = 5, height = 5, min_cells = 10, paired = FALSE) {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   dir.create(file.path("results", "abundance"), showWarnings = FALSE)
@@ -419,7 +419,7 @@ compStat <- function(x_var, group, data, paired) {
 
 
 abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group_order, color, width = 9, height = ceiling(length(unique(object@meta.data[[cluster_idents]]))/4)*3, paired = FALSE, number_of_tests) {
-  if(!methods::is(object) == "Seurat") {
+  if(!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   dir.create(file.path("results", "abundance"), showWarnings = FALSE)
@@ -651,7 +651,7 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
 #' @export
 
 plotSlingshot <- function(object, lineage) {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   my_curves <- dplyr::filter(curves, Lineage == lineage)

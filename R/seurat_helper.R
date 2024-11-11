@@ -69,7 +69,7 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
 #' @export
 
 findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, min_pct = 0.1, logfc_threshold = 0.25, assay = assay) {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   if (is.null(assay)) {
@@ -100,7 +100,7 @@ findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, m
 #' @export
 
 abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
-  if (!methods::is(object) == "Seurat") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   object_parse <- deparse(substitute(object))
@@ -288,7 +288,7 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 #' @examples
 #  file_path <-  file.path("inst", "extdata", "raw_feature_bc_matrix_filtered.h5"))
 #  mat <- ReadCellBender_h5(file_name = file_path)
-#'
+
 ReadCellBender_h5 <- function(
     file_name,
     use.names = TRUE,
