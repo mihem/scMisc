@@ -43,7 +43,6 @@ Imports:
     factoextra,
     FactoMineR,
     Matrix,
-    cli,
     ggpubr,
     hdf5r,
     enrichR,
