@@ -286,8 +286,8 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 #' @export
 #'
 #' @examples
-#  file_path <-  file.path("inst", "extdata", "raw_feature_bc_matrix_filtered.h5"))
-#  mat <- ReadCellBender_h5(file_name = file_path)
+#'  file_path <-  file.path("inst", "extdata", "raw_feature_bc_matrix_filtered.h5"))
+#'  mat <- ReadCellBender_h5(file_name = file_path)
 
 ReadCellBender_h5 <- function(
     file_name,

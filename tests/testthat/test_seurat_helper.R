@@ -27,6 +27,10 @@ test_that("findMarkersPresto works correctly", {
   expect_true(is.data.frame(result))
   expect_true("gene" %in% colnames(result))
   expect_true("avg_log2FC" %in% colnames(result))
+  expect_error(
+    findMarkersPresto(ident1 = "0", ident2 = "1", object = data.frame(a = c(1:3)), assay = "RNA"),
+    "Object must be a Seurat object"
+  )
 })
 
 test_that("abundanceTbl works correctly", {
@@ -78,7 +82,7 @@ test_that("enrichrRun works correctly", {
     dbs = c("KEGG_2019_Human"),
     fc_thresh = 1,
     p_thresh = 0.001,
-    remove_rp_mt = FALSE
+    remove_rp_mt = TRUE
   )
 
   result_file_pos <- "enrichr_test_de_pos_Sheet1.xlsx"
@@ -111,4 +115,8 @@ test_that("ReadCellBender_h5 works correctly", {
   expect_true(is(result, "dgCMatrix"))
   expect_true(nrow(result) > 0)
   expect_true(ncol(result) > 0)
+  expect_error(
+    ReadCellBender_h5("non_existent_file.h5"),
+    "File not found"
+  )
 })
