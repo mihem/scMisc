@@ -22,7 +22,7 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
   if (!file.exists("markers.csv")) {
     stop("Please make sure that markers.csv file exists")
   }
-  if (!methods::is(object) == "Seurat") {
+  if(!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   markers <- readr::read_csv("markers.csv") |>

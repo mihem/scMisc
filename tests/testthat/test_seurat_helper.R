@@ -11,7 +11,15 @@ test_that("avgExp works correctly", {
   result <- avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data")
   expect_true(inherits(result, "dgCMatrix"))
   expect_true(all(c("CD19", "MS4A1", "CD79B") %in% rownames(result)))
+  expect_error(
+    avgExp("Bc", object = data.frame(a = c(1:3)), assay = "RNA", slot = "data"),
+    "Object must be a Seurat object"
+  )
   unlink("markers.csv")
+  expect_error(
+    avgExp("Bc", object = pbmc_small, assay = "RNA", slot = "data"),
+    "Please make sure that markers.csv file exists"
+  )
 })
 
 test_that("findMarkersPresto works correctly", {
