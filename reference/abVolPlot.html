@@ -50,7 +50,8 @@
 <span>  width <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  min_cells <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  paired <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  dir_output <span class="op">=</span> <span class="st">"."</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -105,15 +106,32 @@
 <dt id="arg-paired">paired<a class="anchor" aria-label="anchor" href="#arg-paired"></a></dt>
 <dd><p>logical indicating whether you want a paired test (default FALSE)</p></dd>
 
+
+<dt id="arg-dir-output">dir_output<a class="anchor" aria-label="anchor" href="#arg-dir-output"></a></dt>
+<dd><p>directory to save the output plot (default: ".")</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>save volcano abundance plot to folder <code>/results/abundance</code></p>
+    <p>save volcano abundance plot</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu">abVolPlot</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  object <span class="op">=</span> <span class="va">aie_sct</span>,</span></span>
+<span class="r-in"><span>  cluster_idents <span class="op">=</span> <span class="st">"predicted.id"</span>,</span></span>
+<span class="r-in"><span>  sample <span class="op">=</span> <span class="st">"sample"</span>,</span></span>
+<span class="r-in"><span>  cluster_order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">aie_sct</span><span class="op">$</span><span class="va">predicted.id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  group_by <span class="op">=</span> <span class="st">"AIE_type"</span>,</span></span>
+<span class="r-in"><span>  group1 <span class="op">=</span> <span class="st">"LGI1"</span>,</span></span>
+<span class="r-in"><span>  group2 <span class="op">=</span> <span class="st">"control"</span>,</span></span>
+<span class="r-in"><span>  color <span class="op">=</span> <span class="fu">dittoColors</span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  min_pct <span class="op">=</span> <span class="fl">0.5</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+</code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
