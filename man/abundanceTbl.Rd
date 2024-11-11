@@ -4,7 +4,7 @@
 \alias{abundanceTbl}
 \title{wrapper function to calculate absolute and relative abundance}
 \usage{
-abundanceTbl(object, row_var, col_var, target_dir = ".")
+abundanceTbl(object, row_var, col_var, dir_output = ".")
 }
 \arguments{
 \item{object}{Seurat object}
@@ -13,7 +13,7 @@ abundanceTbl(object, row_var, col_var, target_dir = ".")
 
 \item{col_var}{variable in meta data that will represent the columns}
 
-\item{target_dir}{target directory to save the results (default: .)}
+\item{dir_output}{target directory to save the results (default: .)}
 }
 \description{
 wrapper function to calculate absolute and relative abundance

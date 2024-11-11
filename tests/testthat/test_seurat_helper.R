@@ -34,7 +34,7 @@ test_that("findMarkersPresto works correctly", {
 })
 
 test_that("abundanceTbl works correctly", {
-  abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents", target_dir = ".")
+  abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents", dir_output = ".")
   file_path <- "abundance_tbl_pbmc_small_letter.idents.xlsx"
   result <- readxl::read_xlsx(file_path)
   expect_true(file.exists(file_path))
@@ -42,7 +42,7 @@ test_that("abundanceTbl works correctly", {
   expected_result <- tibble::tibble(cell = c("g1", "g2"), A = c(30, 23), B = c(14, 13))
   expect_equal(result, expected_result)
   expect_error(
-    abundanceTbl(data.frame(a = c(1:3)), row_var = "groups", col_var = "letter.idents", target_dir = "."),
+    abundanceTbl(data.frame(a = c(1:3)), row_var = "groups", col_var = "letter.idents", dir_output = "."),
     "Object must be a Seurat object"
   )
   unlink(file_path)

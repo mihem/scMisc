@@ -92,14 +92,14 @@ findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, m
 #' @param object Seurat object
 #' @param row_var variable in meta data that will represent the rows
 #' @param col_var variable in meta data that will represent the columns
-#' @param target_dir target directory to save the results (default: .)
+#' @param dir_output target directory to save the results (default: .)
 #' @examples
 #' library(Seurat)
 #' abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
 #' unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
 #' @export
 
-abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
+abundanceTbl <- function(object, row_var, col_var, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -111,7 +111,7 @@ abundanceTbl <- function(object, row_var, col_var, target_dir = ".") {
     dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) x / sum(x) * 100)) |>
     dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) round(x, 2)))
 
-  file_path <- file.path(target_dir, glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx"))
+  file_path <- file.path(dir_output, glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx"))
   writexl::write_xlsx(list("absolute" = result_abs, "percentage" = result_pct), file_path)
 }
 
