@@ -6,12 +6,16 @@
 #' @description nice theme with square border
 #' @importFrom ggplot2 theme element_blank element_rect
 #' @export
+#' @examples
+#' library(ggplot2)
+#' p <- ggplot(mtcars, aes(x = wt, y = mpg)) + geom_point()
+#' p + theme_rect()
 
 theme_rect <- function() {
   theme(
     axis.text = element_blank(),
     axis.ticks = element_blank(),
-    panel.border = element_rect(color = "black", size = 1, fill = NA),
+    panel.border = element_rect(color = "black", linewidth = 1, fill = NA),
     aspect.ratio = 1
   )
 }
