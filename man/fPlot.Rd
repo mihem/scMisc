@@ -11,7 +11,8 @@ fPlot(
   reduction,
   width = 16,
   height = ceiling(length(genes_found)/4) * 3,
-  order
+  order,
+  dir_output = "."
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ fPlot(
 \item{height}{height of output plot (default: length of genes divided by four, ceiling, times three)}
 
 \item{order}{should the feature plot be ordered in order of expression}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save feature plot to folder \verb{/results/featureplot/}
@@ -36,7 +39,10 @@ save feature plot to folder \verb{/results/featureplot/}
 create and save a nice Seurat feature plot in folder \code{featureplot}
 }
 \examples{
-\dontrun{
-fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")
-}
+library(Seurat)
+markers <- data.frame(B = c("MS4A1", "CD79A"))
+write.csv(markers, "markers.csv")
+fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
+unlink("markers.csv")
+unlink("fp_pbmc_small_B.png")
 }

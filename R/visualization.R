@@ -33,14 +33,19 @@ theme_rect <- function() {
 #' @param width width of output plot (default: 16)
 #' @param height height of output plot (default: length of genes divided by four, ceiling, times three)
 #' @param order should the feature plot be ordered in order of expression
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save feature plot to folder `/results/featureplot/`
 #' @importFrom ggplot2 theme element_blank element_rect ggsave
-#' @examples \dontrun{
-#' fPlot(sc_merge, path = file.path("lookup", "markers.csv"), par = "main", reduction = "umap")
-#' }
+#' @examples
+#' library(Seurat)
+#' markers <- data.frame(B = c("MS4A1", "CD79A"))
+#' write.csv(markers, "markers.csv")
+#' fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
+#' unlink("markers.csv")
+#' unlink("fp_pbmc_small_B.png")
 #' @export
 
-fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3, order) {
+fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3, order, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -59,9 +64,10 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank(),
-      panel.border = element_rect(color = "black", size = 1, fill = NA)
+      panel.border = element_rect(color = "black", linewidth = 1, fill = NA)
     )
-  ggsave(filename = file.path("results", "featureplot", glue::glue("fp_{object_parse}_{par}.png")), width = width, height = height, limitsize = FALSE)
+  file_path <- file.path(dir_output, glue::glue("fp_{object_parse}_{par}.png"))
+  ggsave(filename = file_path, width = width, height = height, limitsize = FALSE)
 }
 
 
