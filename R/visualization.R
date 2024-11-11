@@ -8,9 +8,9 @@
 #' @export
 #' @examples
 #' library(ggplot2)
-#' p <- ggplot(mtcars, aes(x = wt, y = mpg)) + geom_point()
+#' p <- ggplot(mtcars, aes(x = wt, y = mpg)) +
+#'   geom_point()
 #' p + theme_rect()
-
 theme_rect <- function() {
   theme(
     axis.text = element_blank(),
@@ -92,12 +92,15 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
 #' @param reduction a character string specifying the dimension reduction
 #' @param width width of output plot (default: 16)
 #' @param height height of output plot (default: length of genes divided by four, ceiling, times three)
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save feature plot
 #' @importFrom ggplot2 theme element_blank element_rect ggsave
-#' @examples \dontrun{fPlot(sc_merge, par = "main", filepath = file.path("results", "featureplot", glue::glue("fp_")))}
+#' @examples \dontrun{
+#' fPlot(sc_merge, par = "main", filepath = file.path("results", "featureplot", glue::glue("fp_")))
+#' }
 #' @export
 
-fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3) {
+fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -112,7 +115,8 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
       axis.ticks = element_blank(),
       panel.border = element_rect(color = "black", size = 1, fill = NA)
     )
-  ggsave(filename = file.path("results", "featureplot", glue::glue("fp_{object_parse}_{par}.png")), width = width, height = height, limitsize = FALSE)
+  file_path <- file.path(dir_output, glue::glue("fp_{object_parse}_{par}.png"))
+  ggsave(filename = file_path, width = width, height = height, limitsize = FALSE)
 }
 
 ################################################################################
@@ -129,6 +133,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' @param height height of output plot (default: 10)
 #' @param ortho convert to orthologues? Allowed values: `none`, `mouse2human` or `human2mouse`
 #' @param scale should the values be scaled? (default: TRUE)
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save dot plot
 #' @importFrom ggplot2 ggplot scale_size theme xlab ylab element_text ggsave
 #' @examples
@@ -137,7 +142,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' }
 #' @export
 
-dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", width = 10, height = 10) {
+dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", width = 10, height = 10, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -168,7 +173,8 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "italic")) +
     xlab(NULL) +
     ylab(NULL)
-  ggsave(file.path("results", "dotplot", glue::glue("dp_{object_parse}_{par}.pdf")), width = width, height = height, limitsize = FALSE)
+  file_path <- file.path(dir_output, glue::glue("dp_{object_parse}_{par}.pdf"))
+  ggsave(file_path, width = width, height = height, limitsize = FALSE)
 }
 
 ################################################################################
@@ -189,11 +195,14 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
 #' @param cluster_rows cluster rows? (default: true)
 #' @param cluster_cols cluster columns? (default: true)
 #' @param annotation_row data frame that contains the annotations. Rows in the data and in the annotation are matched using row names. (default: NA)
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save heatmap to folder
-#' @examples \dontrun{pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)}
+#' @examples \dontrun{
+#' pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)
+#' }
 #' @export
 
-pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3), width = ceiling(ncol(matrix) / 2), cellwidth = 10, cellheight = 10, treeheight_row = 10, treeheight_col = 10, fontsize = 10, cluster_rows = TRUE, cluster_cols = TRUE, annotation_row = NA) {
+pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3), width = ceiling(ncol(matrix) / 2), cellwidth = 10, cellheight = 10, treeheight_row = 10, treeheight_col = 10, fontsize = 10, cluster_rows = TRUE, cluster_cols = TRUE, annotation_row = NA, dir_output = ".") {
   matrix_parse <- deparse(substitute(matrix))
   matrix <- matrix[!rowSums(matrix) == 0, ] # filter rows with only zeros
   break_max <- round(max(abs(c(max(scale_mat(matrix, scale = scale)), min(scale_mat(matrix, scale = scale))))) - 0.1, 1) # use internal function to get scaled matrix and max value for color legend
@@ -213,7 +222,8 @@ pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3),
     legend_breaks = seq(break_min, break_max, length = 3),
     annotation_row = annotation_row
   )
-  pdf(file.path("results", "heatmap", glue::glue("hm_{matrix_parse}.pdf")), width = width, height = height)
+  file_path <- file.path(dir_output, glue::glue("hm_{matrix_parse}.pdf"))
+  pdf(file_path, width = width, height = height)
   print(phmap)
   dev.off()
 }
@@ -223,7 +233,7 @@ pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3),
 ################################################################################
 
 #' @title abundance stacked bar plot
-#' @description create and save an abundance stacked bar plot in the folder `abundance` 
+#' @description create and save an abundance stacked bar plot in the folder `abundance`
 #' @param object Seurat object
 #' @param x_axis variable in meta data that is used for the y axis
 #' @param y_axis variable in meta data that is used for the x axis
@@ -232,21 +242,23 @@ pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3),
 #' @param color color palette
 #' @param width width of output plot (default: 10)
 #' @param height height of output plot
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save stacked abundance barplot
 #' @examples
 #' \dontrun{
 #' stackedPlot(
-#' object = sc_merge,
-#' x_axis = "pool",
-#' y_axis = "cluster",
-#' x_order = unique(sc_merge$pool),
-#' y_order = cluster_order,
-#' color = col_vector,
-#' width = 4)
+#'   object = sc_merge,
+#'   x_axis = "pool",
+#'   y_axis = "cluster",
+#'   x_order = unique(sc_merge$pool),
+#'   y_order = cluster_order,
+#'   color = col_vector,
+#'   width = 4
+#' )
 #' }
 #' @export
 
-stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, height = 10) {
+stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, height = 10, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -267,7 +279,8 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
     ylab("Proportion of cells") +
     xlab("") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3))
-  ggsave(file.path("results", "abundance", glue::glue("stacked_barplot_{object_parse}_{x_axis}.pdf")), sbp, width = width, height = height)
+  file_path <- file.path(dir_output, glue::glue("stacked_barplot_{object_parse}_{x_axis}.pdf"))
+  ggsave(file_path, sbp, width = width, height = height)
 }
 
 ################################################################################
@@ -275,7 +288,7 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 ################################################################################
 
 #' @title abundance volcano plot
-#' @description create and save an abundance volcano bar plot in the folder `abundance` 
+#' @description create and save an abundance volcano bar plot in the folder `abundance`
 #' @param object Seurat object
 #' @param cluster_idents variable in meta data with cluster names
 #' @param sample variable in meta data for each sample
@@ -288,23 +301,25 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 #' @param height height of output plot (default: 5)
 #' @param min_cells remove all clusters that have less than minimal amount of cells (default = 10)
 #' @param paired logical indicating whether you want a paired test (default FALSE)
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save volcano abundance plot
 #' @examples
 #' \dontrun{
-#' abVolPlot(object = aie_sct,
-#          cluster_idents = "predicted.id",
-#          sample = "sample",
-#          cluster_order = unique(aie_sct$predicted.id),
-#          group_by  = "AIE_type",
-#          group1 = "LGI1",
-#          group2 = "control",
-#          color = dittoColors(), 
-#          min_pct = 0.5)
+#' abVolPlot(
+#'   object = aie_sct,
+#'   cluster_idents = "predicted.id",
+#'   sample = "sample",
+#'   cluster_order = unique(aie_sct$predicted.id),
+#'   group_by = "AIE_type",
+#'   group1 = "LGI1",
+#'   group2 = "control",
+#'   color = dittoColors(),
+#'   min_pct = 0.5
+#' )
 #' }
 #' @export
 
-
-abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group1, group2, color, width = 5, height = 5, min_cells = 10, paired = FALSE) {
+abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group1, group2, color, width = 5, height = 5, min_cells = 10, paired = FALSE, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -324,7 +339,6 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
     pvalue_res[i] <- wilcox.test(count ~ group_by, data = out1, paired = paired)$p.value
   }
 
-  # wilcox_res <- p.adjust(wilcox_res, "BH")
   pvalue_cl <- data.frame(cluster = cluster_order, pvalue = pvalue_res)
 
   cl_size <- as.data.frame.matrix(table(object@meta.data[[cluster_idents]], object@meta.data[[group_by]])) |>
@@ -350,7 +364,8 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
     xlab(bquote(~ Log[2] ~ "fold change")) +
     ylab(bquote(-Log[10] ~ "p value")) +
     theme(legend.position = "none") # remove guide
-  ggsave(file.path("results", "abundance", glue::glue("volcano_plot_{cluster_idents}_{object_parse}_{group1}_{group2}.pdf")), width = width, height = height)
+  file_path <- file.path(dir_output, glue::glue("volcano_plot_{cluster_idents}_{object_parse}_{group1}_{group2}.pdf"))
+  ggsave(file_path, width = width, height = height)
 }
 
 ################################################################################
@@ -365,31 +380,36 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 #' @param paired logical value. Do you want to do perform pair testing?
 #' @return data frame with adjusted signficance values
 #' @examples
-#' \dontrun{compStat(x_var = "pct", group = "type", data = bp_data)}
-
+#' \dontrun{
+#' compStat(x_var = "pct", group = "type", data = bp_data)
+#' }
 compStat <- function(x_var, group, data, paired) {
-# initalize stats
+  # initalize stats
   stats <- vector("list")
 
   # for character run pairwise fisher test for all parameters, only keep important columns so they match
   for (par in x_var) {
     f_str <- paste0(par, "~", group)
     if (length(unique(data[[par]])) > 2) {
-      if(paired == FALSE) {
+      if (paired == FALSE) {
         stats[[par]] <- rstatix::dunn_test(as.formula(f_str), data = data, p.adjust.method = "none") |>
           dplyr::select(.y., group1, group2, p, p.adj, p.adj.signif)
       }
       if (paired == TRUE) {
         stats[[par]] <- rstatix::wilcox_test(as.formula(f_str), data = data, p.adjust.method = "none", paired = paired) |>
           dplyr::select(.y., group1, group2, p) |>
-          dplyr::mutate(p.adj = NA,
-                        p.adj.signif = NA)
+          dplyr::mutate(
+            p.adj = NA,
+            p.adj.signif = NA
+          )
       }
     } else {
       stats[[par]] <- rstatix::wilcox_test(as.formula(f_str), data = data, p.adjust.method = "none", paired = paired) |>
         dplyr::select(.y., group1, group2, p) |>
-        dplyr::mutate(p.adj = NA,
-                      p.adj.signif = NA)
+        dplyr::mutate(
+          p.adj = NA,
+          p.adj.signif = NA
+        )
     }
   }
   # combine these lists into a dataframe, do p value adjustment with BH, and then extract only significant values
@@ -418,22 +438,25 @@ compStat <- function(x_var, group, data, paired) {
 #' @param height height of output plot (default: length of cluster_idents divided by four, ceiling, times three)
 #' @param paired logical indicating whether you want a paired test (default FALSE)
 #' @param number_of_tests number of tests to be performed
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save abundance box plot
 #' @examples
 #' \dontrun{
-#'abBoxPlot(object = aie_pbmc,
-#'          cluster_idents = "cluster",
-#'          sample = "sample",
-#'        cluster_order = cluster_order,
-#'          group_by = "AIE_type",
-#'          group_order = c("control", "CASPR2", "LGI1"),
-#'          color = my_cols)
+#' abBoxPlot(
+#'   object = aie_pbmc,
+#'   cluster_idents = "cluster",
+#'   sample = "sample",
+#'   cluster_order = cluster_order,
+#'   group_by = "AIE_type",
+#'   group_order = c("control", "CASPR2", "LGI1"),
+#'   color = my_cols
+#' )
 #' }
 #' @export
 
 
-abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group_order, color, width = 9, height = ceiling(length(unique(object@meta.data[[cluster_idents]]))/4)*3, paired = FALSE, number_of_tests) {
-  if(!inherits(object, "Seurat")) {
+abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group_order, color, width = 9, height = ceiling(length(unique(object@meta.data[[cluster_idents]])) / 4) * 3, paired = FALSE, number_of_tests, dir_output = ".") {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   object_parse <- deparse(substitute(object))
@@ -442,54 +465,53 @@ abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
     as.data.frame.matrix() |>
     dplyr::select(where(function(x) any(x != 0))) |> # filter out columns with only zeros
     tibble::rownames_to_column("cluster") |>
-    dplyr::mutate(across(where(is.numeric), function(x) x/sum(x)*100)) |>
+    dplyr::mutate(across(where(is.numeric), function(x) x / sum(x) * 100)) |>
     tidyr::pivot_longer(where(is.numeric), names_to = "sample", values_to = "pct") |>
     dplyr::mutate(cluster = factor(cluster, levels = cluster_order)) |>
     dplyr::left_join(unique(tibble(sample = object@meta.data[[sample]], type = object@meta.data[[group_by]]))) |>
     dplyr::mutate(type = factor(type, levels = group_order)) |>
     tidyr::pivot_wider(names_from = cluster, values_from = pct)
 
-  ## |>
-  ##   dplyr::group_split(cluster) |>
-  ##   setNames(cluster_order)
-
   # calculate stats for all tests and adjust
-  bp_stats <- compStat(x_var = names(bp_data)[-c(1,2)], group = "type", data = bp_data, paired = paired)
+  bp_stats <- compStat(x_var = names(bp_data)[-c(1, 2)], group = "type", data = bp_data, paired = paired)
 
   bp_data_plot <- bp_data |>
-    dplyr::mutate(patient = gsub(sample, pattern = "(\\w+)_(\\d+)" , replacement = "\\1" ))
+    dplyr::mutate(patient = gsub(sample, pattern = "(\\w+)_(\\d+)", replacement = "\\1"))
 
   bp_plot <- vector("list")
 
 
-  for (var in names(bp_data)[-c(1,2)]) {
-    #extract stats and data for each plot
+  for (var in names(bp_data)[-c(1, 2)]) {
+    # extract stats and data for each plot
     stats_df <- dplyr::filter(bp_stats, .y. == var)
     stats_list <- vector("list")
-    if(nrow(stats_df) != 0) {
+    if (nrow(stats_df) != 0) {
       stats_list$annotation <- stats_df$p.adj.signif
       for (i in 1:nrow(stats_df)) {
         stats_list$comparisons[[i]] <- c(stats_df$group1[i], stats_df$group2[i])
       }
     }
+
     # create plot for each variable
     bp_plot[[var]] <-
       bp_data_plot |>
       ggplot(aes(x = type, y = .data[[var]])) +
-      ggsignif::geom_signif(comparisons = stats_list$comparisons, annotation = stats_list$annotation, textsize = 5, step_increase = 0.05, vjust = 0.7)+
+      ggsignif::geom_signif(comparisons = stats_list$comparisons, annotation = stats_list$annotation, textsize = 5, step_increase = 0.05, vjust = 0.7) +
       geom_boxplot(aes(fill = type)) +
       geom_point() +
       geom_line(aes(group = patient)) +
-      theme_bw()+
+      theme_bw() +
       ggtitle(var) +
-      theme(legend.position = "none",
-            axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3)) +
+      theme(
+        legend.position = "none",
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3)
+      ) +
       xlab("") +
-      ylab("percentage")+
+      ylab("percentage") +
       scale_fill_manual(values = color)
   }
   patchwork::wrap_plots(bp_plot, ncol = 4)
-  ggsave(file.path("results", "abundance", glue::glue("boxplot_{cluster_idents}_{object_parse}_{group_by}.pdf")), width = width, height = height)
+  ggsave(file.path(dir_output, glue::glue("boxplot_{cluster_idents}_{object_parse}_{group_by}.pdf")), width = width, height = height)
 }
 
 ################################################################################
@@ -504,50 +526,52 @@ abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 #' @param color color palette
 #' @return plot module plot
 #' @examples
-#' \dontrun{ModulePlot(object = aie_csf, x_var = "AIE_type", module = "TCRVG1", color = my_cols)}
+#' \dontrun{
+#' ModulePlot(object = aie_csf, x_var = "AIE_type", module = "TCRVG1", color = my_cols)
+#' }
 #' @export
 
 ModulePlot <- function(x_var, module, object, color) {
-data_module <- tibble(x_axis = object@meta.data[[x_var]], module = object@meta.data[[module]])
-signif <- vector("list")
-f_str <- paste0("x_axis" ~ "module")
-if(length(unique(data_module$x_axis)) > 2) {
+  data_module <- tibble(x_axis = object@meta.data[[x_var]], module = object@meta.data[[module]])
+  signif <- vector("list")
+  f_str <- paste0("x_axis" ~ "module")
+  if (length(unique(data_module$x_axis)) > 2) {
     stats <- rstatix::dunn_test(as.formula(f_str), data = data_module, p.adjust.method = "BH") |>
-        dplyr::filter(p.adj < 0.05) |>
-        mutate(p.adj.signif = as.character(symnum(p.adj, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 1), symbols = c("***", "**", "*", " "))))
+      dplyr::filter(p.adj < 0.05) |>
+      mutate(p.adj.signif = as.character(symnum(p.adj, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 1), symbols = c("***", "**", "*", " "))))
 
     signif$annotation <- stats$p.adj.signif
-} else {
-        stats <- rstatix::wilcox_test(as.formula(f_str), data = data_module) |>
-            dplyr::filter(p < 0.05) |>
-            mutate(p.signif = as.character(symnum(p, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 1), symbols = c("***", "**", "*", " "))))
-        signif$annotation <- stats$p.signif
-}
+  } else {
+    stats <- rstatix::wilcox_test(as.formula(f_str), data = data_module) |>
+      dplyr::filter(p < 0.05) |>
+      mutate(p.signif = as.character(symnum(p, corr = FALSE, na = FALSE, cutpoints = c(0, 0.001, 0.01, 0.05, 1), symbols = c("***", "**", "*", " "))))
+    signif$annotation <- stats$p.signif
+  }
 
-if(nrow(stats) != 0) {
+  if (nrow(stats) != 0) {
     for (i in 1:nrow(stats)) {
-        signif$comparisons[[i]] <-c(stats$group1[i], stats$group2[i])
+      signif$comparisons[[i]] <- c(stats$group1[i], stats$group2[i])
     }
-} else {
+  } else {
     signif <- list()
-}
+  }
 
-module_plot <-
-    ggplot(data_module, aes(x = x_axis, y = module))+
-    geom_violin(aes(fill = x_axis))+
-    geom_boxplot(width = .15)+
-#    stat_summary(fun = mean, geom = "point")+
-    scale_fill_manual(values = color)+
-    theme_bw()+
-    xlab("")+
-    ylab("")+
-    ggtitle(module)+
+  module_plot <-
+    ggplot(data_module, aes(x = x_axis, y = module)) +
+    geom_violin(aes(fill = x_axis)) +
+    geom_boxplot(width = .15) +
+    #    stat_summary(fun = mean, geom = "point")+
+    scale_fill_manual(values = color) +
+    theme_bw() +
+    xlab("") +
+    ylab("") +
+    ggtitle(module) +
     theme(legend.position = "none")
-    ## ggsignif::geom_signif(comparisons = signif$comparisons, 
-    ##                       annotation = signif$annotation, textsize = 5, 
-    ##                       step_increase = 0.05, vjust = 0.7)
+  ## ggsignif::geom_signif(comparisons = signif$comparisons,
+  ##                       annotation = signif$annotation, textsize = 5,
+  ##                       step_increase = 0.05, vjust = 0.7)
 
-return(module_plot)
+  return(module_plot)
 }
 
 
@@ -561,26 +585,31 @@ return(module_plot)
 #' @param sheet name of the excel sheet
 #' @param width width of output plot
 #' @param height height of output plot
+#' @param dir_output directory to save the output plot (default: ".")
 #' @return save enrichr plot
 #' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
 #' @examples
-#' \dontrun{plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)}
+#' \dontrun{
+#' plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)
+#' }
 #' @export
-plotEnrichr <- function(filename, sheet, width, height) {
-    colors <- RColorBrewer::brewer.pal(5, "Set2")
-    color <- ifelse(grepl(x = filename, pattern = "pos"), colors[[1]], colors[[2]])
-    enrichr <- readxl::read_excel(file.path("results", "enrichr", glue::glue("enrichr_{filename}.xlsx")), sheet = sheet) |>
-        dplyr::filter(Adjusted.P.value < 0.05) |>
-        dplyr::slice_min(order_by = Adjusted.P.value, n = 10, with_ties = FALSE) |>
-        tidyr::separate(Overlap, into = c("overlap1", "overlap2")) |>  # separate overlap in two columns
-        dplyr::mutate(overlap = as.numeric(overlap1)/as.numeric(overlap2)) |> # calculcate overlap
-        ggplot(aes(y = reorder(Term, -log10(Adjusted.P.value)), x = -log10(Adjusted.P.value))) +
-        geom_col(fill = color)+
-        labs(x = "-Log10 Adjusted P value",
-             y = "")+
-        theme_classic()+
-        theme(legend.position = "none")
-    ggsave(file.path("results", "enrichr", glue::glue("barplot_enrichr_{filename}_{sheet}.pdf")), width = width, height = height)
+plotEnrichr <- function(filename, sheet, width, height, dir_output = ".") {
+  colors <- RColorBrewer::brewer.pal(5, "Set2")
+  color <- ifelse(grepl(x = filename, pattern = "pos"), colors[[1]], colors[[2]])
+  enrichr <- readxl::read_excel(file.path("results", "enrichr", glue::glue("enrichr_{filename}.xlsx")), sheet = sheet) |>
+    dplyr::filter(Adjusted.P.value < 0.05) |>
+    dplyr::slice_min(order_by = Adjusted.P.value, n = 10, with_ties = FALSE) |>
+    tidyr::separate(Overlap, into = c("overlap1", "overlap2")) |> # separate overlap in two columns
+    dplyr::mutate(overlap = as.numeric(overlap1) / as.numeric(overlap2)) |> # calculcate overlap
+    ggplot(aes(y = reorder(Term, -log10(Adjusted.P.value)), x = -log10(Adjusted.P.value))) +
+    geom_col(fill = color) +
+    labs(
+      x = "-Log10 Adjusted P value",
+      y = ""
+    ) +
+    theme_classic() +
+    theme(legend.position = "none")
+  ggsave(file.path(dir_output, glue::glue("barplot_enrichr_{filename}_{sheet}.pdf")), width = width, height = height)
 }
 
 ################################################################################
@@ -594,13 +623,16 @@ plotEnrichr <- function(filename, sheet, width, height) {
 #' @param width The width of the plot
 #' @param height The height of the plot
 #' @param FDR The FDR threshold for the plot
+#' @param dir_output directory to save the output plot (default: ".")
 #' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
 #' @return save propeller plot
 #' @examples
-#' \dontrun{plotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")}
+#' \dontrun{
+#' plotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")
+#' }
 #' @export
 
-plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR) {
+plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR, dir_output = ".") {
   ggplot(data, aes(x = log2ratio, y = FDR_log, color = cluster, size = 3, label = cluster)) +
     geom_point() +
     scale_color_manual(values = color) +
@@ -613,7 +645,7 @@ plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR) {
     xlab(bquote(~ Log[2] ~ "fold change")) +
     ylab(bquote(~ -Log[10] ~ "adjusted p value")) +
     theme(legend.position = "none") # remove guide
-  ggsave(file.path("results", "abundance", glue::glue("propeller_{filename}.pdf")), width = width, height = height)
+  ggsave(file.path(dir_output, glue::glue("propeller_{filename}.pdf")), width = width, height = height)
 }
 
 ################################################################################
@@ -626,13 +658,16 @@ plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR) {
 #' @param filename A character representing the file name of the plot
 #' @param width The width of the plot
 #' @param height The height of the plot
+#' @param dir_output directory to save the output plot (default: ".")
 #' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
 #' @return save propeller abundance barplot
 #' @examples
-#' \dontrun{dotplotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")}
+#' \dontrun{
+#' dotplotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")
+#' }
 #' @export
 
-dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
+dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_output = ".") {
   ggplot(data, aes(x = log2ratio, y = fct_reorder(cluster, log2ratio), color = cluster)) +
     geom_point(size = 5) +
     theme_classic() +
@@ -643,7 +678,7 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
     xlab("Log2 fold change") +
     ylab(NULL) +
     theme(legend.position = "none") # remove legend
-  ggsave(file.path("results", "abundance", glue::glue("propeller_dotplot_{filename}.pdf")), width = width, height = height)
+  ggsave(file.path(dir_output, glue::glue("propeller_dotplot_{filename}.pdf")), width = width, height = height)
 }
 
 ################################################################################
@@ -658,7 +693,9 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5) {
 #' @return A ggplot object.
 #'
 #' @examples
-#' \dontrun{sds_plots_list <- lapply(colnames(pt), slingshotPlot, object = bcells)}
+#' \dontrun{
+#' sds_plots_list <- lapply(colnames(pt), slingshotPlot, object = bcells)
+#' }
 #' @importFrom ggplot2 aes geom_point geom_path ggtitle theme_classic element_blank element_rect
 #' @export
 
@@ -684,7 +721,7 @@ plotSlingshot <- function(object, lineage) {
       aspect.ratio = 1
     ) +
     ggtitle(lineage)
-  return(sds_plot)
+-  return(sds_plot)
 }
 
 
@@ -700,6 +737,7 @@ plotSlingshot <- function(object, lineage) {
 #' @param condition A character string indicating the condition column in the metadata of the Seurat object
 #' @param width The width of the plot
 #' @param height The height of the plot
+#' @param dir_output directory to save the output plot (default: ".")
 #'
 #' @return A ggplot object.
 #'
@@ -709,12 +747,13 @@ plotSlingshot <- function(object, lineage) {
 #'   object = sc_final,
 #'   cluster = "cluster",
 #'   sample = "patient",
-#'   condition = "condition")
+#'   condition = "condition"
+#' )
 #' }
 #' @importFrom ggplot2 aes geom_point geom_path ggtitle theme_classic element_blank element_rect
 #' @export
 
-pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5) {
+pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5, dir_output = ".") {
   object_parse <- deparse(substitute(object))
   cl_size <-
     as.data.frame.matrix(table(object@meta.data[[cluster]], object@meta.data[[sample]])) |>
@@ -806,7 +845,7 @@ pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5
     theme_classic()
 
   pca_plots <- patchwork::wrap_plots(pca_eigen, pca_var_plot, pca_ggplot_ind, pca_ggplot_group, ncol = 4)
-  ggsave(file.path("results", "pca", paste0(object_parse, "_", condition, "_", cluster, ".pdf")),
+  ggsave(file.path(dir_output, paste0(object_parse, "_", condition, "_", cluster, ".pdf")),
     width = width, height = height,
     plot = pca_plots
   )

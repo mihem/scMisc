@@ -15,8 +15,6 @@ test_that("fPlot works as expected", {
     write.csv(markers, "markers.csv")
     # run the function
     fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
-    # Check that the plot was created
-    expect_true(file.exists("fp_pbmc_small_B.png"))
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("fp_pbmc_small_B.png"))
     # Test 2: Function  creates a file that is not empty

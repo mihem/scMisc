@@ -4,7 +4,7 @@
 \alias{plotEnrichr}
 \title{enrichr plot}
 \usage{
-plotEnrichr(filename, sheet, width, height)
+plotEnrichr(filename, sheet, width, height, dir_output = ".")
 }
 \arguments{
 \item{filename}{name of file without extension and without \code{enrichr_}}
@@ -14,6 +14,8 @@ plotEnrichr(filename, sheet, width, height)
 \item{width}{width of output plot}
 
 \item{height}{height of output plot}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save enrichr plot
@@ -22,5 +24,7 @@ save enrichr plot
 plot enrichr results in a bar plot
 }
 \examples{
-\dontrun{plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)}
+\dontrun{
+plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)
+}
 }

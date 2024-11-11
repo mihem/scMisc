@@ -15,7 +15,8 @@ abBoxPlot(
   width = 9,
   height = ceiling(length(unique(object@meta.data[[cluster_idents]]))/4) * 3,
   paired = FALSE,
-  number_of_tests
+  number_of_tests,
+  dir_output = "."
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ abBoxPlot(
 \item{paired}{logical indicating whether you want a paired test (default FALSE)}
 
 \item{number_of_tests}{number of tests to be performed}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save abundance box plot
@@ -49,12 +52,14 @@ create and save an abundance boxplot in the folder \code{abundance}
 }
 \examples{
 \dontrun{
-abBoxPlot(object = aie_pbmc,
-         cluster_idents = "cluster",
-         sample = "sample",
-       cluster_order = cluster_order,
-         group_by = "AIE_type",
-         group_order = c("control", "CASPR2", "LGI1"),
-         color = my_cols)
+abBoxPlot(
+  object = aie_pbmc,
+  cluster_idents = "cluster",
+  sample = "sample",
+  cluster_order = cluster_order,
+  group_by = "AIE_type",
+  group_order = c("control", "CASPR2", "LGI1"),
+  color = my_cols
+)
 }
 }

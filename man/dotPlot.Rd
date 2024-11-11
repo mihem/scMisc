@@ -12,7 +12,8 @@ dotPlot(
   scale = TRUE,
   ortho = "none",
   width = 10,
-  height = 10
+  height = 10,
+  dir_output = "."
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ dotPlot(
 \item{width}{width of output plot (default: 10)}
 
 \item{height}{height of output plot (default: 10)}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save dot plot

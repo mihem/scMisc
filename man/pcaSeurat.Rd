@@ -4,7 +4,15 @@
 \alias{pcaSeurat}
 \title{plot PCA of cluster abundances}
 \usage{
-pcaSeurat(object, cluster, sample, condition, width = 20, height = 5)
+pcaSeurat(
+  object,
+  cluster,
+  sample,
+  condition,
+  width = 20,
+  height = 5,
+  dir_output = "."
+)
 }
 \arguments{
 \item{object}{A Seurat object}
@@ -18,6 +26,8 @@ pcaSeurat(object, cluster, sample, condition, width = 20, height = 5)
 \item{width}{The width of the plot}
 
 \item{height}{The height of the plot}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 A ggplot object.
@@ -31,6 +41,7 @@ pcaSeurat(
   object = sc_final,
   cluster = "cluster",
   sample = "patient",
-  condition = "condition")
+  condition = "condition"
+)
 }
 }

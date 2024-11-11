@@ -11,6 +11,7 @@ nice theme with square border
 }
 \examples{
 library(ggplot2)
-p <- ggplot(mtcars, aes(x = wt, y = mpg)) + geom_point()
+p <- ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point()
 p + theme_rect()
 }

@@ -18,5 +18,7 @@ A ggplot object.
 The function creates a colored UMAP plot and curves split by lineage
 }
 \examples{
-\dontrun{sds_plots_list <- lapply(colnames(pt), slingshotPlot, object = bcells)}
+\dontrun{
+sds_plots_list <- lapply(colnames(pt), slingshotPlot, object = bcells)
+}
 }

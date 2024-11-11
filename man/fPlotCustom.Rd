@@ -10,7 +10,8 @@ fPlotCustom(
   par,
   reduction,
   width = 16,
-  height = ceiling(length(genes_found)/4) * 3
+  height = ceiling(length(genes_found)/4) * 3,
+  dir_output = "."
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ fPlotCustom(
 \item{width}{width of output plot (default: 16)}
 
 \item{height}{height of output plot (default: length of genes divided by four, ceiling, times three)}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save feature plot
@@ -33,5 +36,7 @@ save feature plot
 create and save a Seurat feature plot in folder \code{featureplot}
 }
 \examples{
-\dontrun{fPlot(sc_merge, par = "main", filepath = file.path("results", "featureplot", glue::glue("fp_")))}
+\dontrun{
+fPlot(sc_merge, par = "main", filepath = file.path("results", "featureplot", glue::glue("fp_")))
+}
 }

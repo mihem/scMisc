@@ -4,7 +4,15 @@
 \alias{plotPropeller}
 \title{plot propeller results}
 \usage{
-plotPropeller(data, color, filename, width = 5, height = 5, FDR)
+plotPropeller(
+  data,
+  color,
+  filename,
+  width = 5,
+  height = 5,
+  FDR,
+  dir_output = "."
+)
 }
 \arguments{
 \item{data}{A dataframe containing the results from propeller calculation}
@@ -18,6 +26,8 @@ plotPropeller(data, color, filename, width = 5, height = 5, FDR)
 \item{height}{The height of the plot}
 
 \item{FDR}{The FDR threshold for the plot}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save propeller plot
@@ -26,5 +36,7 @@ save propeller plot
 The function creates a volcano plot of the propeller results and saves the plot in results/abundance folder
 }
 \examples{
-\dontrun{plotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")}
+\dontrun{
+plotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")
+}
 }

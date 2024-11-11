@@ -22,5 +22,7 @@ plot module plot
 create combined violin and boxplot of the module score
 }
 \examples{
-\dontrun{ModulePlot(object = aie_csf, x_var = "AIE_type", module = "TCRVG1", color = my_cols)}
+\dontrun{
+ModulePlot(object = aie_csf, x_var = "AIE_type", module = "TCRVG1", color = my_cols)
+}
 }

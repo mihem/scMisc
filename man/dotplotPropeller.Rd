@@ -4,7 +4,14 @@
 \alias{dotplotPropeller}
 \title{plot propeller results in a barplot}
 \usage{
-dotplotPropeller(data, color, filename, width = 5, height = 5)
+dotplotPropeller(
+  data,
+  color,
+  filename,
+  width = 5,
+  height = 5,
+  dir_output = "."
+)
 }
 \arguments{
 \item{data}{A dataframe containing the results from propeller calculation}
@@ -16,6 +23,8 @@ dotplotPropeller(data, color, filename, width = 5, height = 5)
 \item{width}{The width of the plot}
 
 \item{height}{The height of the plot}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save propeller abundance barplot
@@ -24,5 +33,7 @@ save propeller abundance barplot
 The function creates a barplot of the propeller results and saves the plot in results/abundance folder
 }
 \examples{
-\dontrun{dotplotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")}
+\dontrun{
+dotplotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")
+}
 }

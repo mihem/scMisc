@@ -16,7 +16,8 @@ abVolPlot(
   width = 5,
   height = 5,
   min_cells = 10,
-  paired = FALSE
+  paired = FALSE,
+  dir_output = "."
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ abVolPlot(
 \item{min_cells}{remove all clusters that have less than minimal amount of cells (default = 10)}
 
 \item{paired}{logical indicating whether you want a paired test (default FALSE)}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save volcano abundance plot
@@ -52,6 +55,16 @@ create and save an abundance volcano bar plot in the folder \code{abundance}
 }
 \examples{
 \dontrun{
-abVolPlot(object = aie_sct,
+abVolPlot(
+  object = aie_sct,
+  cluster_idents = "predicted.id",
+  sample = "sample",
+  cluster_order = unique(aie_sct$predicted.id),
+  group_by = "AIE_type",
+  group1 = "LGI1",
+  group2 = "control",
+  color = dittoColors(),
+  min_pct = 0.5
+)
 }
 }

@@ -16,7 +16,8 @@ pHeatmap(
   fontsize = 10,
   cluster_rows = TRUE,
   cluster_cols = TRUE,
-  annotation_row = NA
+  annotation_row = NA,
+  dir_output = "."
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ pHeatmap(
 \item{cluster_cols}{cluster columns? (default: true)}
 
 \item{annotation_row}{data frame that contains the annotations. Rows in the data and in the annotation are matched using row names. (default: NA)}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save heatmap to folder
@@ -51,5 +54,7 @@ save heatmap to folder
 create and save a nice pheatmap in the folder \code{heatmap} using color breaks
 }
 \examples{
-\dontrun{pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)}
+\dontrun{
+pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)
+}
 }

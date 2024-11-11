@@ -22,5 +22,7 @@ data frame with adjusted signficance values
 calculcate significance for ggsignif
 }
 \examples{
-\dontrun{compStat(x_var = "pct", group = "type", data = bp_data)}
+\dontrun{
+compStat(x_var = "pct", group = "type", data = bp_data)
+}
 }

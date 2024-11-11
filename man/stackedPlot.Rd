@@ -12,7 +12,8 @@ stackedPlot(
   y_order,
   color,
   width,
-  height = 10
+  height = 10,
+  dir_output = "."
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ stackedPlot(
 \item{width}{width of output plot (default: 10)}
 
 \item{height}{height of output plot}
+
+\item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
 save stacked abundance barplot
@@ -41,12 +44,13 @@ create and save an abundance stacked bar plot in the folder \code{abundance}
 \examples{
 \dontrun{
 stackedPlot(
-object = sc_merge,
-x_axis = "pool",
-y_axis = "cluster",
-x_order = unique(sc_merge$pool),
-y_order = cluster_order,
-color = col_vector,
-width = 4)
+  object = sc_merge,
+  x_axis = "pool",
+  y_axis = "cluster",
+  x_order = unique(sc_merge$pool),
+  y_order = cluster_order,
+  color = col_vector,
+  width = 4
+)
 }
 }
