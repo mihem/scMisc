@@ -286,8 +286,8 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 #' @export
 #'
 #' @examples
-#'  file_path <-  file.path("inst", "extdata", "raw_feature_bc_matrix_filtered.h5"))
-#'  mat <- ReadCellBender_h5(file_name = file_path)
+#' file_name <- system.file("extdata", "raw_feature_bc_matrix_filtered.h5", package = "scMisc")
+#' mat <- ReadCellBender_h5(file_name)
 
 ReadCellBender_h5 <- function(
     file_name,
@@ -333,7 +333,7 @@ ReadCellBender_h5 <- function(
 
   rownames(x = sparse.mat) <- features
   colnames(x = sparse.mat) <- barcodes[]
-  sparse.mat <- as.sparse(x = sparse.mat)
+  sparse.mat <- Seurat::as.sparse(x = sparse.mat)
 
   infile$close_all()
 

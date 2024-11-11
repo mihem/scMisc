@@ -19,6 +19,10 @@ sparse matrix
 \description{
 Extract sparse matrix with corrected counts from CellBender h5 output file.
 }
+\examples{
+file_name <- system.file("extdata", "raw_feature_bc_matrix_filtered.h5", package = "scMisc")
+mat <- ReadCellBender_h5(file_name)
+}
 \references{
 Code used in function has been modified from \code{Seurat::Read10X_h5} function of
 Seurat package \url{https://github.com/satijalab/seurat} (License: GPL-3).
