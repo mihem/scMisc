@@ -41,6 +41,10 @@ test_that("abundanceTbl works correctly", {
   expect_true(is.data.frame(result))
   expected_result <- tibble::tibble(cell = c("g1", "g2"), A = c(30, 23), B = c(14, 13))
   expect_equal(result, expected_result)
+  expect_error(
+    abundanceTbl(data.frame(a = c(1:3)), row_var = "groups", col_var = "letter.idents", target_dir = "."),
+    "Object must be a Seurat object"
+  )
   unlink(file_path)
 })
 
