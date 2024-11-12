@@ -52,7 +52,14 @@ theme_rect <- function() {
 #' unlink("fp_pbmc_small_B.png")
 #' @export
 
-fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3, order, dir_output = ".") {
+fPlot <- function(path,
+                  object,
+                  par,
+                  reduction,
+                  width = 16,
+                  height = ceiling(length(genes_found) / 4) * 3,
+                  order,
+                  dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -84,6 +91,7 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
     )
   file_path <- file.path(dir_output, glue::glue("fp_{object_parse}_{par}.png"))
   ggsave(filename = file_path, width = width, height = height, limitsize = FALSE)
+  return(fp)
 }
 
 
@@ -131,6 +139,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
     )
   file_path <- file.path(dir_output, glue::glue("fp_{object_parse}_{par}.png"))
   ggsave(filename = file_path, width = width, height = height, limitsize = FALSE)
+  return(fp)
 }
 
 ################################################################################
@@ -198,6 +207,7 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
     ylab(NULL)
   file_path <- file.path(dir_output, glue::glue("dp_{object_parse}_{par}.pdf"))
   ggsave(file_path, width = width, height = height, limitsize = FALSE)
+  return(dp)
 }
 
 ################################################################################
@@ -334,6 +344,7 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.3))
   file_path <- file.path(dir_output, glue::glue("stacked_barplot_{object_parse}_{x_axis}.pdf"))
   ggsave(file_path, sbp, width = width, height = height)
+  return(sbp)
 }
 
 ################################################################################
@@ -425,6 +436,7 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
     theme(legend.position = "none") # remove guide
   file_path <- file.path(dir_output, glue::glue("volcano_plot_{cluster_idents}_{object_parse}_{group1}_{group2}.pdf"))
   ggsave(file_path, width = width, height = height)
+  return(p1)
 }
 
 ################################################################################
