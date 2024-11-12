@@ -58,4 +58,5 @@ matrix <- matrix(rnorm(100), nrow = 10, ncol = 10)
 rownames(matrix) <- paste0("Gene", 1:10)
 colnames(matrix) <- paste0("Sample", 1:10)
 pHeatmap(matrix, scale = "row", dir_output = ".")
+unlink("hm_matrix.pdf")
 }

@@ -23,6 +23,10 @@
 #' @param color color palette
 #' @param name fontsize (default: 10)
 #' @return save umap/heatmap plot to folder `/results/clustifyr/`
+#' @importFrom Seurat DimPlot Idents
+#' @importFrom ggplot2 ggsave
+#' @importFrom grDevices dev.off pdf
+#' @importFrom stringr str_detect
 #' @examples
 #' \dontrun{
 #' clustifyFun(

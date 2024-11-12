@@ -4,7 +4,7 @@
 
 #' @title nice ggplot theme
 #' @description nice theme with square border
-#' @importFrom ggplot2 theme element_blank element_rect
+#' @importFrom ggplot2 element_blank element_rect theme
 #' @export
 #' @examples
 #' library(ggplot2)
@@ -35,7 +35,7 @@ theme_rect <- function() {
 #' @param order should the feature plot be ordered in order of expression
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save feature plot
-#' @importFrom ggplot2 theme element_blank element_rect ggsave
+#' @importFrom ggplot2 element_blank element_rect ggsave theme
 #' @examples
 #' library(Seurat)
 #' markers <- data.frame(B = c("MS4A1", "CD79A"))
@@ -101,7 +101,7 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
 #' @param height height of output plot (default: length of genes divided by four, ceiling, times three)
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save feature plot
-#' @importFrom ggplot2 theme element_blank element_rect ggsave
+#' @importFrom ggplot2 element_blank element_rect ggsave theme
 #' @examples
 #' library(Seurat)
 #' markers <- data.frame(cell_source = c("B", "B"), gene = c("MS4A1", "CD79A"))
@@ -149,7 +149,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' @param scale should the values be scaled? (default: TRUE)
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save dot plot
-#' @importFrom ggplot2 ggplot scale_size theme xlab ylab element_text ggsave
+#' @importFrom ggplot2 element_text ggsave scale_size theme xlab ylab
 #' @examples
 #' library(Seurat)
 #' markers <- data.frame(B = c("MS4A1", "CD79A"))
@@ -220,12 +220,14 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
 #' @param annotation_row data frame that contains the annotations. Rows in the data and in the annotation are matched using row names. (default: NA)
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save heatmap to folder
-#' @examples 
+#' @examples
 #' matrix <- matrix(rnorm(100), nrow = 10, ncol = 10)
 #' rownames(matrix) <- paste0("Gene", 1:10)
 #' colnames(matrix) <- paste0("Sample", 1:10)
 #' pHeatmap(matrix, scale = "row", dir_output = ".")
+#' unlink("hm_matrix.pdf")
 #' @export
+#' @importFrom grDevices dev.off pdf
 
 pHeatmap <- function(matrix,
                      scale = "none",
@@ -303,6 +305,11 @@ pHeatmap <- function(matrix,
 #' )
 #' }
 #' @export
+#' @importFrom dplyr across mutate
+#' @importFrom ggplot2 aes element_text geom_col ggplot ggsave guide_legend guides scale_fill_manual theme theme_classic xlab ylab
+#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr pivot_longer
+#' @importFrom tidyselect where
 
 stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, height = 10, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
@@ -364,6 +371,12 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 #' )
 #' }
 #' @export
+#' @importFrom dplyr across left_join mutate
+#' @importFrom ggplot2 aes geom_hline geom_point geom_vline ggplot ggsave scale_color_manual theme theme_classic xlab ylab
+#' @importFrom stats wilcox.test
+#' @importFrom tibble rownames_to_column tibble
+#' @importFrom tidyr pivot_longer
+#' @importFrom tidyselect where
 
 abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group1, group2, color, width = 5, height = 5, min_cells = 10, paired = FALSE, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
@@ -429,6 +442,8 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 #' \dontrun{
 #' compStat(x_var = "pct", group = "type", data = bp_data)
 #' }
+#' @importFrom stats as.formula p.adjust symnum
+
 compStat <- function(x_var, group, data, paired) {
   # initalize stats
   stats <- vector("list")
@@ -499,6 +514,10 @@ compStat <- function(x_var, group, data, paired) {
 #' )
 #' }
 #' @export
+#' @importFrom dplyr across
+#' @importFrom ggplot2 aes element_text geom_boxplot geom_line geom_point ggplot ggsave ggtitle scale_fill_manual theme theme_bw xlab ylab
+#' @importFrom tibble tibble
+#' @importFrom tidyselect where
 
 
 abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group_order, color, width = 9, height = ceiling(length(unique(object@meta.data[[cluster_idents]])) / 4) * 3, paired = FALSE, number_of_tests, dir_output = ".") {
@@ -576,6 +595,10 @@ abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 #' ModulePlot(object = aie_csf, x_var = "AIE_type", module = "TCRVG1", color = my_cols)
 #' }
 #' @export
+#' @importFrom dplyr mutate
+#' @importFrom ggplot2 aes geom_boxplot geom_violin ggplot ggtitle scale_fill_manual theme theme_bw xlab ylab
+#' @importFrom stats as.formula symnum
+#' @importFrom tibble tibble
 
 ModulePlot <- function(x_var, module, object, color) {
   data_module <- tibble(x_axis = object@meta.data[[x_var]], module = object@meta.data[[module]])
@@ -633,12 +656,14 @@ ModulePlot <- function(x_var, module, object, color) {
 #' @param height height of output plot
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save enrichr plot
-#' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
 #' @examples
 #' \dontrun{
 #' plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)
 #' }
 #' @export
+#' @importFrom ggplot2 aes geom_col ggplot ggsave labs theme theme_classic
+#' @importFrom stats reorder
+
 plotEnrichr <- function(filename, sheet, width, height, dir_output = ".") {
   colors <- RColorBrewer::brewer.pal(5, "Set2")
   color <- ifelse(grepl(x = filename, pattern = "pos"), colors[[1]], colors[[2]])
@@ -670,7 +695,7 @@ plotEnrichr <- function(filename, sheet, width, height, dir_output = ".") {
 #' @param height The height of the plot
 #' @param FDR The FDR threshold for the plot
 #' @param dir_output directory to save the output plot (default: ".")
-#' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
+#' @importFrom ggplot2 aes geom_hline geom_point geom_vline ggplot ggsave scale_color_manual theme theme_classic xlab ylab
 #' @return save propeller plot
 #' @examples
 #' \dontrun{
@@ -742,7 +767,9 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_o
 #' \dontrun{
 #' sds_plots_list <- lapply(colnames(pt), slingshotPlot, object = bcells)
 #' }
-#' @importFrom ggplot2 aes geom_point geom_path ggtitle theme_classic element_blank element_rect
+#' @importFrom stats pt
+#' @importFrom Seurat Embeddings
+#' @importFrom ggplot2 aes element_blank element_rect geom_path geom_point ggplot ggtitle theme theme_classic
 #' @export
 
 plotSlingshot <- function(object, lineage) {
@@ -796,7 +823,8 @@ plotSlingshot <- function(object, lineage) {
 #'   condition = "condition"
 #' )
 #' }
-#' @importFrom ggplot2 aes geom_point geom_path ggtitle theme_classic element_blank element_rect
+#' @importFrom dplyr distinct left_join
+#' @importFrom ggplot2 element_text ggsave labs theme theme_bw theme_classic
 #' @export
 
 pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5, dir_output = ".") {

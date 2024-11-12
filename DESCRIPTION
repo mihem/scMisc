@@ -45,5 +45,7 @@ Imports:
     Matrix,
     ggpubr,
     enrichR,
-    tidyselect
+    tidyselect,
+    methods,
+    stringr
 Remotes: wjawaid/enrichR

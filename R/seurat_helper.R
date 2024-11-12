@@ -67,6 +67,7 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
 #' library(Seurat)
 #' findMarkersPresto(ident1 = "0", ident2 = "1", object = pbmc_small, assay = "RNA")
 #' @export
+#' @importFrom dplyr desc
 
 findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, min_pct = 0.1, logfc_threshold = 0.25, assay = assay) {
   if (!inherits(object, "Seurat")) {
@@ -218,6 +219,7 @@ enrichrRun <- function(sheet, dir_input = ".", filename, dir_output = ".", dbs, 
 #'   min_cells = 30
 #' )
 #' @export
+#' @importFrom stats as.formula model.matrix
 
 
 propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_col, lookup, sample_col, formula, min_cells = 30) {
@@ -288,7 +290,8 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 #' @examples
 #' file_name <- system.file("extdata", "raw_feature_bc_matrix_filtered.h5", package = "scMisc")
 #' mat <- ReadCellBender_h5(file_name)
-
+#' @importFrom methods new
+ 
 ReadCellBender_h5 <- function(
     file_name,
     use.names = TRUE,

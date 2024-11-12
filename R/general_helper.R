@@ -6,7 +6,8 @@
 #' @description copied from pheatmap for internal use
 #' @param x matrix input
 #' @return matrix scaled rows
-
+#' @importFrom stats sd
+#' 
 scale_rows <- function(x) {
     m <- apply(x, 1, mean, na.rm = TRUE)
     s <- apply(x, 1, sd, na.rm = TRUE)
@@ -45,7 +46,7 @@ scale_mat <- function(mat, scale) {
 #' Taken from https://stackoverflow.com/a/65949488.
 #' @return tibble with environment objects arranged by size
 #' @export
-
+#' @importFrom utils object.size
 lss <- function() {
     data.frame("object" = ls(".GlobalEnv")) %>%
         dplyr::mutate(
