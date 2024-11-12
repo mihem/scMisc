@@ -33,10 +33,16 @@ fPlotCustom(
 save feature plot
 }
 \description{
-create and save a Seurat feature plot in folder \code{featureplot}
+create and save a Seurat feature plot
 }
 \examples{
-\dontrun{
-fPlot(sc_merge, par = "main", filepath = file.path("results", "featureplot", glue::glue("fp_")))
-}
+library(Seurat)
+markers <- data.frame(cell_source = c("B", "B"), gene = c("MS4A1", "CD79A"))
+fPlotCustom(
+  object = pbmc_small,
+  markers = markers,
+  par = "B",
+  reduction = "tsne"
+)
+unlink("fp_pbmc_small_B.png")
 }

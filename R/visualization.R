@@ -92,7 +92,7 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
 ################################################################################
 
 #' @title Seurat feature plot
-#' @description create and save a Seurat feature plot in folder `featureplot`
+#' @description create and save a Seurat feature plot
 #' @param object Seurat object
 #' @param markers a data frame with a column called `cell_source` that represents the cell population and its source and a column `gene`
 #' @param par a character string representing the cell_source to plot
@@ -102,9 +102,16 @@ fPlot <- function(path, object, par, reduction, width = 16, height = ceiling(len
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save feature plot
 #' @importFrom ggplot2 theme element_blank element_rect ggsave
-#' @examples \dontrun{
-#' fPlot(sc_merge, par = "main", filepath = file.path("results", "featureplot", glue::glue("fp_")))
-#' }
+#' @examples
+#' library(Seurat)
+#' markers <- data.frame(cell_source = c("B", "B"), gene = c("MS4A1", "CD79A"))
+#' fPlotCustom(
+#'   object = pbmc_small,
+#'   markers = markers,
+#'   par = "B",
+#'   reduction = "tsne"
+#' )
+#' unlink("fp_pbmc_small_B.png")
 #' @export
 
 fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ceiling(length(genes_found) / 4) * 3, dir_output = ".") {
