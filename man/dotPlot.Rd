@@ -42,7 +42,16 @@ save dot plot
 create and save a nice Seurat dot plot
 }
 \examples{
-\dontrun{
-dotPlot(object = sc_merge, par = "cellmarkers_covid", dot_min = 0.1)
-}
+library(Seurat)
+markers <- data.frame(B = c("MS4A1", "CD79A"))
+write.csv(markers, "markers.csv")
+dotPlot(
+  path = "markers.csv",
+  object = pbmc_small,
+  par = "B",
+  dot_min = 0.1,
+  dir_output = "."
+)
+unlink("markers.csv")
+unlink("dp_pbmc_small_B.pdf")
 }

@@ -127,7 +127,7 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
     theme(
       axis.text = element_blank(),
       axis.ticks = element_blank(),
-      panel.border = element_rect(color = "black", size = 1, fill = NA)
+      panel.border = element_rect(color = "black", linewidth = 1, fill = NA)
     )
   file_path <- file.path(dir_output, glue::glue("fp_{object_parse}_{par}.png"))
   ggsave(filename = file_path, width = width, height = height, limitsize = FALSE)
@@ -151,9 +151,18 @@ fPlotCustom <- function(object, markers, par, reduction, width = 16, height = ce
 #' @return save dot plot
 #' @importFrom ggplot2 ggplot scale_size theme xlab ylab element_text ggsave
 #' @examples
-#' \dontrun{
-#' dotPlot(object = sc_merge, par = "cellmarkers_covid", dot_min = 0.1)
-#' }
+#' library(Seurat)
+#' markers <- data.frame(B = c("MS4A1", "CD79A"))
+#' write.csv(markers, "markers.csv")
+#' dotPlot(
+#'   path = "markers.csv",
+#'   object = pbmc_small,
+#'   par = "B",
+#'   dot_min = 0.1,
+#'   dir_output = "."
+#' )
+#' unlink("markers.csv")
+#' unlink("dp_pbmc_small_B.pdf")
 #' @export
 
 dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", width = 10, height = 10, dir_output = ".") {
