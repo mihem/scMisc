@@ -28,3 +28,32 @@ test_that("fPlot works as expected", {
     unlink("markers.csv")
     unlink("fp_pbmc_small_B.png")
 })
+
+test_that("fPlotCustom works as expected", {
+    library(Seurat)
+
+    markers <- data.frame(cell_source = c("B", "B"), gene = c("MS4A1", "CD79A"))
+    # run the function
+    fPlotCustom(
+        object = pbmc_small,
+        markers = markers,
+        par = "B",
+        reduction = "tsne"
+    )
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("fp_pbmc_small_B.png"))
+    # Test 2: Function  creates a file that is not empty
+    expect_gt(file.info("fp_pbmc_small_B.png")$size, 0)
+    # Test 3: Expect error if object is not a Seurat object
+    expect_error(
+        fPlotCustom(
+            object = data.frame(a = c(1:3)),
+            markers = markers,
+            par = "B",
+            reduction = "tsne"
+        ),
+        "Object must be a Seurat object"
+    )
+    # Cleanup: Remove the generated file
+    unlink("fp_pbmc_small_B.png")
+})
