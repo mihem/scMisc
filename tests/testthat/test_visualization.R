@@ -164,10 +164,10 @@ test_that("stackedPlot works as expected", {
     )
     
     # Test 1: Function creates a file in the correct directory
-    expect_true(file.exists("stacked_barplot_pbmc_small_pool.pdf"))
+    expect_true(file.exists("stacked_barplot_pbmc_small_disease.pdf"))
     # Test 2: Function creates a file that is not empty
-    expect_gt(file.info("stacked_barplot_pbmc_small_pool.pdf")$size, 0)
+    expect_gt(file.info("stacked_barplot_pbmc_small_disease.pdf")$size, 0)
     
     # Cleanup: Remove the generated file
-    unlink("stacked_barplot_pbmc_small_pool.pdf")
+    unlink("stacked_barplot_pbmc_small_disease.pdf")
 })

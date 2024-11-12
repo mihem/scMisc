@@ -325,7 +325,7 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
     mutate(type = factor(type, levels = x_order)) |>
     dplyr::filter(count != 0)
   sbp <- ggplot(data = result_long) +
-    geom_col(aes(x = type, y = count, fill = cell), color = "black", size = 0.1, position = "fill") +
+    geom_col(aes(x = type, y = count, fill = cell), color = "black", linewidth = 0.1, position = "fill") +
     scale_fill_manual(values = color) +
     guides(fill = guide_legend(title = NULL)) + # remove guide label
     theme_classic() + # remove background
