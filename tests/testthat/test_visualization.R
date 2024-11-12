@@ -144,3 +144,30 @@ test_that("pHeatmap works as expected", {
     # Cleanup: Remove the generated file
     unlink("hm_matrix.pdf")
 })
+
+test_that("stackedPlot works as expected", {
+    library(Seurat)
+    set.seed(123)
+    pbmc_small$disease <- sample(c("diseaseA", "diseaseB"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+    
+    # Run the function
+    stackedPlot(
+        object = pbmc_small,
+        x_axis = "disease",
+        y_axis = "cluster",
+        x_order = c("diseaseA", "diseaseB"),
+        y_order = c("Cluster1", "Cluster2"),
+        color = c("Cluster1" = "blue", "Cluster2" = "red"),
+        width = 10,
+        dir_output = "."
+    )
+    
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("stacked_barplot_pbmc_small_pool.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("stacked_barplot_pbmc_small_pool.pdf")$size, 0)
+    
+    # Cleanup: Remove the generated file
+    unlink("stacked_barplot_pbmc_small_pool.pdf")
+})
