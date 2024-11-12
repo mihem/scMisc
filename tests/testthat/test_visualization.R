@@ -24,6 +24,13 @@ test_that("fPlot works as expected", {
         fPlot(path = "markers.csv", object = data.frame(a = c(1:3)), par = "B", reduction = "tsne", order = TRUE, dir_output = "."),
         "Object must be a Seurat object"
     )
+    # Test 4: Check if the function throws an error if no genes are found
+    markers <- data.frame(B = c())
+    write.csv(markers, "markers.csv")
+    expect_error(
+        fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = "."),
+        "No genes were found. Make sure that `par` exists in markers.csv"
+    )
     # Cleanup: Remove the generated file
     unlink("markers.csv")
     unlink("fp_pbmc_small_B.png")
