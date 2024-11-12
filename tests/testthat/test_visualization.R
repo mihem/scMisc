@@ -14,7 +14,7 @@ test_that("fPlot works as expected", {
     markers <- data.frame(B = c("MS4A1", "CD79A"))
     write.csv(markers, "markers.csv")
     # run the function
-    fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
+    plot <- fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("fp_pbmc_small_B.png"))
     # Test 2: Function  creates a file that is not empty
@@ -31,6 +31,11 @@ test_that("fPlot works as expected", {
         fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = "."),
         "No genes were found. Make sure that `par` exists in markers.csv"
     )
+    # Test 5: Check plot objects
+    expect_s3_class(plot, "ggplot")
+    expect_equal(plot[[1]]$label$title, "MS4A1")
+    expect_equal(plot[[2]]$label$title, "CD79A")
+
     # Cleanup: Remove the generated file
     unlink("markers.csv")
     unlink("fp_pbmc_small_B.png")
@@ -41,7 +46,7 @@ test_that("fPlotCustom works as expected", {
 
     markers <- data.frame(cell_source = c("B", "B"), gene = c("MS4A1", "CD79A"))
     # run the function
-    fPlotCustom(
+    plot <- fPlotCustom(
         object = pbmc_small,
         markers = markers,
         par = "B",
@@ -61,6 +66,11 @@ test_that("fPlotCustom works as expected", {
         ),
         "Object must be a Seurat object"
     )
+
+    # Test 4: Check plot objects
+    expect_s3_class(plot, "ggplot")
+    expect_equal(plot[[1]]$label$title, "MS4A1")
+    expect_equal(plot[[2]]$label$title, "CD79A")
     # Cleanup: Remove the generated file
     unlink("fp_pbmc_small_B.png")
 })
@@ -72,7 +82,7 @@ test_that("dotPlot works as expected", {
 
     # run the function
     suppressWarnings(
-        dotPlot(
+        plot <- dotPlot(
             path = "markers.csv",
             object = pbmc_small,
             par = "T",
@@ -122,6 +132,13 @@ test_that("dotPlot works as expected", {
         )
     )
     expect_gt(file.info("dp_pbmc_small_T.pdf")$size, 0)
+    # Test 6: Check plot objects
+    expect_s3_class(plot, "ggplot")
+    p <- ggplot2::ggplot_build(plot)
+    expect_equal(
+        p$layout$panel_params[[1]]$x$limits,
+        c("CD3E", "CD3D", "IL7R")
+    )
     # Cleanup: Remove the generated file
     unlink("markers.csv")
     unlink("dp_pbmc_small_T.pdf")
@@ -132,15 +149,15 @@ test_that("pHeatmap works as expected", {
     matrix <- matrix(rnorm(100), nrow = 10, ncol = 10)
     rownames(matrix) <- paste0("Gene", 1:10)
     colnames(matrix) <- paste0("Sample", 1:10)
-    
+
     # Run the function
     pHeatmap(matrix, scale = "row", dir_output = ".")
-    
+
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("hm_matrix.pdf"))
     # Test 2: Function creates a file that is not empty
     expect_gt(file.info("hm_matrix.pdf")$size, 0)
-    
+
     # Cleanup: Remove the generated file
     unlink("hm_matrix.pdf")
 })
@@ -150,9 +167,9 @@ test_that("stackedPlot works as expected", {
     set.seed(123)
     pbmc_small$disease <- sample(c("diseaseA", "diseaseB"), ncol(pbmc_small), replace = TRUE)
     pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
-    
+
     # Run the function
-    stackedPlot(
+    plot <- stackedPlot(
         object = pbmc_small,
         x_axis = "disease",
         y_axis = "cluster",
@@ -162,12 +179,18 @@ test_that("stackedPlot works as expected", {
         width = 10,
         dir_output = "."
     )
-    
+
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("stacked_barplot_pbmc_small_disease.pdf"))
     # Test 2: Function creates a file that is not empty
     expect_gt(file.info("stacked_barplot_pbmc_small_disease.pdf")$size, 0)
-    
+    # Test 3: Test plot objects
+    expect_s3_class(plot, "ggplot")
+    p <- ggplot2::ggplot_build(plot)
+    expect_equal(
+        p$layout$panel_params[[1]]$x$limits,
+        c("diseaseA", "diseaseB")
+    )
     # Cleanup: Remove the generated file
     unlink("stacked_barplot_pbmc_small_disease.pdf")
 })
