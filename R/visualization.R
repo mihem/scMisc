@@ -220,15 +220,38 @@ dotPlot <- function(path, object, par, dot_min, scale = TRUE, ortho = "none", wi
 #' @param annotation_row data frame that contains the annotations. Rows in the data and in the annotation are matched using row names. (default: NA)
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save heatmap to folder
-#' @examples \dontrun{
-#' pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)
-#' }
+#' @examples 
+#' matrix <- matrix(rnorm(100), nrow = 10, ncol = 10)
+#' rownames(matrix) <- paste0("Gene", 1:10)
+#' colnames(matrix) <- paste0("Sample", 1:10)
+#' pHeatmap(matrix, scale = "row", dir_output = ".")
 #' @export
 
-pHeatmap <- function(matrix, scale = "none", height = ceiling(nrow(matrix) / 3), width = ceiling(ncol(matrix) / 2), cellwidth = 10, cellheight = 10, treeheight_row = 10, treeheight_col = 10, fontsize = 10, cluster_rows = TRUE, cluster_cols = TRUE, annotation_row = NA, dir_output = ".") {
+pHeatmap <- function(matrix,
+                     scale = "none",
+                     height = ceiling(nrow(matrix) / 3),
+                     width = ceiling(ncol(matrix) / 2),
+                     cellwidth = 10,
+                     cellheight = 10,
+                     treeheight_row = 10,
+                     treeheight_col = 10,
+                     fontsize = 10,
+                     cluster_rows = TRUE,
+                     cluster_cols = TRUE,
+                     annotation_row = NA,
+                     dir_output = ".") {
   matrix_parse <- deparse(substitute(matrix))
   matrix <- matrix[!rowSums(matrix) == 0, ] # filter rows with only zeros
-  break_max <- round(max(abs(c(max(scale_mat(matrix, scale = scale)), min(scale_mat(matrix, scale = scale))))) - 0.1, 1) # use internal function to get scaled matrix and max value for color legend
+  break_max <- round(
+    max(abs(c(max(scale_mat(
+      matrix,
+      scale = scale
+    )), min(scale_mat(
+      matrix,
+      scale = scale
+    ))))) - 0.1,
+    1
+  ) # use internal function to get scaled matrix and max value for color legend
   break_min <- -break_max
   phmap <- pheatmap::pheatmap(matrix,
     color = viridis::viridis(100),

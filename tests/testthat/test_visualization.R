@@ -126,3 +126,21 @@ test_that("dotPlot works as expected", {
     unlink("markers.csv")
     unlink("dp_pbmc_small_T.pdf")
 })
+
+test_that("pHeatmap works as expected", {
+    # Create a sample matrix
+    matrix <- matrix(rnorm(100), nrow = 10, ncol = 10)
+    rownames(matrix) <- paste0("Gene", 1:10)
+    colnames(matrix) <- paste0("Sample", 1:10)
+    
+    # Run the function
+    pHeatmap(matrix, scale = "row", dir_output = ".")
+    
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("hm_matrix.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("hm_matrix.pdf")$size, 0)
+    
+    # Cleanup: Remove the generated file
+    unlink("hm_matrix.pdf")
+})

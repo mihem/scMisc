@@ -54,7 +54,8 @@ save heatmap to folder
 create and save a nice pheatmap in the folder \code{heatmap} using color breaks
 }
 \examples{
-\dontrun{
-pHeatmap(szabo_tc_tc_avg, scale = "row", cluster_cols = FALSE)
-}
+matrix <- matrix(rnorm(100), nrow = 10, ncol = 10)
+rownames(matrix) <- paste0("Gene", 1:10)
+colnames(matrix) <- paste0("Sample", 1:10)
+pHeatmap(matrix, scale = "row", dir_output = ".")
 }
