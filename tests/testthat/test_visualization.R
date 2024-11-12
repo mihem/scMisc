@@ -57,3 +57,65 @@ test_that("fPlotCustom works as expected", {
     # Cleanup: Remove the generated file
     unlink("fp_pbmc_small_B.png")
 })
+
+test_that("dotPlot works as expected", {
+    library(Seurat)
+    markers <- data.frame(T = c("CD3E", "CD3D", "IL7R", "TRBC"))
+    write.csv(markers, "markers.csv")
+
+    # run the function
+    suppressWarnings(
+        dotPlot(
+            path = "markers.csv",
+            object = pbmc_small,
+            par = "T",
+            dot_min = 0.01,
+            dir_output = "."
+        )
+    )
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("dp_pbmc_small_T.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("dp_pbmc_small_T.pdf")$size, 0)
+    # Test 3: Expect error if object is not a Seurat object
+    expect_error(
+        dotPlot(
+            path = "markers.csv",
+            object = data.frame(a = c(1:3)),
+            par = "T",
+            dot_min = 0.1,
+            dir_output = "."
+        ),
+        "Object must be a Seurat object"
+    )
+    # Test 4: Check if the function throws an error if no genes are found
+    markers <- data.frame(T = c())
+    write.csv(markers, "markers.csv")
+    expect_error(
+        dotPlot(
+            path = "markers.csv",
+            object = pbmc_small,
+            par = "B",
+            dot_min = 0.1,
+            dir_output = "."
+        ),
+        "No genes were found. Make sure that `par` exists in markers.csv"
+    )
+    # Test 5 Check if mouse2human conversion works
+    markers <- data.frame(T = c("Cd3e", "Cd3d", "Il7r"))
+    write.csv(markers, "markers.csv")
+    suppressWarnings(
+        dotPlot(
+            path = "markers.csv",
+            object = pbmc_small,
+            par = "T",
+            dot_min = 0.01,
+            ortho = "mouse2human"
+        )
+    )
+    expect_gt(file.info("dp_pbmc_small_T.pdf")$size, 0)
+    # Cleanup: Remove the generated file
+    unlink("markers.csv")
+    unlink("dp_pbmc_small_T.pdf")
+})
