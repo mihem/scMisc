@@ -654,9 +654,17 @@ abBoxPlot <- function(object,
 #' @param color color palette
 #' @return plot module plot
 #' @examples
-#' \dontrun{
-#' ModulePlot(object = aie_csf, x_var = "AIE_type", module = "TCRVG1", color = my_cols)
-#' }
+#' library(Seurat)
+#' set.seed(123)
+#' pbmc_small$AIE_type <- sample(c("control", "CASPR2", "LGI1"), ncol(pbmc_small), replace = TRUE)
+#' module1 <- list(c(rownames(pbmc_small)[1:100]))
+#' pbmc_small <- AddModuleScore(pbmc_small, features = module1, assay = "RNA", name = "module", ctrl = 5)
+#' ModulePlot(
+#'   x_var = "AIE_type",
+#'   module = "module1",
+#'   object = pbmc_small,
+#'   color = c("control" = "blue", "CASPR2" = "red", "LGI1" = "green")
+#' )
 #' @export
 #' @importFrom dplyr mutate
 #' @importFrom ggplot2 aes geom_boxplot geom_violin ggplot ggtitle scale_fill_manual theme theme_bw xlab ylab
@@ -698,10 +706,12 @@ ModulePlot <- function(x_var, module, object, color) {
     xlab("") +
     ylab("") +
     ggtitle(module) +
-    theme(legend.position = "none")
-  ## ggsignif::geom_signif(comparisons = signif$comparisons,
-  ##                       annotation = signif$annotation, textsize = 5,
-  ##                       step_increase = 0.05, vjust = 0.7)
+    theme(legend.position = "none") +
+    ggsignif::geom_signif(
+      comparisons = signif$comparisons,
+      annotation = signif$annotation, textsize = 5,
+      step_increase = 0.05, vjust = 0.7
+    )
 
   return(module_plot)
 }

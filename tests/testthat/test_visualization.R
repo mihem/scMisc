@@ -348,3 +348,24 @@ test_that("compStat works as expected", {
     # Test 3: Check if the function returns significant values
     expect_true(any(result$p.adj < 0.05))
 })
+
+test_that("ModulePlot works as expected", {
+    library(Seurat)
+    set.seed(123)
+    pbmc_small$AIE_type <- sample(c("control", "CASPR2", "LGI1"), ncol(pbmc_small), replace = TRUE)
+    module1 <- list(c(rownames(pbmc_small)[1:100]))
+    pbmc_small <- AddModuleScore(pbmc_small, features = module1, assay = "RNA", name = "module", ctrl = 5)
+
+    # Run the function
+    suppressWarnings(
+        plot <- ModulePlot(
+            x_var = "AIE_type",
+            module = "module1",
+            object = pbmc_small,
+            color = c("control" = "blue", "CASPR2" = "red", "LGI1" = "green")
+        )
+    )
+
+    # Test 1: Check if the function returns a ggplot object
+    expect_s3_class(plot, "ggplot")
+})
