@@ -529,8 +529,16 @@ compStat <- function(x_var, group, data, paired) {
 #' @examples
 #' library(Seurat)
 #' set.seed(123)
-#' pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
-#' pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+#' pbmc_small$cluster <-
+#'   sample(c("Cluster1", "Cluster2"),
+#'     ncol(pbmc_small),
+#'     replace = TRUE
+#'   )
+#' pbmc_small$sample <-
+#'   sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+#'     ncol(pbmc_small),
+#'     replace = TRUE
+#'   )
 #' lookup <-
 #'   data.frame(
 #'     sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
