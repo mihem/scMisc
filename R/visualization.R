@@ -658,7 +658,13 @@ abBoxPlot <- function(object,
 #' set.seed(123)
 #' pbmc_small$AIE_type <- sample(c("control", "CASPR2", "LGI1"), ncol(pbmc_small), replace = TRUE)
 #' module1 <- list(c(rownames(pbmc_small)[1:100]))
-#' pbmc_small <- AddModuleScore(pbmc_small, features = module1, assay = "RNA", name = "module", ctrl = 5)
+#' pbmc_small <- AddModuleScore(
+#'   pbmc_small,
+#'   features = module1,
+#'   assay = "RNA",
+#'   name = "module",
+#'   ctrl = 5
+#' )
 #' ModulePlot(
 #'   x_var = "AIE_type",
 #'   module = "module1",
@@ -723,28 +729,38 @@ ModulePlot <- function(x_var, module, object, color) {
 
 #' @title enrichr plot
 #' @description plot enrichr results in a bar plot
-#' @param filename name of file without extension and without `enrichr_`
+#' @param filename name of .xlsx file without extension and without `enrichr_`
 #' @param sheet name of the excel sheet
 #' @param width width of output plot
 #' @param height height of output plot
+#' @param dir_input directory where the input file (.xlsx) is located (default: ".")
 #' @param dir_output directory to save the output plot (default: ".")
-#' @return save enrichr plot
+#' @return create and save enrichr plot
 #' @examples
-#' \dontrun{
-#' plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)
+#' enrichr_data_go <- data.frame(
+#' Term = c("Term1", "Term2", "Term3"),
+#' Adjusted.P.value = c(0.01, 0.02, 0.03),
+#' Overlap = c("5/100", "10/200", "15/300")
+#' enrichr_data <- list("GO_Biological_Process_2021" = enrichr_data_go)
+#' writexl::write_xlsx(enrichr_data, "./enrichr_test.xlsx")
+#' plotEnrichr(filename = "test", sheet = "GO_Biological_Process_2021", width = 10, height = 5, dir_output = ".")
+#' unlink("enrichr_test.xlsx")
+#' unlink("barplot_enrichr_test_GO_Biological_Process_2021.pdf")
 #' }
 #' @export
 #' @importFrom ggplot2 aes geom_col ggplot ggsave labs theme theme_classic
 #' @importFrom stats reorder
 
-plotEnrichr <- function(filename, sheet, width, height, dir_output = ".") {
+plotEnrichr <- function(filename, sheet, width, height, dir_input = ".", dir_output = ".") {
   colors <- RColorBrewer::brewer.pal(5, "Set2")
   color <- ifelse(grepl(x = filename, pattern = "pos"), colors[[1]], colors[[2]])
-  enrichr <- readxl::read_excel(file.path("results", "enrichr", glue::glue("enrichr_{filename}.xlsx")), sheet = sheet) |>
+  enrichr <- readxl::read_excel(file.path(dir_input, glue::glue("enrichr_{filename}.xlsx")), sheet = sheet) |>
     dplyr::filter(Adjusted.P.value < 0.05) |>
     dplyr::slice_min(order_by = Adjusted.P.value, n = 10, with_ties = FALSE) |>
     tidyr::separate(Overlap, into = c("overlap1", "overlap2")) |> # separate overlap in two columns
-    dplyr::mutate(overlap = as.numeric(overlap1) / as.numeric(overlap2)) |> # calculcate overlap
+    dplyr::mutate(overlap = as.numeric(overlap1) / as.numeric(overlap2)) # calculcate overlap
+  plot <-
+    enrichr |>
     ggplot(aes(y = reorder(Term, -log10(Adjusted.P.value)), x = -log10(Adjusted.P.value))) +
     geom_col(fill = color) +
     labs(
@@ -754,6 +770,7 @@ plotEnrichr <- function(filename, sheet, width, height, dir_output = ".") {
     theme_classic() +
     theme(legend.position = "none")
   ggsave(file.path(dir_output, glue::glue("barplot_enrichr_{filename}_{sheet}.pdf")), width = width, height = height)
+  return(plot)
 }
 
 ################################################################################

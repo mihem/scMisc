@@ -26,7 +26,13 @@ library(Seurat)
 set.seed(123)
 pbmc_small$AIE_type <- sample(c("control", "CASPR2", "LGI1"), ncol(pbmc_small), replace = TRUE)
 module1 <- list(c(rownames(pbmc_small)[1:100]))
-pbmc_small <- AddModuleScore(pbmc_small, features = module1, assay = "RNA", name = "module", ctrl = 5)
+pbmc_small <- AddModuleScore(
+  pbmc_small,
+  features = module1,
+  assay = "RNA",
+  name = "module",
+  ctrl = 5
+)
 ModulePlot(
   x_var = "AIE_type",
   module = "module1",

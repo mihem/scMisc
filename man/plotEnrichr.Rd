@@ -4,10 +4,10 @@
 \alias{plotEnrichr}
 \title{enrichr plot}
 \usage{
-plotEnrichr(filename, sheet, width, height, dir_output = ".")
+plotEnrichr(filename, sheet, width, height, dir_input = ".", dir_output = ".")
 }
 \arguments{
-\item{filename}{name of file without extension and without \code{enrichr_}}
+\item{filename}{name of .xlsx file without extension and without \code{enrichr_}}
 
 \item{sheet}{name of the excel sheet}
 
@@ -15,16 +15,13 @@ plotEnrichr(filename, sheet, width, height, dir_output = ".")
 
 \item{height}{height of output plot}
 
+\item{dir_input}{directory where the input file (.xlsx) is located (default: ".")}
+
 \item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
-save enrichr plot
+create and save enrichr plot
 }
 \description{
 plot enrichr results in a bar plot
-}
-\examples{
-\dontrun{
-plotEnrichr("de_ALZ_Naive_CSF_neg_pDC", sheet = "GO_Biological_Process_2021", width = 10, height = 5)
-}
 }

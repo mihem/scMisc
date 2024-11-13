@@ -369,3 +369,30 @@ test_that("ModulePlot works as expected", {
     # Test 1: Check if the function returns a ggplot object
     expect_s3_class(plot, "ggplot")
 })
+
+test_that("plotEnrichr works as expected", {
+    # Create a sample enrichr file
+    enrichr_data_go <- data.frame(
+        Term = c("Term1", "Term2", "Term3"),
+        Adjusted.P.value = c(0.01, 0.02, 0.03),
+        Overlap = c("5/100", "10/200", "15/300")
+    )
+    enrichr_data <- list("GO_Biological_Process_2021" = enrichr_data_go)
+    writexl::write_xlsx(enrichr_data, "./enrichr_test.xlsx")
+
+    # Run the function
+    plot <- plotEnrichr(filename = "test", sheet = "GO_Biological_Process_2021", width = 10, height = 5, dir_output = ".")
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("barplot_enrichr_test_GO_Biological_Process_2021.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("barplot_enrichr_test_GO_Biological_Process_2021.pdf")$size, 0)
+    # Test 3: Test plot objects
+    expect_s3_class(plot, "ggplot")
+    # Test 4: Check if the plot is not empty
+    p <- ggplot2::ggplot_build(plot)
+    expect_gt(length(p$data), 0)
+    # Cleanup: Remove the generated file
+    unlink("enrichr_test.xlsx")
+    unlink("barplot_enrichr_test_GO_Biological_Process_2021.pdf")
+})
