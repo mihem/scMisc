@@ -119,16 +119,6 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: SeuratObject</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: sp</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ‘SeuratObject’ was built under R 4.4.0 but the current version is</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 4.4.2; it is recomended that you reinstall ‘SeuratObject’ as the ABI</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> for R may have changed</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘SeuratObject’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, t</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rpkgs.datanovia.com/rstatix/" class="external-link">rstatix</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘rstatix’</span>
@@ -139,22 +129,21 @@
 <span class="r-in"><span><span class="va">pbmc_small</span><span class="op">$</span><span class="va">predicted.id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cluster1"</span>, <span class="st">"Cluster2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">pbmc_small</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pbmc_small</span><span class="op">$</span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sample1"</span>, <span class="st">"Sample2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">pbmc_small</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pbmc_small</span><span class="op">$</span><span class="va">AIE_type</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LGI1"</span>, <span class="st">"control"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">pbmc_small</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">abVolPlot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    object <span class="op">=</span> <span class="va">pbmc_small</span>,</span></span>
-<span class="r-in"><span>    cluster_idents <span class="op">=</span> <span class="st">"predicted.id"</span>,</span></span>
-<span class="r-in"><span>    sample <span class="op">=</span> <span class="st">"sample"</span>,</span></span>
-<span class="r-in"><span>    cluster_order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cluster1"</span>, <span class="st">"Cluster2"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    group_by <span class="op">=</span> <span class="st">"AIE_type"</span>,</span></span>
-<span class="r-in"><span>    group1 <span class="op">=</span> <span class="st">"LGI1"</span>,</span></span>
-<span class="r-in"><span>    group2 <span class="op">=</span> <span class="st">"control"</span>,</span></span>
-<span class="r-in"><span>    color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cluster1"</span> <span class="op">=</span> <span class="st">"blue"</span>, <span class="st">"Cluster2"</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    width <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>    height <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>    dir_output <span class="op">=</span> <span class="st">"."</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">abVolPlot</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  object <span class="op">=</span> <span class="va">pbmc_small</span>,</span></span>
+<span class="r-in"><span>  cluster_idents <span class="op">=</span> <span class="st">"predicted.id"</span>,</span></span>
+<span class="r-in"><span>  sample <span class="op">=</span> <span class="st">"sample"</span>,</span></span>
+<span class="r-in"><span>  cluster_order <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cluster1"</span>, <span class="st">"Cluster2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  group_by <span class="op">=</span> <span class="st">"AIE_type"</span>,</span></span>
+<span class="r-in"><span>  group1 <span class="op">=</span> <span class="st">"LGI1"</span>,</span></span>
+<span class="r-in"><span>  group2 <span class="op">=</span> <span class="st">"control"</span>,</span></span>
+<span class="r-in"><span>  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cluster1"</span> <span class="op">=</span> <span class="st">"blue"</span>, <span class="st">"Cluster2"</span> <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  width <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  height <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  dir_output <span class="op">=</span> <span class="st">"."</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(sample)`</span>
+<span class="r-plt img"><img src="abVolPlot-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf"</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
