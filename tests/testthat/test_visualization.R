@@ -197,11 +197,20 @@ test_that("stackedPlot works as expected", {
 
 test_that("abVolPlot works as expected", {
     library(Seurat)
-    library(rstatix)
     set.seed(123)
-    pbmc_small$predicted.id <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
-    pbmc_small$sample <- sample(c("Sample1", "Sample2"), ncol(pbmc_small), replace = TRUE)
-    pbmc_small$AIE_type <- sample(c("LGI1", "control"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$predicted.id <- sample(c("Mono", "Tcell"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+    lookup <-
+        data.frame(
+            sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+            AIE_type = c(rep("control", 2), rep("CASPR2", 2))
+        )
+    pbmc_small@meta.data <-
+        pbmc_small@meta.data |>
+        tibble::rownames_to_column("barcode") |>
+        dplyr::left_join(lookup, by = "sample") |>
+        tibble::column_to_rownames("barcode")
+
 
     # Run the function
     suppressWarnings(
@@ -209,11 +218,11 @@ test_that("abVolPlot works as expected", {
             object = pbmc_small,
             cluster_idents = "predicted.id",
             sample = "sample",
-            cluster_order = c("Cluster1", "Cluster2"),
+            cluster_order = c("Mono", "Tcell"),
             group_by = "AIE_type",
-            group1 = "LGI1",
+            group1 = "CASPR2",
             group2 = "control",
-            color = c("Cluster1" = "blue", "Cluster2" = "red"),
+            color = c("Mono" = "blue", "Tcell" = "red"),
             width = 5,
             height = 5,
             dir_output = "."
@@ -221,9 +230,9 @@ test_that("abVolPlot works as expected", {
     )
 
     # Test 1: Function creates a file in the correct directory
-    expect_true(file.exists("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf"))
+    expect_true(file.exists("volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf"))
     # Test 2: Function creates a file that is not empty
-    expect_gt(file.info("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")$size, 0)
+    expect_gt(file.info("volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf")$size, 0)
     # Test 3: Test plot objects
     expect_s3_class(plot, "ggplot")
     p <- ggplot2::ggplot_build(plot)
@@ -254,5 +263,88 @@ test_that("abVolPlot works as expected", {
     expect_true("GeomPoint" %in% sapply(plot$layers, function(x) class(x$geom)[1]))
 
     # Cleanup: Remove the generated file
-    unlink("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")
+    unlink("volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf")
+})
+
+test_that("abBoxPlot works as expected", {
+    library(Seurat)
+    set.seed(123)
+    pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+    lookup <-
+        data.frame(
+            sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+            AIE_type = c(rep("control", 2), rep("CASPR2", 2))
+        )
+    pbmc_small@meta.data <-
+        pbmc_small@meta.data |>
+        tibble::rownames_to_column("barcode") |>
+        dplyr::left_join(lookup, by = "sample") |>
+        tibble::column_to_rownames("barcode")
+
+    # Run the function
+    suppressWarnings(
+        plot <- abBoxPlot(
+            object = pbmc_small,
+            cluster_idents = "cluster",
+            sample = "sample",
+            cluster_order = c("Cluster1", "Cluster2"),
+            group_by = "AIE_type",
+            group_order = c("control", "CASPR2"),
+            color = c("control" = "blue", "CASPR2" = "red"),
+            width = 9,
+            height = 6,
+            paired = FALSE,
+            number_of_tests = 3,
+            dir_output = "."
+        )
+    )
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("boxplot_cluster_pbmc_small_AIE_type.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("boxplot_cluster_pbmc_small_AIE_type.pdf")$size, 0)
+    # Test 3: Test plot objects
+    expect_s3_class(plot, "ggplot")
+    # Test 4: Check if the function throws an error if object is not a Seurat object
+    expect_error(
+        abBoxPlot(
+            object = data.frame(a = c(1:3)),
+            cluster_idents = "cluster",
+            sample = "sample",
+            cluster_order = c("Cluster1", "Cluster2"),
+            group_by = "AIE_type",
+            group_order = c("control", "CASPR2", "LGI1"),
+            color = c("control" = "blue", "CASPR2" = "red", "LGI1" = "green"),
+            width = 9,
+            height = 6,
+            paired = FALSE,
+            number_of_tests = 3,
+            dir_output = "."
+        ),
+        "Object must be a Seurat object"
+    )
+
+    # Cleanup: Remove the generated file
+    unlink("boxplot_cluster_pbmc_small_AIE_type.pdf")
+})
+
+test_that("compStat works as expected", {
+    set.seed(123)
+    data <- data.frame(
+        sample = c(paste0("CSF_P0", 1:9)),
+        type = c(rep("control", 4), rep("AIE", 5)),
+        cluster1 = c(runif(4, 0, 1), runif(5, 99, 100)),
+        cluster2 = c(runif(4, 0, 70), runif(5, 20, 100))
+    )
+
+    # Test 1: Check if the function returns a data frame
+    result <- compStat(x_var = c("cluster1", "cluster2"), group = "type", data = data, paired = FALSE)
+    expect_s3_class(result, "data.frame")
+
+    # Test 2: Check if the function returns the correct columns
+    expect_true(all(c(".y.", "group1", "group2", "p", "p.adj", "p.adj.signif") %in% colnames(result)))
+
+    # Test 3: Check if the function returns significant values
+    expect_true(any(result$p.adj < 0.05))
 })

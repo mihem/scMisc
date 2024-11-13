@@ -375,19 +375,19 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 #' pbmc_small$sample <- sample(c("Sample1", "Sample2"), ncol(pbmc_small), replace = TRUE)
 #' pbmc_small$AIE_type <- sample(c("LGI1", "control"), ncol(pbmc_small), replace = TRUE)
 #' suppressWarnings(
-#'     plot <- abVolPlot(
-#'         object = pbmc_small,
-#'         cluster_idents = "predicted.id",
-#'         sample = "sample",
-#'         cluster_order = c("Cluster1", "Cluster2"),
-#'         group_by = "AIE_type",
-#'         group1 = "LGI1",
-#'         group2 = "control",
-#'         color = c("Cluster1" = "blue", "Cluster2" = "red"),
-#'         width = 5,
-#'         height = 5,
-#'         dir_output = "."
-#'     )
+#'   plot <- abVolPlot(
+#'     object = pbmc_small,
+#'     cluster_idents = "predicted.id",
+#'     sample = "sample",
+#'     cluster_order = c("Cluster1", "Cluster2"),
+#'     group_by = "AIE_type",
+#'     group1 = "LGI1",
+#'     group2 = "control",
+#'     color = c("Cluster1" = "blue", "Cluster2" = "red"),
+#'     width = 5,
+#'     height = 5,
+#'     dir_output = "."
+#'   )
 #' )
 #' unlink("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")
 #' @importFrom dplyr across left_join mutate
@@ -450,7 +450,7 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 }
 
 ################################################################################
-# internal helper function to calculcate significance for boxplots
+# helper function to calculcate significance for boxplots
 ################################################################################
 
 #' @title significance for boxplot
@@ -465,15 +465,15 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 #' compStat(x_var = "pct", group = "type", data = bp_data)
 #' }
 #' @importFrom stats as.formula p.adjust symnum
+#' @export
 
 compStat <- function(x_var, group, data, paired) {
   # initalize stats
   stats <- vector("list")
 
-  # for character run pairwise fisher test for all parameters, only keep important columns so they match
   for (par in x_var) {
     f_str <- paste0(par, "~", group)
-    if (length(unique(data[[par]])) > 2) {
+    if (length(unique(data[[group]])) > 2) {
       if (paired == FALSE) {
         stats[[par]] <- rstatix::dunn_test(as.formula(f_str), data = data, p.adjust.method = "none") |>
           dplyr::select(.y., group1, group2, p, p.adj, p.adj.signif)
@@ -542,7 +542,18 @@ compStat <- function(x_var, group, data, paired) {
 #' @importFrom tidyselect where
 
 
-abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group_order, color, width = 9, height = ceiling(length(unique(object@meta.data[[cluster_idents]])) / 4) * 3, paired = FALSE, number_of_tests, dir_output = ".") {
+abBoxPlot <- function(object,
+                      cluster_idents,
+                      sample,
+                      cluster_order,
+                      group_by,
+                      group_order,
+                      color,
+                      width = 9,
+                      height = ceiling(length(unique(object@meta.data[[cluster_idents]])) / 4) * 3,
+                      paired = FALSE,
+                      number_of_tests,
+                      dir_output = ".") {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
@@ -597,8 +608,9 @@ abBoxPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
       ylab("percentage") +
       scale_fill_manual(values = color)
   }
-  patchwork::wrap_plots(bp_plot, ncol = 4)
-  ggsave(file.path(dir_output, glue::glue("boxplot_{cluster_idents}_{object_parse}_{group_by}.pdf")), width = width, height = height)
+  bp_plots_patch <- patchwork::wrap_plots(bp_plot, ncol = 4)
+  ggsave(file.path(dir_output, glue::glue("boxplot_{cluster_idents}_{object_parse}_{group_by}.pdf")), bp_plots_patch, width = width, height = height)
+  return(bp_plots_patch)
 }
 
 ################################################################################
