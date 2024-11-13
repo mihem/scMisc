@@ -374,20 +374,18 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 #' pbmc_small$predicted.id <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
 #' pbmc_small$sample <- sample(c("Sample1", "Sample2"), ncol(pbmc_small), replace = TRUE)
 #' pbmc_small$AIE_type <- sample(c("LGI1", "control"), ncol(pbmc_small), replace = TRUE)
-#' suppressWarnings(
-#'   plot <- abVolPlot(
-#'     object = pbmc_small,
-#'     cluster_idents = "predicted.id",
-#'     sample = "sample",
-#'     cluster_order = c("Cluster1", "Cluster2"),
-#'     group_by = "AIE_type",
-#'     group1 = "LGI1",
-#'     group2 = "control",
-#'     color = c("Cluster1" = "blue", "Cluster2" = "red"),
-#'     width = 5,
-#'     height = 5,
-#'     dir_output = "."
-#'   )
+#' abVolPlot(
+#'   object = pbmc_small,
+#'   cluster_idents = "predicted.id",
+#'   sample = "sample",
+#'   cluster_order = c("Cluster1", "Cluster2"),
+#'   group_by = "AIE_type",
+#'   group1 = "LGI1",
+#'   group2 = "control",
+#'   color = c("Cluster1" = "blue", "Cluster2" = "red"),
+#'   width = 5,
+#'   height = 5,
+#'   dir_output = "."
 #' )
 #' unlink("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")
 #' @importFrom dplyr across left_join mutate
@@ -461,9 +459,14 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 #' @param paired logical value. Do you want to do perform pair testing?
 #' @return data frame with adjusted signficance values
 #' @examples
-#' \dontrun{
-#' compStat(x_var = "pct", group = "type", data = bp_data)
-#' }
+#' set.seed(123)
+#' data <- data.frame(
+#'   sample = c(paste0("CSF_P0", 1:9)),
+#'   type = c(rep("control", 4), rep("AIE", 5)),
+#'   cluster1 = c(runif(4, 0, 1), runif(5, 99, 100)),
+#'   cluster2 = c(runif(4, 0, 70), runif(5, 20, 100))
+#' )
+#' compStat(x_var = c("cluster1", "cluster2"), group = "type", data = data, paired = FALSE)
 #' @importFrom stats as.formula p.adjust symnum
 #' @export
 
@@ -524,17 +527,35 @@ compStat <- function(x_var, group, data, paired) {
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save abundance box plot
 #' @examples
-#' \dontrun{
+#' library(Seurat)
+#' set.seed(123)
+#' pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+#' pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+#' lookup <-
+#'   data.frame(
+#'     sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+#'     AIE_type = c(rep("control", 2), rep("CASPR2", 2))
+#'   )
+#' pbmc_small@meta.data <-
+#'   pbmc_small@meta.data |>
+#'   tibble::rownames_to_column("barcode") |>
+#'   dplyr::left_join(lookup, by = "sample") |>
+#'   tibble::column_to_rownames("barcode")
 #' abBoxPlot(
-#'   object = aie_pbmc,
+#'   object = pbmc_small,
 #'   cluster_idents = "cluster",
 #'   sample = "sample",
-#'   cluster_order = cluster_order,
+#'   cluster_order = c("Cluster1", "Cluster2"),
 #'   group_by = "AIE_type",
-#'   group_order = c("control", "CASPR2", "LGI1"),
-#'   color = my_cols
+#'   group_order = c("control", "CASPR2"),
+#'   color = c("control" = "blue", "CASPR2" = "red"),
+#'   width = 9,
+#'   height = 6,
+#'   paired = FALSE,
+#'   number_of_tests = 3,
+#'   dir_output = "."
 #' )
-#' }
+#' unlink("boxplot_cluster_pbmc_small_AIE_type.pdf")
 #' @export
 #' @importFrom dplyr across
 #' @importFrom ggplot2 aes element_text geom_boxplot geom_line geom_point ggplot ggsave ggtitle scale_fill_manual theme theme_bw xlab ylab

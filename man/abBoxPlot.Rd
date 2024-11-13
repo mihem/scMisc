@@ -51,15 +51,33 @@ save abundance box plot
 create and save an abundance boxplot in the folder \code{abundance}
 }
 \examples{
-\dontrun{
+library(Seurat)
+set.seed(123)
+pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+lookup <-
+  data.frame(
+    sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+    AIE_type = c(rep("control", 2), rep("CASPR2", 2))
+  )
+pbmc_small@meta.data <-
+  pbmc_small@meta.data |>
+  tibble::rownames_to_column("barcode") |>
+  dplyr::left_join(lookup, by = "sample") |>
+  tibble::column_to_rownames("barcode")
 abBoxPlot(
-  object = aie_pbmc,
+  object = pbmc_small,
   cluster_idents = "cluster",
   sample = "sample",
-  cluster_order = cluster_order,
+  cluster_order = c("Cluster1", "Cluster2"),
   group_by = "AIE_type",
-  group_order = c("control", "CASPR2", "LGI1"),
-  color = my_cols
+  group_order = c("control", "CASPR2"),
+  color = c("control" = "blue", "CASPR2" = "red"),
+  width = 9,
+  height = 6,
+  paired = FALSE,
+  number_of_tests = 3,
+  dir_output = "."
 )
-}
+unlink("boxplot_cluster_pbmc_small_AIE_type.pdf")
 }

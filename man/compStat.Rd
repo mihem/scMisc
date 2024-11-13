@@ -22,7 +22,12 @@ data frame with adjusted signficance values
 calculcate significance for ggsignif
 }
 \examples{
-\dontrun{
-compStat(x_var = "pct", group = "type", data = bp_data)
-}
+set.seed(123)
+data <- data.frame(
+  sample = c(paste0("CSF_P0", 1:9)),
+  type = c(rep("control", 4), rep("AIE", 5)),
+  cluster1 = c(runif(4, 0, 1), runif(5, 99, 100)),
+  cluster2 = c(runif(4, 0, 70), runif(5, 20, 100))
+)
+compStat(x_var = c("cluster1", "cluster2"), group = "type", data = data, paired = FALSE)
 }
