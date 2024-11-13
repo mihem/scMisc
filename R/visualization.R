@@ -368,26 +368,36 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 #' @param dir_output directory to save the output plot (default: ".")
 #' @return save volcano abundance plot
 #' @examples
-#' \dontrun{
-#' abVolPlot(
-#'   object = aie_sct,
-#'   cluster_idents = "predicted.id",
-#'   sample = "sample",
-#'   cluster_order = unique(aie_sct$predicted.id),
-#'   group_by = "AIE_type",
-#'   group1 = "LGI1",
-#'   group2 = "control",
-#'   color = dittoColors(),
-#'   min_pct = 0.5
+#' library(Seurat)
+#' library(rstatix)
+#' set.seed(123)
+#' pbmc_small$predicted.id <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+#' pbmc_small$sample <- sample(c("Sample1", "Sample2"), ncol(pbmc_small), replace = TRUE)
+#' pbmc_small$AIE_type <- sample(c("LGI1", "control"), ncol(pbmc_small), replace = TRUE)
+#' suppressWarnings(
+#'     plot <- abVolPlot(
+#'         object = pbmc_small,
+#'         cluster_idents = "predicted.id",
+#'         sample = "sample",
+#'         cluster_order = c("Cluster1", "Cluster2"),
+#'         group_by = "AIE_type",
+#'         group1 = "LGI1",
+#'         group2 = "control",
+#'         color = c("Cluster1" = "blue", "Cluster2" = "red"),
+#'         width = 5,
+#'         height = 5,
+#'         dir_output = "."
+#'     )
 #' )
-#' }
-#' @export
+#' unlink("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")
 #' @importFrom dplyr across left_join mutate
 #' @importFrom ggplot2 aes geom_hline geom_point geom_vline ggplot ggsave scale_color_manual theme theme_classic xlab ylab
 #' @importFrom stats wilcox.test
 #' @importFrom tibble rownames_to_column tibble
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyselect where
+#' @importFrom rstatix wilcox_test
+#' @export
 
 abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group1, group2, color, width = 5, height = 5, min_cells = 10, paired = FALSE, dir_output = ".") {
   if (!inherits(object, "Seurat")) {
@@ -406,7 +416,7 @@ abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, g
 
   for (i in cluster_order) {
     out1 <- cl_size_ind[cl_size_ind$cluster == i, ]
-    pvalue_res[i] <- wilcox.test(count ~ group_by, data = out1, paired = paired)$p.value
+    pvalue_res[i] <- wilcox_test(count ~ group_by, data = out1, paired = paired)$p
   }
 
   pvalue_cl <- data.frame(cluster = cluster_order, pvalue = pvalue_res)

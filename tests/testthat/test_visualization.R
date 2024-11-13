@@ -194,3 +194,65 @@ test_that("stackedPlot works as expected", {
     # Cleanup: Remove the generated file
     unlink("stacked_barplot_pbmc_small_disease.pdf")
 })
+
+test_that("abVolPlot works as expected", {
+    library(Seurat)
+    library(rstatix)
+    set.seed(123)
+    pbmc_small$predicted.id <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$sample <- sample(c("Sample1", "Sample2"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$AIE_type <- sample(c("LGI1", "control"), ncol(pbmc_small), replace = TRUE)
+
+    # Run the function
+    suppressWarnings(
+        plot <- abVolPlot(
+            object = pbmc_small,
+            cluster_idents = "predicted.id",
+            sample = "sample",
+            cluster_order = c("Cluster1", "Cluster2"),
+            group_by = "AIE_type",
+            group1 = "LGI1",
+            group2 = "control",
+            color = c("Cluster1" = "blue", "Cluster2" = "red"),
+            width = 5,
+            height = 5,
+            dir_output = "."
+        )
+    )
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")$size, 0)
+    # Test 3: Test plot objects
+    expect_s3_class(plot, "ggplot")
+    p <- ggplot2::ggplot_build(plot)
+    expect_equal(
+        p$layout$panel_params[[1]]$x$limits,
+        c(-1, 1)
+    )
+
+    # Test 4: Check if the function throws an error if object is not a Seurat object
+    expect_error(
+        abVolPlot(
+            object = data.frame(a = c(1:3)),
+            cluster_idents = "predicted.id",
+            sample = "sample",
+            cluster_order = c("Cluster1", "Cluster2"),
+            group_by = "AIE_type",
+            group1 = "LGI1",
+            group2 = "control",
+            color = c("Cluster1" = "blue", "Cluster2" = "red"),
+            width = 5,
+            height = 5,
+            dir_output = "."
+        ),
+        "Object must be a Seurat object"
+    )
+
+    # Test 5: Check if the plot has the expected elements
+    expect_true("GeomPoint" %in% sapply(plot$layers, function(x) class(x$geom)[1]))
+
+    # Cleanup: Remove the generated file
+    unlink("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")
+})

@@ -54,17 +54,26 @@ save volcano abundance plot
 create and save an abundance volcano bar plot in the folder \code{abundance}
 }
 \examples{
-\dontrun{
-abVolPlot(
-  object = aie_sct,
-  cluster_idents = "predicted.id",
-  sample = "sample",
-  cluster_order = unique(aie_sct$predicted.id),
-  group_by = "AIE_type",
-  group1 = "LGI1",
-  group2 = "control",
-  color = dittoColors(),
-  min_pct = 0.5
+library(Seurat)
+library(rstatix)
+set.seed(123)
+pbmc_small$predicted.id <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+pbmc_small$sample <- sample(c("Sample1", "Sample2"), ncol(pbmc_small), replace = TRUE)
+pbmc_small$AIE_type <- sample(c("LGI1", "control"), ncol(pbmc_small), replace = TRUE)
+suppressWarnings(
+    plot <- abVolPlot(
+        object = pbmc_small,
+        cluster_idents = "predicted.id",
+        sample = "sample",
+        cluster_order = c("Cluster1", "Cluster2"),
+        group_by = "AIE_type",
+        group1 = "LGI1",
+        group2 = "control",
+        color = c("Cluster1" = "blue", "Cluster2" = "red"),
+        width = 5,
+        height = 5,
+        dir_output = "."
+    )
 )
-}
+unlink("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")
 }
