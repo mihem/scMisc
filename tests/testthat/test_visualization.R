@@ -446,3 +446,26 @@ test_that("dotplotPropeller works as expected", {
     # Cleanup: Remove the generated file
     unlink("propeller_dotplot_test_propeller_dotplot.pdf")
 })
+
+test_that("plotSlingshot works as expected", {
+    library(Seurat)
+    set.seed(123)
+    pbmc_small$lineage <- sample(c("Lineage1", "Lineage2"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$umap <- CreateDimReducObject(embeddings = Embeddings(pbmc_small, reduction = "tsne"), key = "UMAP_", assay = "RNA")
+    curves <- data.frame(
+        UMAP_1 = runif(ncol(pbmc_small), min = -10, max = 10),
+        UMAP_2 = runif(ncol(pbmc_small), min = -10, max = 10),
+        Lineage = sample(c("Lineage1", "Lineage2"), ncol(pbmc_small), replace = TRUE)
+    )
+    pt <- matrix(runif(ncol(pbmc_small) * 2), ncol = 2)
+    colnames(pt) <- c("Lineage1", "Lineage2")
+
+    # Run the function
+    plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt)
+
+    # Test 1: Check if the function returns a ggplot object
+    expect_s3_class(plot, "ggplot")
+    # Test 2: Check if the plot is not empty
+    p <- ggplot2::ggplot_build(plot)
+    expect_gt(length(p$data), 0)
+})

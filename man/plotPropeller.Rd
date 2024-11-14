@@ -42,6 +42,14 @@ propeller_data <- data.frame(
   FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001))
 )
 color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
-plotPropeller(data = propeller_data, color = color, filename = "test_propeller", width = 5, height = 5, FDR = 0.05, dir_output = ".")
+plotPropeller(
+  data = propeller_data,
+  color = color,
+  filename = "test_propeller",
+  width = 5,
+  height = 5,
+  FDR = 0.05,
+  dir_output = "."
+)
 unlink("propeller_test_propeller.pdf")
 }

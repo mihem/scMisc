@@ -33,7 +33,13 @@ enrichr_data_go <- data.frame(
 )
 enrichr_data <- list("GO_Biological_Process_2021" = enrichr_data_go)
 writexl::write_xlsx(enrichr_data, "./enrichr_test.xlsx")
-plotEnrichr(filename = "test", sheet = "GO_Biological_Process_2021", width = 10, height = 5, dir_output = ".")
+plotEnrichr(
+  filename = "test",
+  sheet = "GO_Biological_Process_2021",
+  width = 10,
+  height = 5,
+  dir_output = "."
+)
 unlink("enrichr_test.xlsx")
 unlink("barplot_enrichr_test_GO_Biological_Process_2021.pdf")
 }
