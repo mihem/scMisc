@@ -744,7 +744,13 @@ ModulePlot <- function(x_var, module, object, color) {
 #' )
 #' enrichr_data <- list("GO_Biological_Process_2021" = enrichr_data_go)
 #' writexl::write_xlsx(enrichr_data, "./enrichr_test.xlsx")
-#' plotEnrichr(filename = "test", sheet = "GO_Biological_Process_2021", width = 10, height = 5, dir_output = ".")
+#' plotEnrichr(
+#'   filename = "test",
+#'   sheet = "GO_Biological_Process_2021",
+#'   width = 10,
+#'   height = 5,
+#'   dir_output = "."
+#' )
 #' unlink("enrichr_test.xlsx")
 #' unlink("barplot_enrichr_test_GO_Biological_Process_2021.pdf")
 #' @export
@@ -789,12 +795,20 @@ plotEnrichr <- function(filename, sheet, width, height, dir_input = ".", dir_out
 #' @return create and save propeller plot
 #' @examples
 #' propeller_data <- data.frame(
-#'     cluster = c("Cluster1", "Cluster2", "Cluster3"),
-#'     log2ratio = c(1.5, -2.0, 0.5),
-#'     FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001))
+#'   cluster = c("Cluster1", "Cluster2", "Cluster3"),
+#'   log2ratio = c(1.5, -2.0, 0.5),
+#'   FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001))
 #' )
 #' color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
-#' plotPropeller(data = propeller_data, color = color, filename = "test_propeller", width = 5, height = 5, FDR = 0.05, dir_output = ".")
+#' plotPropeller(
+#'   data = propeller_data,
+#'   color = color,
+#'   filename = "test_propeller",
+#'   width = 5,
+#'   height = 5,
+#'   FDR = 0.05,
+#'   dir_output = "."
+#' )
 #' unlink("propeller_test_propeller.pdf")
 #' @export
 
@@ -819,23 +833,35 @@ plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR, dir
 # abundance propeller plot barplot
 ################################################################################
 #' @title plot propeller results in a barplot
-#' @description The function creates a barplot of the propeller results and saves the plot in results/abundance folder
+#' @description The function creates a barplot of the propeller results and saves the plot
 #' @param data A dataframe containing the results from propeller calculation
 #' @param color A vector of colors for the clusters in the plot
 #' @param filename A character representing the file name of the plot
 #' @param width The width of the plot
 #' @param height The height of the plot
 #' @param dir_output directory to save the output plot (default: ".")
-#' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic
-#' @return save propeller abundance barplot
+#' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic geom_vline scale_color_manual xlab ylab
+#' @importFrom forcats fct_reorder
+#' @return create and save propeller abundance barplot
 #' @examples
-#' \dontrun{
-#' dotplotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")
-#' }
+#' propeller_data <- data.frame(
+#'   cluster = c("Cluster1", "Cluster2", "Cluster3"),
+#'   log2ratio = c(1.5, -2.0, 0.5)
+#' )
+#' color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
+#' dotplotPropeller(
+#'   data = propeller_data,
+#'   color = color,
+#'   filename = "test_propeller_dotplot",
+#'   width = 5,
+#'   height = 5,
+#'   dir_output = "."
+#' )
+#' unlink("propeller_dotplot_test_propeller_dotplot.pdf")
 #' @export
 
 dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_output = ".") {
-  ggplot(data, aes(x = log2ratio, y = fct_reorder(cluster, log2ratio), color = cluster)) +
+  plot <- ggplot(data, aes(x = log2ratio, y = fct_reorder(cluster, log2ratio), color = cluster)) +
     geom_point(size = 5) +
     theme_classic() +
     geom_vline(xintercept = 0, color = "red", linetype = "solid") + # vertical line
@@ -845,7 +871,8 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_o
     xlab("Log2 fold change") +
     ylab(NULL) +
     theme(legend.position = "none") # remove legend
-  ggsave(file.path(dir_output, glue::glue("propeller_dotplot_{filename}.pdf")), width = width, height = height)
+  ggsave(file.path(dir_output, glue::glue("propeller_dotplot_{filename}.pdf")), plot, width = width, height = height)
+  return(plot)
 }
 
 ################################################################################

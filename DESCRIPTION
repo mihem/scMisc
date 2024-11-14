@@ -47,5 +47,6 @@ Imports:
     enrichR,
     tidyselect,
     methods,
-    stringr
+    stringr,
+    forcats
 Remotes: wjawaid/enrichR

@@ -27,13 +27,17 @@ dotplotPropeller(
 \item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
-save propeller abundance barplot
+create and save propeller abundance barplot
 }
 \description{
-The function creates a barplot of the propeller results and saves the plot in results/abundance folder
+The function creates a barplot of the propeller results and saves the plot
 }
 \examples{
-\dontrun{
-dotplotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")
-}
+propeller_data <- data.frame(
+    cluster = c("Cluster1", "Cluster2", "Cluster3"),
+    log2ratio = c(1.5, -2.0, 0.5)
+)
+color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
+dotplotPropeller(data = propeller_data, color = color, filename = "test_propeller_dotplot", width = 5, height = 5, dir_output = ".")
+unlink("propeller_dotplot_test_propeller_dotplot.pdf")
 }

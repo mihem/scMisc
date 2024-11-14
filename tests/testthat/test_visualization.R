@@ -422,3 +422,27 @@ test_that("plotPropeller works as expected", {
     # Cleanup: Remove the generated file
     unlink("propeller_test_propeller.pdf")
 })
+
+test_that("dotplotPropeller works as expected", {
+    # Create a sample propeller data frame
+    propeller_data <- data.frame(
+        cluster = c("Cluster1", "Cluster2", "Cluster3"),
+        log2ratio = c(1.5, -2.0, 0.5)
+    )
+    color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
+
+    # Run the function
+    plot <- dotplotPropeller(data = propeller_data, color = color, filename = "test_propeller_dotplot", width = 5, height = 5, dir_output = ".")
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("propeller_dotplot_test_propeller_dotplot.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("propeller_dotplot_test_propeller_dotplot.pdf")$size, 0)
+    # Test 3: Test plot objects
+    expect_s3_class(plot, "ggplot")
+    # Test 4: Check if the plot is not empty
+    p <- ggplot2::ggplot_build(plot)
+    expect_gt(length(p$data), 0)
+    # Cleanup: Remove the generated file
+    unlink("propeller_dotplot_test_propeller_dotplot.pdf")
+})
