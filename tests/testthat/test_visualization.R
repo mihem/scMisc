@@ -461,7 +461,7 @@ test_that("plotSlingshot works as expected", {
     colnames(pt) <- c("Lineage1", "Lineage2")
 
     # Run the function
-    plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt)
+    plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt, curves = curves)
 
     # Test 1: Check if the function returns a ggplot object
     expect_s3_class(plot, "ggplot")

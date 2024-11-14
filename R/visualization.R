@@ -882,6 +882,7 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_o
 #' @param object A Seurat object
 #' @param lineage A character string indicating the lineage of interest.
 #' @param pt A numeric vector of pseudotime values.
+#' @param curves A dataframe containing the curves.
 #' @return A ggplot object.
 #' @examples
 #' library(Seurat)
@@ -910,7 +911,7 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_o
 #' @importFrom ggplot2 aes element_blank element_rect geom_path geom_point ggplot ggtitle theme theme_classic
 #' @export
 
-plotSlingshot <- function(object, lineage, pt) {
+plotSlingshot <- function(object, lineage, pt, curves) {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
