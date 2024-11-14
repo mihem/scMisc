@@ -83,7 +83,13 @@
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">enrichr_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"GO_Biological_Process_2021"</span> <span class="op">=</span> <span class="va">enrichr_data_go</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">writexl</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/writexl/reference/write_xlsx.html" class="external-link">write_xlsx</a></span><span class="op">(</span><span class="va">enrichr_data</span>, <span class="st">"./enrichr_test.xlsx"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">plotEnrichr</span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"test"</span>, sheet <span class="op">=</span> <span class="st">"GO_Biological_Process_2021"</span>, width <span class="op">=</span> <span class="fl">10</span>, height <span class="op">=</span> <span class="fl">5</span>, dir_output <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotEnrichr</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  filename <span class="op">=</span> <span class="st">"test"</span>,</span></span>
+<span class="r-in"><span>  sheet <span class="op">=</span> <span class="st">"GO_Biological_Process_2021"</span>,</span></span>
+<span class="r-in"><span>  width <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  height <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  dir_output <span class="op">=</span> <span class="st">"."</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotEnrichr-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"enrichr_test.xlsx"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="st">"barplot_enrichr_test_GO_Biological_Process_2021.pdf"</span><span class="op">)</span></span></span>
