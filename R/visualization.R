@@ -887,7 +887,16 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_o
 #' library(Seurat)
 #' set.seed(123)
 #' pbmc_small$lineage <- sample(c("Lineage1", "Lineage2"), ncol(pbmc_small), replace = TRUE)
-#' pbmc_small$umap <- CreateDimReducObject(embeddings = Embeddings(pbmc_small, reduction = "tsne"), key = "UMAP_", assay = "RNA")
+#' pbmc_small$umap <-
+#' CreateDimReducObject(
+#'  embeddings =
+#'    Embeddings(
+#'      pbmc_small,
+#'      reduction = "tsne"
+#'    ),
+#'  key = "UMAP_",
+#'  assay = "RNA"
+#' )
 #' curves <- data.frame(
 #'     UMAP_1 = runif(ncol(pbmc_small), min = -10, max = 10),
 #'     UMAP_2 = runif(ncol(pbmc_small), min = -10, max = 10),
