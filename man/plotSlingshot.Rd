@@ -4,7 +4,7 @@
 \alias{plotSlingshot}
 \title{plot slingshot results}
 \usage{
-plotSlingshot(object, lineage, pt)
+plotSlingshot(object, lineage, pt, curves)
 }
 \arguments{
 \item{object}{A Seurat object}
@@ -12,6 +12,8 @@ plotSlingshot(object, lineage, pt)
 \item{lineage}{A character string indicating the lineage of interest.}
 
 \item{pt}{A numeric vector of pseudotime values.}
+
+\item{curves}{A dataframe containing the curves.}
 }
 \value{
 A ggplot object.
@@ -23,7 +25,16 @@ The function creates a colored UMAP plot and curves split by lineage
 library(Seurat)
 set.seed(123)
 pbmc_small$lineage <- sample(c("Lineage1", "Lineage2"), ncol(pbmc_small), replace = TRUE)
-pbmc_small$umap <- CreateDimReducObject(embeddings = Embeddings(pbmc_small, reduction = "tsne"), key = "UMAP_", assay = "RNA")
+pbmc_small$umap <-
+CreateDimReducObject(
+ embeddings =
+   Embeddings(
+     pbmc_small,
+     reduction = "tsne"
+   ),
+ key = "UMAP_",
+ assay = "RNA"
+)
 curves <- data.frame(
     UMAP_1 = runif(ncol(pbmc_small), min = -10, max = 10),
     UMAP_2 = runif(ncol(pbmc_small), min = -10, max = 10),

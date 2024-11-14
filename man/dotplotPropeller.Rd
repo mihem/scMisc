@@ -34,7 +34,7 @@ The function creates a barplot of the propeller results and saves the plot
 }
 \examples{
 propeller_data <- data.frame(
-#'     cluster = c("Cluster1", "Cluster2", "Cluster3"),
+     cluster = c("Cluster1", "Cluster2", "Cluster3"),
     log2ratio = c(1.5, -2.0, 0.5)
 )
 color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
