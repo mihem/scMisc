@@ -396,3 +396,29 @@ test_that("plotEnrichr works as expected", {
     unlink("enrichr_test.xlsx")
     unlink("barplot_enrichr_test_GO_Biological_Process_2021.pdf")
 })
+
+test_that("plotPropeller works as expected", {
+    # Create a sample propeller data frame
+    propeller_data <- data.frame(
+        cluster = c("Cluster1", "Cluster2", "Cluster3"),
+        log2ratio = c(1.5, -2.0, 0.5),
+        FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001))
+    )
+    color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
+    color <- c("0" = "blue", "Cluster2" = "red", "Cluster3" = "green")
+
+    # Run the function
+    plot <- plotPropeller(data = propeller_data, color = color, filename = "test_propeller", width = 5, height = 5, FDR = 0.05, dir_output = ".")
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("propeller_test_propeller.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("propeller_test_propeller.pdf")$size, 0)
+    # Test 3: Test plot objects
+    expect_s3_class(plot, "ggplot")
+    # Test 4: Check if the plot is not empty
+    p <- ggplot2::ggplot_build(plot)
+    expect_gt(length(p$data), 0)
+    # Cleanup: Remove the generated file
+    unlink("propeller_test_propeller.pdf")
+})

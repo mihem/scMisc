@@ -777,7 +777,7 @@ plotEnrichr <- function(filename, sheet, width, height, dir_input = ".", dir_out
 # abundance propeller plot volcano
 ################################################################################
 #' @title plot propeller results
-#' @description The function creates a volcano plot of the propeller results and saves the plot in results/abundance folder
+#' @description The function creates a volcano plot of the propeller results and saves it
 #' @param data A dataframe containing the results from propeller calculation
 #' @param color A vector of colors for the clusters in the plot
 #' @param filename A character representing the file name of the plot
@@ -786,15 +786,20 @@ plotEnrichr <- function(filename, sheet, width, height, dir_input = ".", dir_out
 #' @param FDR The FDR threshold for the plot
 #' @param dir_output directory to save the output plot (default: ".")
 #' @importFrom ggplot2 aes geom_hline geom_point geom_vline ggplot ggsave scale_color_manual theme theme_classic xlab ylab
-#' @return save propeller plot
+#' @return create and save propeller plot
 #' @examples
-#' \dontrun{
-#' plotPropeller(data = pnp_ctrl_csf_sex_age, color = cluster_col, filename = "pnp_ctrl_csf_sex_age")
-#' }
+#' propeller_data <- data.frame(
+#'     cluster = c("Cluster1", "Cluster2", "Cluster3"),
+#'     log2ratio = c(1.5, -2.0, 0.5),
+#'     FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001))
+#' )
+#' color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
+#' plotPropeller(data = propeller_data, color = color, filename = "test_propeller", width = 5, height = 5, FDR = 0.05, dir_output = ".")
+#' unlink("propeller_test_propeller.pdf")
 #' @export
 
 plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR, dir_output = ".") {
-  ggplot(data, aes(x = log2ratio, y = FDR_log, color = cluster, size = 3, label = cluster)) +
+  plot <- ggplot(data, aes(x = log2ratio, y = FDR_log, color = cluster, size = 3, label = cluster)) +
     geom_point() +
     scale_color_manual(values = color) +
     theme_classic() +
@@ -806,7 +811,8 @@ plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR, dir
     xlab(bquote(~ Log[2] ~ "fold change")) +
     ylab(bquote(~ -Log[10] ~ "adjusted p value")) +
     theme(legend.position = "none") # remove guide
-  ggsave(file.path(dir_output, glue::glue("propeller_{filename}.pdf")), width = width, height = height)
+  ggsave(file.path(dir_output, glue::glue("propeller_{filename}.pdf")), plot, width = width, height = height)
+  return(plot)
 }
 
 ################################################################################
