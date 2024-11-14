@@ -904,7 +904,7 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_o
 #' )
 #' pt <- matrix(runif(ncol(pbmc_small) * 2), ncol = 2)
 #' colnames(pt) <- c("Lineage1", "Lineage2")
-#' plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt)
+#' plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt, curves = curves)
 #' @importFrom stats pt
 #' @importFrom Seurat Embeddings
 #' @importFrom ggplot2 aes element_blank element_rect geom_path geom_point ggplot ggtitle theme theme_classic

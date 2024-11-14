@@ -42,5 +42,5 @@ curves <- data.frame(
 )
 pt <- matrix(runif(ncol(pbmc_small) * 2), ncol = 2)
 colnames(pt) <- c("Lineage1", "Lineage2")
-plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt)
+plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt, curves = curves)
 }
