@@ -38,6 +38,7 @@ The function creates a PCA plot of the cluster abundances and saves the plot in 
 \examples{
 library(Seurat)
 # Setup example data
+set.seed(123)
 pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
 pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), 
                            ncol(pbmc_small), replace = TRUE)
