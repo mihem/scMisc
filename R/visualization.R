@@ -390,11 +390,10 @@ stackedPlot <- function(object, x_axis, y_axis, x_order, y_order, color, width, 
 #' unlink("volcano_plot_predicted.id_pbmc_small_LGI1_control.pdf")
 #' @importFrom dplyr across left_join mutate
 #' @importFrom ggplot2 aes geom_hline geom_point geom_vline ggplot ggsave scale_color_manual theme theme_classic xlab ylab
-#' @importFrom stats wilcox.test
+#' @importFrom rstatix wilcox_test
 #' @importFrom tibble rownames_to_column tibble
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyselect where
-#' @importFrom rstatix wilcox_test
 #' @export
 
 abVolPlot <- function(object, cluster_idents, sample, cluster_order, group_by, group1, group2, color, width = 5, height = 5, min_cells = 10, paired = FALSE, dir_output = ".") {
@@ -840,8 +839,8 @@ plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR, dir
 #' @param width The width of the plot
 #' @param height The height of the plot
 #' @param dir_output directory to save the output plot (default: ".")
-#' @importFrom ggplot2 ggplot theme labs ggsave aes geom_col theme_classic geom_vline scale_color_manual xlab ylab
 #' @importFrom forcats fct_reorder
+#' @importFrom ggplot2 aes geom_point geom_vline ggplot ggsave scale_color_manual theme theme_classic xlab ylab
 #' @return create and save propeller abundance barplot
 #' @examples
 #' propeller_data <- data.frame(
@@ -905,7 +904,6 @@ dotplotPropeller <- function(data, color, filename, width = 5, height = 5, dir_o
 #' pt <- matrix(runif(ncol(pbmc_small) * 2), ncol = 2)
 #' colnames(pt) <- c("Lineage1", "Lineage2")
 #' plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt, curves = curves)
-#' @importFrom stats pt
 #' @importFrom Seurat Embeddings
 #' @importFrom ggplot2 aes element_blank element_rect geom_path geom_point ggplot ggtitle theme theme_classic
 #' @export
@@ -952,19 +950,40 @@ plotSlingshot <- function(object, lineage, pt, curves) {
 #' @return A ggplot object.
 #'
 #' @examples
-#' \dontrun{
-#' pcaSeurat(
-#'   object = sc_final,
-#'   cluster = "cluster",
-#'   sample = "patient",
-#'   condition = "condition"
+#' library(Seurat)
+#' # Setup example data
+#' pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+#' pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), 
+#'                            ncol(pbmc_small), replace = TRUE)
+#' 
+#' # Create lookup table for conditions
+#' lookup <- data.frame(
+#'   sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+#'   condition = c(rep("control", 2), rep("treatment", 2))
 #' )
-#' }
+#' 
+#' # Add condition information to metadata
+#' pbmc_small@meta.data <- pbmc_small@meta.data |>
+#'   tibble::rownames_to_column("barcode") |>
+#'   dplyr::left_join(lookup, by = "sample") |>
+#'   tibble::column_to_rownames("barcode")
+#' 
+#' # Generate PCA plot
+#' pcaSeurat(
+#'   object = pbmc_small,
+#'   cluster = "cluster",
+#'   sample = "sample", 
+#'   condition = "condition",
+#'   width = 20,
+#'   height = 5
+#' )
+#' @export
 #' @importFrom dplyr distinct left_join
 #' @importFrom ggplot2 element_text ggsave labs theme theme_bw theme_classic
-#' @export
-
 pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5, dir_output = ".") {
+  if (!inherits(object, "Seurat")) {
+    stop("Object must be a Seurat object")
+  }
   object_parse <- deparse(substitute(object))
   cl_size <-
     as.data.frame.matrix(table(object@meta.data[[cluster]], object@meta.data[[sample]])) |>

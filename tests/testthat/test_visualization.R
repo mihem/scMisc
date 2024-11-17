@@ -469,3 +469,64 @@ test_that("plotSlingshot works as expected", {
     p <- ggplot2::ggplot_build(plot)
     expect_gt(length(p$data), 0)
 })
+
+test_that("pcaSeurat works as expected", {
+    library(Seurat)
+    set.seed(123)
+    # Setup test data
+    pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+    lookup <-
+        data.frame(
+            sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+            condition = c(rep("control", 2), rep("treatment", 2))
+        )
+    pbmc_small@meta.data <-
+        pbmc_small@meta.data |>
+        tibble::rownames_to_column("barcode") |>
+        dplyr::left_join(lookup, by = "sample") |>
+        tibble::column_to_rownames("barcode")
+
+    # Run the function
+    pcaSeurat(
+        object = pbmc_small,
+        cluster = "cluster",
+        sample = "sample",
+        condition = "condition",
+        width = 20,
+        height = 5,
+        dir_output = "."
+    )
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("pbmc_small_condition_cluster.pdf"))
+    
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("pbmc_small_condition_cluster.pdf")$size, 0)
+    
+    # Test 3: Check if the function throws an error if object is not a Seurat object
+    expect_error(
+        pcaSeurat(
+            object = data.frame(a = 1:3),
+            cluster = "cluster",
+            sample = "sample",
+            condition = "condition",
+            dir_output = "."
+        ),
+        "Object must be a Seurat object"
+    )
+
+    # Test 4: Check if the function handles missing metadata columns
+    expect_error(
+        pcaSeurat(
+            object = pbmc_small,
+            cluster = "nonexistent_cluster",
+            sample = "sample",
+            condition = "condition",
+            dir_output = "."
+        )
+    )
+
+    # Cleanup
+    unlink("pbmc_small_condition_cluster.pdf")
+})

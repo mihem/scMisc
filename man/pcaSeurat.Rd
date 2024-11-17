@@ -36,12 +36,31 @@ A ggplot object.
 The function creates a PCA plot of the cluster abundances and saves the plot in results/abundance folder
 }
 \examples{
-\dontrun{
-pcaSeurat(
-  object = sc_final,
-  cluster = "cluster",
-  sample = "patient",
-  condition = "condition"
+library(Seurat)
+# Setup example data
+pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), 
+                           ncol(pbmc_small), replace = TRUE)
+
+# Create lookup table for conditions
+lookup <- data.frame(
+  sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+  condition = c(rep("control", 2), rep("treatment", 2))
 )
-}
+
+# Add condition information to metadata
+pbmc_small@meta.data <- pbmc_small@meta.data |>
+  tibble::rownames_to_column("barcode") |>
+  dplyr::left_join(lookup, by = "sample") |>
+  tibble::column_to_rownames("barcode")
+
+# Generate PCA plot
+pcaSeurat(
+  object = pbmc_small,
+  cluster = "cluster",
+  sample = "sample", 
+  condition = "condition",
+  width = 20,
+  height = 5
+)
 }
