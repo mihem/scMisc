@@ -947,7 +947,7 @@ plotSlingshot <- function(object, lineage, pt, curves) {
 #' @param height The height of the plot
 #' @param dir_output directory to save the output plot (default: ".")
 #'
-#' @return A ggplot object.
+#' @return Create and save PCA plot of Seurat cluster abundances.
 #'
 #' @examples
 #' library(Seurat)
@@ -1080,4 +1080,5 @@ pcaSeurat <- function(object, cluster, sample, condition, width = 20, height = 5
     width = width, height = height,
     plot = pca_plots
   )
+  return(pca_plots)
 }

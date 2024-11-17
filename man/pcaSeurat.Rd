@@ -30,7 +30,7 @@ pcaSeurat(
 \item{dir_output}{directory to save the output plot (default: ".")}
 }
 \value{
-A ggplot object.
+Create and save PCA plot of Seurat cluster abundances.
 }
 \description{
 The function creates a PCA plot of the cluster abundances and saves the plot in results/abundance folder
@@ -63,4 +63,5 @@ pcaSeurat(
   width = 20,
   height = 5
 )
+unlink("pbmc_small_condition_cluster.pdf")
 }

@@ -488,7 +488,7 @@ test_that("pcaSeurat works as expected", {
         tibble::column_to_rownames("barcode")
 
     # Run the function
-    pcaSeurat(
+    plot <- pcaSeurat(
         object = pbmc_small,
         cluster = "cluster",
         sample = "sample",
@@ -503,8 +503,15 @@ test_that("pcaSeurat works as expected", {
     
     # Test 2: Function creates a file that is not empty
     expect_gt(file.info("pbmc_small_condition_cluster.pdf")$size, 0)
+
+    # Test 3: Check if the function returns a ggplot object
+    expect_s3_class(plot, "ggplot")
+
+    # Test 4: Check if the plot is not empty
+    p <- ggplot2::ggplot_build(plot)
+    expect_gt(length(p$data), 0)
     
-    # Test 3: Check if the function throws an error if object is not a Seurat object
+    # Test 5: Check if the function throws an error if object is not a Seurat object
     expect_error(
         pcaSeurat(
             object = data.frame(a = 1:3),
