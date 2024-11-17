@@ -977,6 +977,7 @@ plotSlingshot <- function(object, lineage, pt, curves) {
 #'   width = 20,
 #'   height = 5
 #' )
+#' unlink("pbmc_small_condition_cluster.pdf")
 #' @export
 #' @importFrom dplyr distinct left_join
 #' @importFrom ggplot2 element_text ggsave labs theme theme_bw theme_classic
