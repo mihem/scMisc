@@ -10,7 +10,8 @@ plotPropeller(
   filename,
   width = 5,
   height = 5,
-  FDR,
+  FDR = NULL,
+  use_permFDP = FALSE,
   dir_output = "."
 )
 }
@@ -25,7 +26,9 @@ plotPropeller(
 
 \item{height}{The height of the plot}
 
-\item{FDR}{The FDR threshold for the plot}
+\item{FDR}{The FDR threshold for the plot. Required unless use_permFDP = TRUE}
+
+\item{use_permFDP}{Logical indicating whether to use permFDP threshold from data (default: FALSE)}
 
 \item{dir_output}{directory to save the output plot (default: ".")}
 }
@@ -36,6 +39,7 @@ create and save propeller plot
 The function creates a volcano plot of the propeller results and saves it
 }
 \examples{
+# Standard usage with BH-adjusted FDR
 propeller_data <- data.frame(
   cluster = c("Cluster1", "Cluster2", "Cluster3"),
   log2ratio = c(1.5, -2.0, 0.5),
@@ -52,4 +56,22 @@ plotPropeller(
   dir_output = "."
 )
 unlink("propeller_test_propeller.pdf")
+
+# With permFDP threshold
+propeller_data_permFDP <- data.frame(
+  cluster = c("Cluster1", "Cluster2", "Cluster3"),
+  log2ratio = c(1.5, -2.0, 0.5),
+  FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001)),
+  permFDP_threshold = 0.025
+)
+plotPropeller(
+  data = propeller_data_permFDP,
+  color = color,
+  filename = "test_propeller_permFDP",
+  width = 5,
+  height = 5,
+  use_permFDP = TRUE,
+  dir_output = "."
+)
+unlink("propeller_test_propeller_permFDP.pdf")
 }

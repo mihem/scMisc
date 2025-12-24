@@ -22,7 +22,7 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
   if (!file.exists("markers.csv")) {
     stop("Please make sure that markers.csv file exists")
   }
-  if(!inherits(object, "Seurat")) {
+  if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   markers <- readr::read_csv("markers.csv") |>
@@ -37,16 +37,27 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
     stop("ortho must take values: `none`, `mouse2human` or `human2mouse`")
   }
   if (ortho == "mouse2human") {
-    genes <- homologene::mouse2human(genes, db = homologene::homologeneData2)$humanGene
+    genes <- homologene::mouse2human(
+      genes,
+      db = homologene::homologeneData2
+    )$humanGene
   }
   if (ortho == "human2mouse") {
-    genes <- homologene::human2mouse(genes, db = homologene::homologeneData2)$mouseGene
+    genes <- homologene::human2mouse(
+      genes,
+      db = homologene::homologeneData2
+    )$mouseGene
   }
   if (ortho == "none") {
     genes <- genes
   }
 
-  Seurat::AverageExpression(object, features = genes, slot = slot, assay = assay)[[assay]]
+  Seurat::AverageExpression(
+    object,
+    features = genes,
+    slot = slot,
+    assay = assay
+  )[[assay]]
 }
 
 ################################################################################
@@ -69,14 +80,30 @@ avgExp <- function(par, object, assay, slot, ortho = "none") {
 #' @export
 #' @importFrom dplyr desc
 
-findMarkersPresto <- function(ident1, ident2 = NULL, object, only_pos = FALSE, min_pct = 0.1, logfc_threshold = 0.25, assay = assay) {
+findMarkersPresto <- function(
+  ident1,
+  ident2 = NULL,
+  object,
+  only_pos = FALSE,
+  min_pct = 0.1,
+  logfc_threshold = 0.25,
+  assay = assay
+) {
   if (!inherits(object, "Seurat")) {
     stop("Object must be a Seurat object")
   }
   if (is.null(assay)) {
     stop("Please provide assay information")
   }
-  result <- Seurat::FindMarkers(object, ident.1 = ident1, ident.2 = ident2, min.pct = min_pct, logfc.threshold = logfc_threshold, only.pos = only_pos, assay = assay) |>
+  result <- Seurat::FindMarkers(
+    object,
+    ident.1 = ident1,
+    ident.2 = ident2,
+    min.pct = min_pct,
+    logfc.threshold = logfc_threshold,
+    only.pos = only_pos,
+    assay = assay
+  ) |>
     tibble::rownames_to_column("gene") |>
     dplyr::filter(p_val_adj < 0.05) |>
     dplyr::relocate(gene, avg_log2FC, p_val, p_val_adj) |>
@@ -105,15 +132,28 @@ abundanceTbl <- function(object, row_var, col_var, dir_output = ".") {
     stop("Object must be a Seurat object")
   }
   object_parse <- deparse(substitute(object))
-  result_abs <- as.data.frame.matrix(table(object@meta.data[[row_var]], object@meta.data[[col_var]])) |>
+  result_abs <- as.data.frame.matrix(table(
+    object@meta.data[[row_var]],
+    object@meta.data[[col_var]]
+  )) |>
     tibble::rownames_to_column("cell")
 
   result_pct <- result_abs |>
-    dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) x / sum(x) * 100)) |>
-    dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) round(x, 2)))
+    dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) {
+      x / sum(x) * 100
+    })) |>
+    dplyr::mutate(dplyr::across(tidyselect::where(is.numeric), function(x) {
+      round(x, 2)
+    }))
 
-  file_path <- file.path(dir_output, glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx"))
-  writexl::write_xlsx(list("absolute" = result_abs, "percentage" = result_pct), file_path)
+  file_path <- file.path(
+    dir_output,
+    glue::glue("abundance_tbl_{object_parse}_{col_var}.xlsx")
+  )
+  writexl::write_xlsx(
+    list("absolute" = result_abs, "percentage" = result_pct),
+    file_path
+  )
 }
 
 ################################################################################
@@ -155,8 +195,20 @@ abundanceTbl <- function(object, row_var, col_var, dir_output = ".") {
 #' unlink("enrichr_test_de_pos_Sheet1.xlsx")
 #' @export
 
-enrichrRun <- function(sheet, dir_input = ".", filename, dir_output = ".", dbs, fc_thresh = 1, p_thresh = 0.001, remove_rp_mt) {
-  input <- readxl::read_excel(file.path(dir_input, glue::glue("{filename}.xlsx")), sheet = sheet)
+enrichrRun <- function(
+  sheet,
+  dir_input = ".",
+  filename,
+  dir_output = ".",
+  dbs,
+  fc_thresh = 1,
+  p_thresh = 0.001,
+  remove_rp_mt
+) {
+  input <- readxl::read_excel(
+    file.path(dir_input, glue::glue("{filename}.xlsx")),
+    sheet = sheet
+  )
   if (remove_rp_mt == TRUE) {
     input <- dplyr::filter(input, !grepl(x = gene, pattern = "(MT-)|(^RP)"))
   }
@@ -174,19 +226,147 @@ enrichrRun <- function(sheet, dir_input = ".", filename, dir_output = ".", dbs, 
       for (j in seq_along(result[[i]])) {
         result[[i]][[j]][c("Old.Adjusted.P.value", "Old.P.value")] <- NULL
       } # remove old p value
-      names(result[[i]])[names(result[[i]]) == "TF_Perturbations_Followed_by_Expression"] <- "TF_Pertubations"
-      names(result[[i]])[names(result[[i]]) == "Enrichr_Submissions_TF-Gene_Coocurrence"] <- "Enrichr_Submissions_TF"
-      writexl::write_xlsx(result[[i]], file.path(dir_output, glue::glue("enrichr_{filename}_{i}_{sheet}.xlsx")))
+      names(result[[i]])[
+        names(result[[i]]) == "TF_Perturbations_Followed_by_Expression"
+      ] <- "TF_Pertubations"
+      names(result[[i]])[
+        names(result[[i]]) == "Enrichr_Submissions_TF-Gene_Coocurrence"
+      ] <- "Enrichr_Submissions_TF"
+      writexl::write_xlsx(
+        result[[i]],
+        file.path(dir_output, glue::glue("enrichr_{filename}_{i}_{sheet}.xlsx"))
+      )
     }
   }
 }
 
 
 ################################################################################
-# propeller
+# helper function for permFDP calculation
 ################################################################################
-#' @title DA with propeller
-#' @description The function calculates differential cell abundance the transformed proportions and performs a t-test based on a given design matrix
+
+#' @title Calculate permFDP-adjusted threshold for propeller results
+#' @description Internal helper function to calculate permFDP-adjusted significance threshold for propeller differential abundance testing
+#' @param prop_data A dataframe containing propeller results with P.Value column
+#' @param seu_obj A Seurat object subset to the two conditions being compared
+#' @param sample_col A character representing the name of the sample column
+#' @param cluster_col A character representing the name of the cluster column
+#' @param meta_col A character representing the name of the condition column
+#' @param cond1 A character representing the first condition
+#' @param cond2 A character representing the second condition
+#' @param fdr_threshold The FDR threshold to use for permFDP adjustment
+#' @param n_perms Number of permutations for permFDP adjustment (default: 1000)
+#' @return A dataframe with added permFDP_sig and permFDP_threshold columns
+#' @keywords internal
+
+calculatePropellerPermFDP <- function(
+  prop_data,
+  seu_obj,
+  sample_col,
+  cluster_col,
+  meta_col,
+  cond1,
+  cond2,
+  fdr_threshold,
+  n_perms = 1000
+) {
+  # Filter to only the two conditions being compared
+  seu_subset <- seu_obj[, seu_obj@meta.data[[meta_col]] %in% c(cond1, cond2)]
+
+  # Create proportion matrix manually (clusters x samples)
+  # Calculate proportions from cell counts per cluster per sample
+  prop_counts <- seu_subset@meta.data |>
+    dplyr::group_by(.data[[sample_col]], .data[[cluster_col]]) |>
+    dplyr::summarise(n = dplyr::n(), .groups = "drop") |>
+    dplyr::group_by(.data[[sample_col]]) |>
+    dplyr::mutate(prop = n / sum(n)) |>
+    dplyr::select(.data[[sample_col]], .data[[cluster_col]], prop) |>
+    tidyr::pivot_wider(
+      names_from = .data[[sample_col]],
+      values_from = prop,
+      values_fill = 0
+    )
+
+  # Convert to matrix with clusters as rows
+  prop_matrix <- as.matrix(prop_counts[, -1])
+  rownames(prop_matrix) <- prop_counts[[cluster_col]]
+
+  # Filter to clusters present in propeller results
+  prop_matrix <- prop_matrix[prop_data$cluster, , drop = FALSE]
+
+  # Remove any rows with NAs
+  complete_rows <- complete.cases(prop_matrix)
+  n_removed <- sum(!complete_rows)
+
+  if (n_removed > 0) {
+    removed_clusters <- prop_data$cluster[!complete_rows]
+    warning(
+      paste0(
+        "Removed ",
+        n_removed,
+        " cluster(s) with incomplete data for permFDP calculation: ",
+        paste(removed_clusters, collapse = ", ")
+      )
+    )
+  }
+
+  prop_matrix <- prop_matrix[complete_rows, , drop = FALSE]
+  prop_data_filtered <- prop_data[complete_rows, ]
+
+  if (nrow(prop_matrix) == 0) {
+    stop("No complete cases for permFDP calculation. Check your data.")
+  }
+
+  # Create group vector from sample metadata
+  sample_meta <- seu_subset@meta.data |>
+    dplyr::distinct(.data[[sample_col]], .data[[meta_col]]) |>
+    dplyr::arrange(match(.data[[sample_col]], colnames(prop_matrix)))
+
+  group_vector <- ifelse(sample_meta[[meta_col]] == cond1, 1, 2)
+
+  # Calculate permFDP adjusted threshold
+  message(
+    paste0(
+      "Running permFDP with ",
+      n_perms,
+      " permutations for ",
+      cond1,
+      " vs ",
+      cond2,
+      " (",
+      nrow(prop_matrix),
+      " clusters, ",
+      ncol(prop_matrix),
+      " samples)..."
+    )
+  )
+
+  corrected_threshold <- permFDP::permFDP.adjust.threshold(
+    pVals = prop_data_filtered$P.Value,
+    threshold = fdr_threshold,
+    myDesign = group_vector,
+    intOnly = as.data.frame(prop_matrix),
+    nPerms = n_perms
+  )
+
+  message(paste0("  -> Corrected threshold: ", round(corrected_threshold, 4)))
+
+  # Add permFDP-adjusted significance to the full data
+  prop_data_out <- prop_data |>
+    dplyr::mutate(
+      permFDP_sig = P.Value < corrected_threshold,
+      permFDP_threshold = corrected_threshold
+    )
+
+  return(prop_data_out)
+}
+
+################################################################################
+# propellerCalc
+################################################################################
+
+#' @title propellerCalc
+#' @description perform a propeller t-test on a Seurat object
 #' @param seu_obj1 A seurat object
 #' @param condition1 A character representing the first condition
 #' @param condition2 A character representing the second condition
@@ -196,6 +376,9 @@ enrichrRun <- function(sheet, dir_input = ".", filename, dir_output = ".", dbs, 
 #' @param sample_col A character representing the name of the column in seu_obj1 which contains sample information
 #' @param formula  A linear model that should be used for the design matrix
 #' @param min_cells A numeric value indicating the minimum number of cells in a cluster that should be included in the analysis
+#' @param adjustment_method A character indicating the FDR adjustment method: "BH" (default) or "permFDP"
+#' @param fdr_threshold The FDR threshold to use for permFDP adjustment (default: NULL)
+#' @param n_perms Number of permutations for permFDP adjustment (default: 1000)
 #' @return A dataframe containing the results of the t-test
 #' @examples
 #' set.seed(123)
@@ -207,6 +390,7 @@ enrichrRun <- function(sheet, dir_input = ".", filename, dir_output = ".", dbs, 
 #'   patient = paste0("P", 0:9),
 #'   condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE)
 #' )
+#' # Standard BH adjustment
 #' propellerCalc(
 #'   seu_obj1 = pbmc_small,
 #'   condition1 = "diseaseA",
@@ -218,17 +402,50 @@ enrichrRun <- function(sheet, dir_input = ".", filename, dir_output = ".", dbs, 
 #'   formula = "~ 0 + condition",
 #'   min_cells = 30
 #' )
+#'
+#' # With permFDP adjustment
+#' propellerCalc(
+#'   seu_obj1 = pbmc_small,
+#'   condition1 = "diseaseA",
+#'   condition2 = "diseaseB",
+#'   cluster_col = "cluster",
+#'   meta_col = "condition",
+#'   lookup = lookup,
+#'   sample_col = "patient",
+#'   formula = "~ 0 + condition",
+#'   min_cells = 30,
+#'   adjustment_method = "permFDP",
+#'   fdr_threshold = 0.1,
+#'   n_perms = 100
+#' )
 #' @export
 #' @importFrom stats as.formula model.matrix
 
-
-propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_col, lookup, sample_col, formula, min_cells = 30) {
+propellerCalc <- function(
+  seu_obj1,
+  condition1,
+  condition2,
+  cluster_col,
+  meta_col,
+  lookup,
+  sample_col,
+  formula,
+  min_cells = 30,
+  adjustment_method = "BH",
+  fdr_threshold = NULL,
+  n_perms = 1000
+) {
   # filter cells of condition1 and condition2
-  seu_obj2 <- seu_obj1[, seu_obj1@meta.data[[meta_col]] %in% c(condition1, condition2)]
+  seu_obj2 <- seu_obj1[,
+    seu_obj1@meta.data[[meta_col]] %in% c(condition1, condition2)
+  ]
 
   # filter clusters with less than min_cells
   cl_interest <-
-    as.data.frame.matrix(table(seu_obj2@meta.data[[cluster_col]], seu_obj2@meta.data[[meta_col]])) |>
+    as.data.frame.matrix(table(
+      seu_obj2@meta.data[[cluster_col]],
+      seu_obj2@meta.data[[meta_col]]
+    )) |>
     tibble::rownames_to_column("cluster") |>
     dplyr::mutate(group_sum = .data[[condition1]] + .data[[condition2]]) |>
     dplyr::filter(group_sum > min_cells) |>
@@ -257,12 +474,40 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 
   # calculate propeller t test
   propeller_result <-
-    speckle::propeller.ttest(prop.list = props, design = my_design, contrast = my_contr, robust = TRUE, trend = FALSE, sort = TRUE) |>
+    speckle::propeller.ttest(
+      prop.list = props,
+      design = my_design,
+      contrast = my_contr,
+      robust = TRUE,
+      trend = FALSE,
+      sort = TRUE
+    ) |>
     tibble::rownames_to_column("cluster") |>
     dplyr::filter(cluster %in% cl_interest) |>
     dplyr::mutate(log2ratio = log2(PropRatio)) |>
     dplyr::mutate(FDR_log = -log10(FDR)) |>
     tibble::tibble()
+
+  # Apply permFDP adjustment if requested
+  if (adjustment_method == "permFDP") {
+    if (is.null(fdr_threshold)) {
+      stop(
+        "fdr_threshold must be specified when using adjustment_method = 'permFDP'"
+      )
+    }
+    propeller_result <- calculatePropellerPermFDP(
+      prop_data = propeller_result,
+      seu_obj = seu_obj2,
+      sample_col = sample_col,
+      cluster_col = cluster_col,
+      meta_col = meta_col,
+      cond1 = condition1,
+      cond2 = condition2,
+      fdr_threshold = fdr_threshold,
+      n_perms = n_perms
+    )
+  }
+
   return(propeller_result)
 }
 
@@ -291,11 +536,12 @@ propellerCalc <- function(seu_obj1, condition1, condition2, cluster_col, meta_co
 #' file_name <- system.file("extdata", "raw_feature_bc_matrix_filtered.h5", package = "scMisc")
 #' mat <- ReadCellBender_h5(file_name)
 #' @importFrom methods new
- 
+
 ReadCellBender_h5 <- function(
-    file_name,
-    use.names = TRUE,
-    unique.features = TRUE) {
+  file_name,
+  use.names = TRUE,
+  unique.features = TRUE
+) {
   # Check hdf5r installed
   if (!requireNamespace("hdf5r", quietly = TRUE)) {
     stop("Please install hdf5r to read HDF5 files")
@@ -320,7 +566,6 @@ ReadCellBender_h5 <- function(
   shp <- infile[["matrix/shape"]]
   features <- infile[[paste0("matrix/", feature_slot)]][]
   barcodes <- infile[["matrix/barcodes"]]
-
 
   sparse.mat <- Matrix::sparseMatrix(
     i = indices[] + 1,

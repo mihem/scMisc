@@ -788,11 +788,13 @@ plotEnrichr <- function(filename, sheet, width, height, dir_input = ".", dir_out
 #' @param filename A character representing the file name of the plot
 #' @param width The width of the plot
 #' @param height The height of the plot
-#' @param FDR The FDR threshold for the plot
+#' @param FDR The FDR threshold for the plot. Required unless use_permFDP = TRUE
+#' @param use_permFDP Logical indicating whether to use permFDP threshold from data (default: FALSE)
 #' @param dir_output directory to save the output plot (default: ".")
 #' @importFrom ggplot2 aes geom_hline geom_point geom_vline ggplot ggsave scale_color_manual theme theme_classic xlab ylab
 #' @return create and save propeller plot
 #' @examples
+#' # Standard usage with BH-adjusted FDR
 #' propeller_data <- data.frame(
 #'   cluster = c("Cluster1", "Cluster2", "Cluster3"),
 #'   log2ratio = c(1.5, -2.0, 0.5),
@@ -809,15 +811,47 @@ plotEnrichr <- function(filename, sheet, width, height, dir_input = ".", dir_out
 #'   dir_output = "."
 #' )
 #' unlink("propeller_test_propeller.pdf")
+#' 
+#' # With permFDP threshold
+#' propeller_data_permFDP <- data.frame(
+#'   cluster = c("Cluster1", "Cluster2", "Cluster3"),
+#'   log2ratio = c(1.5, -2.0, 0.5),
+#'   FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001)),
+#'   permFDP_threshold = 0.025
+#' )
+#' plotPropeller(
+#'   data = propeller_data_permFDP,
+#'   color = color,
+#'   filename = "test_propeller_permFDP",
+#'   width = 5,
+#'   height = 5,
+#'   use_permFDP = TRUE,
+#'   dir_output = "."
+#' )
+#' unlink("propeller_test_propeller_permFDP.pdf")
 #' @export
 
-plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR, dir_output = ".") {
+plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR = NULL, use_permFDP = FALSE, dir_output = ".") {
+  # Determine the threshold to use
+  if (use_permFDP) {
+    if (!"permFDP_threshold" %in% names(data)) {
+      stop("use_permFDP = TRUE but permFDP_threshold column not found in data")
+    }
+    threshold <- unique(data$permFDP_threshold)[1]
+    message(paste0("Using permFDP threshold: ", round(threshold, 4)))
+  } else {
+    if (is.null(FDR)) {
+      stop("FDR must be specified when use_permFDP = FALSE")
+    }
+    threshold <- FDR
+  }
+
   plot <- ggplot(data, aes(x = log2ratio, y = FDR_log, color = cluster, size = 3, label = cluster)) +
     geom_point() +
     scale_color_manual(values = color) +
     theme_classic() +
     ggrepel::geom_text_repel(nudge_y = 0.07, max.overlaps = 20) +
-    geom_hline(yintercept = -log10(FDR), color = "blue", linetype = "dashed") + # horizontal line p unadjusted
+    geom_hline(yintercept = -log10(threshold), color = "blue", linetype = "dashed") + # horizontal line for threshold
     geom_vline(xintercept = 0, color = "red", linetype = "solid") + # vertical line
     geom_vline(xintercept = -1, color = "red", linetype = "dashed") + # vertical line
     geom_vline(xintercept = 1, color = "red", linetype = "dashed") + # vertical line

@@ -2,7 +2,7 @@
 % Please edit documentation in R/seurat_helper.R
 \name{propellerCalc}
 \alias{propellerCalc}
-\title{DA with propeller}
+\title{propellerCalc}
 \usage{
 propellerCalc(
   seu_obj1,
@@ -13,7 +13,10 @@ propellerCalc(
   lookup,
   sample_col,
   formula,
-  min_cells = 30
+  min_cells = 30,
+  adjustment_method = "BH",
+  fdr_threshold = NULL,
+  n_perms = 1000
 )
 }
 \arguments{
@@ -34,12 +37,18 @@ propellerCalc(
 \item{formula}{A linear model that should be used for the design matrix}
 
 \item{min_cells}{A numeric value indicating the minimum number of cells in a cluster that should be included in the analysis}
+
+\item{adjustment_method}{A character indicating the FDR adjustment method: "BH" (default) or "permFDP"}
+
+\item{fdr_threshold}{The FDR threshold to use for permFDP adjustment (default: NULL)}
+
+\item{n_perms}{Number of permutations for permFDP adjustment (default: 1000)}
 }
 \value{
 A dataframe containing the results of the t-test
 }
 \description{
-The function calculates differential cell abundance the transformed proportions and performs a t-test based on a given design matrix
+perform a propeller t-test on a Seurat object
 }
 \examples{
 set.seed(123)
@@ -51,6 +60,7 @@ lookup <- data.frame(
   patient = paste0("P", 0:9),
   condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE)
 )
+# Standard BH adjustment
 propellerCalc(
   seu_obj1 = pbmc_small,
   condition1 = "diseaseA",
@@ -61,5 +71,21 @@ propellerCalc(
   sample_col = "patient",
   formula = "~ 0 + condition",
   min_cells = 30
+)
+
+# With permFDP adjustment
+propellerCalc(
+  seu_obj1 = pbmc_small,
+  condition1 = "diseaseA",
+  condition2 = "diseaseB",
+  cluster_col = "cluster",
+  meta_col = "condition",
+  lookup = lookup,
+  sample_col = "patient",
+  formula = "~ 0 + condition",
+  min_cells = 30,
+  adjustment_method = "permFDP",
+  fdr_threshold = 0.1,
+  n_perms = 100
 )
 }
