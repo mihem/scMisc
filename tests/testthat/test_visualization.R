@@ -14,21 +14,42 @@ test_that("fPlot works as expected", {
     markers <- data.frame(B = c("MS4A1", "CD79A"))
     write.csv(markers, "markers.csv")
     # run the function
-    plot <- fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = ".")
+    plot <- fPlot(
+        path = "markers.csv",
+        object = pbmc_small,
+        par = "B",
+        reduction = "tsne",
+        order = TRUE,
+        dir_output = "."
+    )
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("fp_pbmc_small_B.png"))
     # Test 2: Function  creates a file that is not empty
     expect_gt(file.info("fp_pbmc_small_B.png")$size, 0)
     # Test 3: Expect error if object is not a Seurat object
     expect_error(
-        fPlot(path = "markers.csv", object = data.frame(a = c(1:3)), par = "B", reduction = "tsne", order = TRUE, dir_output = "."),
+        fPlot(
+            path = "markers.csv",
+            object = data.frame(a = c(1:3)),
+            par = "B",
+            reduction = "tsne",
+            order = TRUE,
+            dir_output = "."
+        ),
         "Object must be a Seurat object"
     )
     # Test 4: Check if the function throws an error if no genes are found
     markers <- data.frame(B = c())
     write.csv(markers, "markers.csv")
     expect_error(
-        fPlot(path = "markers.csv", object = pbmc_small, par = "B", reduction = "tsne", order = TRUE, dir_output = "."),
+        fPlot(
+            path = "markers.csv",
+            object = pbmc_small,
+            par = "B",
+            reduction = "tsne",
+            order = TRUE,
+            dir_output = "."
+        ),
         "No genes were found. Make sure that `par` exists in markers.csv"
     )
     # Test 5: Check plot objects
@@ -165,8 +186,16 @@ test_that("pHeatmap works as expected", {
 test_that("stackedPlot works as expected", {
     library(Seurat)
     set.seed(123)
-    pbmc_small$disease <- sample(c("diseaseA", "diseaseB"), ncol(pbmc_small), replace = TRUE)
-    pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$disease <- sample(
+        c("diseaseA", "diseaseB"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
+    pbmc_small$cluster <- sample(
+        c("Cluster1", "Cluster2"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
 
     # Run the function
     plot <- stackedPlot(
@@ -198,8 +227,16 @@ test_that("stackedPlot works as expected", {
 test_that("abVolPlot works as expected", {
     library(Seurat)
     set.seed(123)
-    pbmc_small$predicted.id <- sample(c("Mono", "Tcell"), ncol(pbmc_small), replace = TRUE)
-    pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$predicted.id <- sample(
+        c("Mono", "Tcell"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
+    pbmc_small$sample <- sample(
+        c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
     lookup <-
         data.frame(
             sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
@@ -210,7 +247,6 @@ test_that("abVolPlot works as expected", {
         tibble::rownames_to_column("barcode") |>
         dplyr::left_join(lookup, by = "sample") |>
         tibble::column_to_rownames("barcode")
-
 
     # Run the function
     suppressWarnings(
@@ -230,9 +266,16 @@ test_that("abVolPlot works as expected", {
     )
 
     # Test 1: Function creates a file in the correct directory
-    expect_true(file.exists("volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf"))
+    expect_true(file.exists(
+        "volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf"
+    ))
     # Test 2: Function creates a file that is not empty
-    expect_gt(file.info("volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf")$size, 0)
+    expect_gt(
+        file.info(
+            "volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf"
+        )$size,
+        0
+    )
     # Test 3: Test plot objects
     expect_s3_class(plot, "ggplot")
     p <- ggplot2::ggplot_build(plot)
@@ -260,7 +303,9 @@ test_that("abVolPlot works as expected", {
     )
 
     # Test 5: Check if the plot has the expected elements
-    expect_true("GeomPoint" %in% sapply(plot$layers, function(x) class(x$geom)[1]))
+    expect_true(
+        "GeomPoint" %in% sapply(plot$layers, function(x) class(x$geom)[1])
+    )
 
     # Cleanup: Remove the generated file
     unlink("volcano_plot_predicted.id_pbmc_small_CASPR2_control.pdf")
@@ -269,8 +314,16 @@ test_that("abVolPlot works as expected", {
 test_that("abBoxPlot works as expected", {
     library(Seurat)
     set.seed(123)
-    pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
-    pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$cluster <- sample(
+        c("Cluster1", "Cluster2"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
+    pbmc_small$sample <- sample(
+        c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
     lookup <-
         data.frame(
             sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
@@ -339,11 +392,19 @@ test_that("compStat works as expected", {
     )
 
     # Test 1: Check if the function returns a data frame
-    result <- compStat(x_var = c("cluster1", "cluster2"), group = "type", data = data, paired = FALSE)
+    result <- compStat(
+        x_var = c("cluster1", "cluster2"),
+        group = "type",
+        data = data,
+        paired = FALSE
+    )
     expect_s3_class(result, "data.frame")
 
     # Test 2: Check if the function returns the correct columns
-    expect_true(all(c(".y.", "group1", "group2", "p", "p.adj", "p.adj.signif") %in% colnames(result)))
+    expect_true(all(
+        c(".y.", "group1", "group2", "p", "p.adj", "p.adj.signif") %in%
+            colnames(result)
+    ))
 
     # Test 3: Check if the function returns significant values
     expect_true(any(result$p.adj < 0.05))
@@ -352,9 +413,19 @@ test_that("compStat works as expected", {
 test_that("ModulePlot works as expected", {
     library(Seurat)
     set.seed(123)
-    pbmc_small$AIE_type <- sample(c("control", "CASPR2", "LGI1"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$AIE_type <- sample(
+        c("control", "CASPR2", "LGI1"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
     module1 <- list(c(rownames(pbmc_small)[1:100]))
-    pbmc_small <- AddModuleScore(pbmc_small, features = module1, assay = "RNA", name = "module", ctrl = 5)
+    pbmc_small <- AddModuleScore(
+        pbmc_small,
+        features = module1,
+        assay = "RNA",
+        name = "module",
+        ctrl = 5
+    )
 
     # Run the function
     suppressWarnings(
@@ -381,12 +452,23 @@ test_that("plotEnrichr works as expected", {
     writexl::write_xlsx(enrichr_data, "./enrichr_test.xlsx")
 
     # Run the function
-    plot <- plotEnrichr(filename = "test", sheet = "GO_Biological_Process_2021", width = 10, height = 5, dir_output = ".")
+    plot <- plotEnrichr(
+        filename = "test",
+        sheet = "GO_Biological_Process_2021",
+        width = 10,
+        height = 5,
+        dir_output = "."
+    )
 
     # Test 1: Function creates a file in the correct directory
-    expect_true(file.exists("barplot_enrichr_test_GO_Biological_Process_2021.pdf"))
+    expect_true(file.exists(
+        "barplot_enrichr_test_GO_Biological_Process_2021.pdf"
+    ))
     # Test 2: Function creates a file that is not empty
-    expect_gt(file.info("barplot_enrichr_test_GO_Biological_Process_2021.pdf")$size, 0)
+    expect_gt(
+        file.info("barplot_enrichr_test_GO_Biological_Process_2021.pdf")$size,
+        0
+    )
     # Test 3: Test plot objects
     expect_s3_class(plot, "ggplot")
     # Test 4: Check if the plot is not empty
@@ -408,7 +490,15 @@ test_that("plotPropeller works as expected", {
     color <- c("0" = "blue", "Cluster2" = "red", "Cluster3" = "green")
 
     # Run the function
-    plot <- plotPropeller(data = propeller_data, color = color, filename = "test_propeller", width = 5, height = 5, FDR = 0.05, dir_output = ".")
+    plot <- plotPropeller(
+        data = propeller_data,
+        color = color,
+        filename = "test_propeller",
+        width = 5,
+        height = 5,
+        FDR = 0.05,
+        dir_output = "."
+    )
 
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("propeller_test_propeller.pdf"))
@@ -419,8 +509,75 @@ test_that("plotPropeller works as expected", {
     # Test 4: Check if the plot is not empty
     p <- ggplot2::ggplot_build(plot)
     expect_gt(length(p$data), 0)
+
+    # Test 5: Error when FDR is not provided
+    expect_error(
+        plotPropeller(
+            data = propeller_data,
+            color = color,
+            filename = "test_propeller2",
+            width = 5,
+            height = 5,
+            dir_output = "."
+        ),
+        "FDR must be specified"
+    )
+
     # Cleanup: Remove the generated file
     unlink("propeller_test_propeller.pdf")
+})
+
+test_that("plotPropeller with permFDP works as expected", {
+    # Create a sample propeller data frame with permFDP threshold
+    propeller_data_permFDP <- data.frame(
+        cluster = c("Cluster1", "Cluster2", "Cluster3"),
+        log2ratio = c(1.5, -2.0, 0.5),
+        FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001)),
+        permFDP_threshold = 0.025,
+        permFDP_sig = c(TRUE, FALSE, FALSE)
+    )
+    color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
+
+    # Run the function with permFDP
+    plot <- plotPropeller(
+        data = propeller_data_permFDP,
+        color = color,
+        filename = "test_propeller_permFDP",
+        width = 5,
+        height = 5,
+        use_permFDP = TRUE,
+        dir_output = "."
+    )
+
+    # Test 1: Function creates a file in the correct directory
+    expect_true(file.exists("propeller_test_propeller_permFDP.pdf"))
+    # Test 2: Function creates a file that is not empty
+    expect_gt(file.info("propeller_test_propeller_permFDP.pdf")$size, 0)
+    # Test 3: Test plot objects
+    expect_s3_class(plot, "ggplot")
+    # Test 4: Check if the plot is not empty
+    p <- ggplot2::ggplot_build(plot)
+    expect_gt(length(p$data), 0)
+
+    # Test 5: Error when use_permFDP = TRUE but permFDP_threshold not in data
+    propeller_data_no_permFDP <- data.frame(
+        cluster = c("Cluster1", "Cluster2", "Cluster3"),
+        log2ratio = c(1.5, -2.0, 0.5),
+        FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001))
+    )
+    expect_error(
+        plotPropeller(
+            data = propeller_data_no_permFDP,
+            color = color,
+            filename = "test_fail",
+            use_permFDP = TRUE,
+            dir_output = "."
+        ),
+        "permFDP_threshold column not found"
+    )
+
+    # Cleanup: Remove the generated file
+    unlink("propeller_test_propeller_permFDP.pdf")
 })
 
 test_that("dotplotPropeller works as expected", {
@@ -432,7 +589,14 @@ test_that("dotplotPropeller works as expected", {
     color <- c("Cluster1" = "blue", "Cluster2" = "red", "Cluster3" = "green")
 
     # Run the function
-    plot <- dotplotPropeller(data = propeller_data, color = color, filename = "test_propeller_dotplot", width = 5, height = 5, dir_output = ".")
+    plot <- dotplotPropeller(
+        data = propeller_data,
+        color = color,
+        filename = "test_propeller_dotplot",
+        width = 5,
+        height = 5,
+        dir_output = "."
+    )
 
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("propeller_dotplot_test_propeller_dotplot.pdf"))
@@ -450,18 +614,35 @@ test_that("dotplotPropeller works as expected", {
 test_that("plotSlingshot works as expected", {
     library(Seurat)
     set.seed(123)
-    pbmc_small$lineage <- sample(c("Lineage1", "Lineage2"), ncol(pbmc_small), replace = TRUE)
-    pbmc_small$umap <- CreateDimReducObject(embeddings = Embeddings(pbmc_small, reduction = "tsne"), key = "UMAP_", assay = "RNA")
+    pbmc_small$lineage <- sample(
+        c("Lineage1", "Lineage2"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
+    pbmc_small$umap <- CreateDimReducObject(
+        embeddings = Embeddings(pbmc_small, reduction = "tsne"),
+        key = "UMAP_",
+        assay = "RNA"
+    )
     curves <- data.frame(
         UMAP_1 = runif(ncol(pbmc_small), min = -10, max = 10),
         UMAP_2 = runif(ncol(pbmc_small), min = -10, max = 10),
-        Lineage = sample(c("Lineage1", "Lineage2"), ncol(pbmc_small), replace = TRUE)
+        Lineage = sample(
+            c("Lineage1", "Lineage2"),
+            ncol(pbmc_small),
+            replace = TRUE
+        )
     )
     pt <- matrix(runif(ncol(pbmc_small) * 2), ncol = 2)
     colnames(pt) <- c("Lineage1", "Lineage2")
 
     # Run the function
-    plot <- plotSlingshot(object = pbmc_small, lineage = "Lineage1", pt = pt, curves = curves)
+    plot <- plotSlingshot(
+        object = pbmc_small,
+        lineage = "Lineage1",
+        pt = pt,
+        curves = curves
+    )
 
     # Test 1: Check if the function returns a ggplot object
     expect_s3_class(plot, "ggplot")
@@ -474,8 +655,16 @@ test_that("pcaSeurat works as expected", {
     library(Seurat)
     set.seed(123)
     # Setup test data
-    pbmc_small$cluster <- sample(c("Cluster1", "Cluster2"), ncol(pbmc_small), replace = TRUE)
-    pbmc_small$sample <- sample(c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"), ncol(pbmc_small), replace = TRUE)
+    pbmc_small$cluster <- sample(
+        c("Cluster1", "Cluster2"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
+    pbmc_small$sample <- sample(
+        c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
+        ncol(pbmc_small),
+        replace = TRUE
+    )
     lookup <-
         data.frame(
             sample = c("CSF_P01", "CSF_P02", "CSF_P03", "CSF_P04"),
@@ -500,7 +689,7 @@ test_that("pcaSeurat works as expected", {
 
     # Test 1: Function creates a file in the correct directory
     expect_true(file.exists("pbmc_small_condition_cluster.pdf"))
-    
+
     # Test 2: Function creates a file that is not empty
     expect_gt(file.info("pbmc_small_condition_cluster.pdf")$size, 0)
 
@@ -510,7 +699,7 @@ test_that("pcaSeurat works as expected", {
     # Test 4: Check if the plot is not empty
     p <- ggplot2::ggplot_build(plot)
     expect_gt(length(p$data), 0)
-    
+
     # Test 5: Check if the function throws an error if object is not a Seurat object
     expect_error(
         pcaSeurat(

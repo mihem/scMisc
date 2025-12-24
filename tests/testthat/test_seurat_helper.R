@@ -23,36 +23,72 @@ test_that("avgExp works correctly", {
 })
 
 test_that("findMarkersPresto works correctly", {
-  result <- findMarkersPresto(ident1 = "0", ident2 = "1", object = pbmc_small, assay = "RNA")
+  result <- findMarkersPresto(
+    ident1 = "0",
+    ident2 = "1",
+    object = pbmc_small,
+    assay = "RNA"
+  )
   expect_true(is.data.frame(result))
   expect_true("gene" %in% colnames(result))
   expect_true("avg_log2FC" %in% colnames(result))
   expect_error(
-    findMarkersPresto(ident1 = "0", ident2 = "1", object = data.frame(a = c(1:3)), assay = "RNA"),
+    findMarkersPresto(
+      ident1 = "0",
+      ident2 = "1",
+      object = data.frame(a = c(1:3)),
+      assay = "RNA"
+    ),
     "Object must be a Seurat object"
   )
 })
 
 test_that("abundanceTbl works correctly", {
-  abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents", dir_output = ".")
+  abundanceTbl(
+    pbmc_small,
+    row_var = "groups",
+    col_var = "letter.idents",
+    dir_output = "."
+  )
   file_path <- "abundance_tbl_pbmc_small_letter.idents.xlsx"
   result <- readxl::read_xlsx(file_path)
   expect_true(file.exists(file_path))
   expect_true(is.data.frame(result))
-  expected_result <- tibble::tibble(cell = c("g1", "g2"), A = c(30, 23), B = c(14, 13))
+  expected_result <- tibble::tibble(
+    cell = c("g1", "g2"),
+    A = c(30, 23),
+    B = c(14, 13)
+  )
   expect_equal(result, expected_result)
   expect_error(
-    abundanceTbl(data.frame(a = c(1:3)), row_var = "groups", col_var = "letter.idents", dir_output = "."),
+    abundanceTbl(
+      data.frame(a = c(1:3)),
+      row_var = "groups",
+      col_var = "letter.idents",
+      dir_output = "."
+    ),
     "Object must be a Seurat object"
   )
   unlink(file_path)
 })
 
 test_that("propellerCalc works correctly", {
-  pbmc_small$condition <- factor(sample(c("diseaseA", "diseaseB"), nrow(pbmc_small), replace = TRUE))
+  set.seed(123)
+  pbmc_small$condition <- factor(sample(
+    c("diseaseA", "diseaseB"),
+    nrow(pbmc_small),
+    replace = TRUE
+  ))
   pbmc_small$cluster <- Idents(pbmc_small)
-  pbmc_small$patient <- rep(paste0("P", 0:9), each = 8, length.out = ncol(pbmc_small))
-  lookup <- data.frame(patient = paste0("P", 0:9), condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE))
+  pbmc_small$patient <- rep(
+    paste0("P", 0:9),
+    each = 8,
+    length.out = ncol(pbmc_small)
+  )
+  lookup <- data.frame(
+    patient = paste0("P", 0:9),
+    condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE)
+  )
 
   result <- propellerCalc(
     seu_obj1 = pbmc_small,
@@ -67,6 +103,71 @@ test_that("propellerCalc works correctly", {
   )
   expect_true(is.data.frame(result))
   expect_true("cluster" %in% colnames(result))
+  expect_true("PropRatio" %in% colnames(result))
+  expect_true("P.Value" %in% colnames(result))
+  expect_true("FDR" %in% colnames(result))
+  expect_true("log2ratio" %in% colnames(result))
+  expect_true("FDR_log" %in% colnames(result))
+})
+
+test_that("propellerCalc with permFDP works correctly", {
+  skip_if_not_installed("permFDP")
+
+  set.seed(123)
+  pbmc_small$condition <- factor(sample(
+    c("diseaseA", "diseaseB"),
+    nrow(pbmc_small),
+    replace = TRUE
+  ))
+  pbmc_small$cluster <- Idents(pbmc_small)
+  pbmc_small$patient <- rep(
+    paste0("P", 0:9),
+    each = 8,
+    length.out = ncol(pbmc_small)
+  )
+  lookup <- data.frame(
+    patient = paste0("P", 0:9),
+    condition = sample(c("diseaseA", "diseaseB"), 10, replace = TRUE)
+  )
+
+  result <- propellerCalc(
+    seu_obj1 = pbmc_small,
+    condition1 = "diseaseA",
+    condition2 = "diseaseB",
+    cluster_col = "cluster",
+    meta_col = "condition",
+    lookup = lookup,
+    sample_col = "patient",
+    formula = "~ 0 + condition",
+    min_cells = 5,
+    adjustment_method = "permFDP",
+    fdr_threshold = 0.1,
+    n_perms = 100
+  )
+
+  expect_true(is.data.frame(result))
+  expect_true("cluster" %in% colnames(result))
+  expect_true("permFDP_sig" %in% colnames(result))
+  expect_true("permFDP_threshold" %in% colnames(result))
+  expect_true(is.logical(result$permFDP_sig))
+  expect_true(is.numeric(result$permFDP_threshold))
+
+  # Test error when fdr_threshold is not provided
+  expect_error(
+    propellerCalc(
+      seu_obj1 = pbmc_small,
+      condition1 = "diseaseA",
+      condition2 = "diseaseB",
+      cluster_col = "cluster",
+      meta_col = "condition",
+      lookup = lookup,
+      sample_col = "patient",
+      formula = "~ 0 + condition",
+      min_cells = 5,
+      adjustment_method = "permFDP"
+    ),
+    "fdr_threshold must be specified"
+  )
 })
 
 test_that("enrichrRun works correctly", {
@@ -103,7 +204,15 @@ test_that("enrichrRun works correctly", {
   expect_true(is.data.frame(result_neg))
 
   # Check if the results have the expected columns
-  expected_columns <- c("Term", "Overlap", "P.value", "Adjusted.P.value", "Odds.Ratio", "Combined.Score", "Genes")
+  expected_columns <- c(
+    "Term",
+    "Overlap",
+    "P.value",
+    "Adjusted.P.value",
+    "Odds.Ratio",
+    "Combined.Score",
+    "Genes"
+  )
   expect_identical(colnames(result_pos), expected_columns)
   expect_identical(colnames(result_neg), expected_columns)
 
@@ -114,7 +223,11 @@ test_that("enrichrRun works correctly", {
 })
 
 test_that("ReadCellBender_h5 works correctly", {
-  file_name <- system.file("extdata", "raw_feature_bc_matrix_filtered.h5", package = "scMisc")
+  file_name <- system.file(
+    "extdata",
+    "raw_feature_bc_matrix_filtered.h5",
+    package = "scMisc"
+  )
   result <- ReadCellBender_h5(file_name)
   expect_true(is(result, "dgCMatrix"))
   expect_true(nrow(result) > 0)
