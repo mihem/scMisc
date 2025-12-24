@@ -334,7 +334,7 @@ calculatePropellerPermFDP <- function(
         length(group_vector),
         " elements but prop_matrix has ",
         ncol(prop_matrix),
-        " columns. "
+        " columns. Check your sample_col and lookup table."
       )
     )
   }
@@ -418,7 +418,7 @@ calculatePropellerPermFDP <- function(
 #'   min_cells = 30
 #' )
 #'
-#' # With permFDP adjustment (use lower min_cells to have multiple clusters)
+#' # With permFDP adjustment
 #' propellerCalc(
 #'   seu_obj1 = pbmc_small,
 #'   condition1 = "diseaseA",
