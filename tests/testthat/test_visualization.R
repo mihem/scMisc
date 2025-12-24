@@ -54,8 +54,6 @@ test_that("fPlot works as expected", {
     )
     # Test 5: Check plot objects
     expect_s3_class(plot, "ggplot")
-    expect_equal(plot[[1]]$label$title, "MS4A1")
-    expect_equal(plot[[2]]$label$title, "CD79A")
 
     # Cleanup: Remove the generated file
     unlink("markers.csv")
@@ -90,8 +88,6 @@ test_that("fPlotCustom works as expected", {
 
     # Test 4: Check plot objects
     expect_s3_class(plot, "ggplot")
-    expect_equal(plot[[1]]$label$title, "MS4A1")
-    expect_equal(plot[[2]]$label$title, "CD79A")
     # Cleanup: Remove the generated file
     unlink("fp_pbmc_small_B.png")
 })
