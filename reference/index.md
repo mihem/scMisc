@@ -1,0 +1,54 @@
+# Package index
+
+## All functions
+
+- [`ModulePlot()`](https://mihem.github.io/scMisc/reference/ModulePlot.md)
+  : module plot
+- [`ReadCellBender_h5()`](https://mihem.github.io/scMisc/reference/ReadCellBender_h5.md)
+  : Load CellBender h5 matrices
+- [`abBoxPlot()`](https://mihem.github.io/scMisc/reference/abBoxPlot.md)
+  : abundance boxplot plot
+- [`abVolPlot()`](https://mihem.github.io/scMisc/reference/abVolPlot.md)
+  : abundance volcano plot
+- [`abundanceTbl()`](https://mihem.github.io/scMisc/reference/abundanceTbl.md)
+  : wrapper function to calculate absolute and relative abundance
+- [`avgExp()`](https://mihem.github.io/scMisc/reference/avgExp.md) :
+  wrapper function for Seurats AverageExpression
+- [`clustifyFun()`](https://mihem.github.io/scMisc/reference/clustifyFun.md)
+  : clustifyr UMAP heatmap wrap
+- [`compStat()`](https://mihem.github.io/scMisc/reference/compStat.md) :
+  significance for boxplot
+- [`dotPlot()`](https://mihem.github.io/scMisc/reference/dotPlot.md) :
+  nice Seurat dot plot
+- [`dotplotPropeller()`](https://mihem.github.io/scMisc/reference/dotplotPropeller.md)
+  : plot propeller results in a barplot
+- [`enrichrRun()`](https://mihem.github.io/scMisc/reference/enrichrRun.md)
+  : enrichment analysis
+- [`fPlot()`](https://mihem.github.io/scMisc/reference/fPlot.md) :
+  Seurat feature plot
+- [`fPlotCustom()`](https://mihem.github.io/scMisc/reference/fPlotCustom.md)
+  : Seurat feature plot
+- [`findMarkersPresto()`](https://mihem.github.io/scMisc/reference/findMarkersPresto.md)
+  : wrapper function for presto find markers
+- [`lss()`](https://mihem.github.io/scMisc/reference/lss.md) : list
+  objects from the environment in a pretty way
+- [`pHeatmap()`](https://mihem.github.io/scMisc/reference/pHeatmap.md) :
+  nice pheatmap
+- [`pcaSeurat()`](https://mihem.github.io/scMisc/reference/pcaSeurat.md)
+  : plot PCA of cluster abundances
+- [`plotEnrichr()`](https://mihem.github.io/scMisc/reference/plotEnrichr.md)
+  : enrichr plot
+- [`plotPropeller()`](https://mihem.github.io/scMisc/reference/plotPropeller.md)
+  : plot propeller results
+- [`plotSlingshot()`](https://mihem.github.io/scMisc/reference/plotSlingshot.md)
+  : plot slingshot results
+- [`propellerCalc()`](https://mihem.github.io/scMisc/reference/propellerCalc.md)
+  : propellerCalc
+- [`scale_mat()`](https://mihem.github.io/scMisc/reference/scale_mat.md)
+  : scale matrix from pheatmap only internal use
+- [`scale_rows()`](https://mihem.github.io/scMisc/reference/scale_rows.md)
+  : scale rows from pheatmap only internal use
+- [`stackedPlot()`](https://mihem.github.io/scMisc/reference/stackedPlot.md)
+  : abundance stacked bar plot
+- [`theme_rect()`](https://mihem.github.io/scMisc/reference/theme_rect.md)
+  : nice ggplot theme
