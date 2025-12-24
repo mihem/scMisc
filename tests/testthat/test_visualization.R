@@ -528,6 +528,7 @@ test_that("plotPropeller with permFDP works as expected", {
     propeller_data_permFDP <- data.frame(
         cluster = c("Cluster1", "Cluster2", "Cluster3"),
         log2ratio = c(1.5, -2.0, 0.5),
+        P.Value = c(0.01, 0.05, 0.001),
         FDR_log = c(-log10(0.01), -log10(0.05), -log10(0.001)),
         permFDP_threshold = 0.025,
         permFDP_sig = c(TRUE, FALSE, FALSE)
