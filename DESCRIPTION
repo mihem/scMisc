@@ -48,5 +48,9 @@ Imports:
     tidyselect,
     methods,
     stringr,
-    forcats
-Remotes: wjawaid/enrichR
+    forcats,
+    permFDP
+Remotes: 
+    wjawaid/enrichR
+    steven-shuken/permFDP
+
