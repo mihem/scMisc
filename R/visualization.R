@@ -832,21 +832,23 @@ plotEnrichr <- function(filename, sheet, width, height, dir_input = ".", dir_out
 #' @export
 
 plotPropeller <- function(data, color, filename, width = 5, height = 5, FDR = NULL, use_permFDP = FALSE, dir_output = ".") {
-  # Determine the threshold to use
+  # Determine the threshold to use and y-axis variable
   if (use_permFDP) {
     if (!"permFDP_threshold" %in% names(data)) {
       stop("use_permFDP = TRUE but permFDP_threshold column not found in data")
     }
     threshold <- unique(data$permFDP_threshold)[1]
+    y_var <- -log10(data$P.Value)
     message(paste0("Using permFDP threshold: ", round(threshold, 4)))
   } else {
     if (is.null(FDR)) {
       stop("FDR must be specified when use_permFDP = FALSE")
     }
     threshold <- FDR
+    y_var <- data$FDR_log
   }
 
-  plot <- ggplot(data, aes(x = log2ratio, y = FDR_log, color = cluster, size = 3, label = cluster)) +
+  plot <- ggplot(data, aes(x = log2ratio, y = y_var, color = cluster, size = 3, label = cluster)) +
     geom_point() +
     scale_color_manual(values = color) +
     theme_classic() +
