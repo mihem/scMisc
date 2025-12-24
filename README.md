@@ -19,4 +19,4 @@ remotes::install_github("mihem/scMisc")
 To find out how to use the package, please refer to the [vignette](https://mihem.github.io/scMisc/).
 
 # Contact
-If you have any questions, please contact me via [mheming.de](https://osmzhlab.uni-muenster.de/mheming/#contact).
+If you have any questions, please contact me via [mheming.com](https://mheming.com/#contact).
