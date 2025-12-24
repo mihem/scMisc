@@ -252,6 +252,7 @@ enrichrRun <- function(
 #' @param sample_col A character representing the name of the sample column
 #' @param cluster_col A character representing the name of the cluster column
 #' @param meta_col A character representing the name of the condition column
+#' @param lookup A dataframe containing sample to condition mapping
 #' @param cond1 A character representing the first condition
 #' @param cond2 A character representing the second condition
 #' @param fdr_threshold The FDR threshold to use for permFDP adjustment
@@ -265,6 +266,7 @@ calculatePropellerPermFDP <- function(
   sample_col,
   cluster_col,
   meta_col,
+  lookup,
   cond1,
   cond2,
   fdr_threshold,
@@ -317,12 +319,25 @@ calculatePropellerPermFDP <- function(
     stop("No complete cases for permFDP calculation. Check your data.")
   }
 
-  # Create group vector from sample metadata
-  sample_meta <- seu_subset@meta.data |>
-    dplyr::distinct(.data[[sample_col]], .data[[meta_col]]) |>
+  # Create group vector from lookup table
+  sample_meta <- lookup |>
+    dplyr::filter(.data[[sample_col]] %in% colnames(prop_matrix)) |>
     dplyr::arrange(match(.data[[sample_col]], colnames(prop_matrix)))
 
   group_vector <- ifelse(sample_meta[[meta_col]] == cond1, 1, 2)
+
+  # Validate dimensions match
+  if (length(group_vector) != ncol(prop_matrix)) {
+    stop(
+      paste0(
+        "Dimension mismatch: group_vector has ",
+        length(group_vector),
+        " elements but prop_matrix has ",
+        ncol(prop_matrix),
+        " columns. "
+      )
+    )
+  }
 
   # Calculate permFDP adjusted threshold
   message(
@@ -403,7 +418,7 @@ calculatePropellerPermFDP <- function(
 #'   min_cells = 30
 #' )
 #'
-#' # With permFDP adjustment
+#' # With permFDP adjustment (use lower min_cells to have multiple clusters)
 #' propellerCalc(
 #'   seu_obj1 = pbmc_small,
 #'   condition1 = "diseaseA",
@@ -501,6 +516,7 @@ propellerCalc <- function(
       sample_col = sample_col,
       cluster_col = cluster_col,
       meta_col = meta_col,
+      lookup = lookup,
       cond1 = condition1,
       cond2 = condition2,
       fdr_threshold = fdr_threshold,

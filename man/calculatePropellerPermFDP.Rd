@@ -10,6 +10,7 @@ calculatePropellerPermFDP(
   sample_col,
   cluster_col,
   meta_col,
+  lookup,
   cond1,
   cond2,
   fdr_threshold,
@@ -26,6 +27,8 @@ calculatePropellerPermFDP(
 \item{cluster_col}{A character representing the name of the cluster column}
 
 \item{meta_col}{A character representing the name of the condition column}
+
+\item{lookup}{A dataframe containing sample to condition mapping}
 
 \item{cond1}{A character representing the first condition}
 

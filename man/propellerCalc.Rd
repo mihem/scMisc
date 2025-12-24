@@ -73,7 +73,7 @@ propellerCalc(
   min_cells = 30
 )
 
-# With permFDP adjustment
+# With permFDP adjustment (use lower min_cells to have multiple clusters)
 propellerCalc(
   seu_obj1 = pbmc_small,
   condition1 = "diseaseA",
@@ -83,7 +83,7 @@ propellerCalc(
   lookup = lookup,
   sample_col = "patient",
   formula = "~ 0 + condition",
-  min_cells = 30,
+  min_cells = 5,
   adjustment_method = "permFDP",
   fdr_threshold = 0.1,
   n_perms = 100
