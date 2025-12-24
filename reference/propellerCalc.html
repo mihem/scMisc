@@ -142,7 +142,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ abbreviated name: ¹​PropMean.conditiondiseaseB</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: P.Value &lt;dbl&gt;, FDR &lt;dbl&gt;, log2ratio &lt;dbl&gt;, FDR_log &lt;dbl&gt;</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># With permFDP adjustment</span></span></span>
+<span class="r-in"><span><span class="co"># With permFDP adjustment (use lower min_cells to have multiple clusters)</span></span></span>
 <span class="r-in"><span><span class="fu">propellerCalc</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  seu_obj1 <span class="op">=</span> <span class="va">pbmc_small</span>,</span></span>
 <span class="r-in"><span>  condition1 <span class="op">=</span> <span class="st">"diseaseA"</span>,</span></span>
@@ -152,14 +152,23 @@
 <span class="r-in"><span>  lookup <span class="op">=</span> <span class="va">lookup</span>,</span></span>
 <span class="r-in"><span>  sample_col <span class="op">=</span> <span class="st">"patient"</span>,</span></span>
 <span class="r-in"><span>  formula <span class="op">=</span> <span class="st">"~ 0 + condition"</span>,</span></span>
-<span class="r-in"><span>  min_cells <span class="op">=</span> <span class="fl">30</span>,</span></span>
+<span class="r-in"><span>  min_cells <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>  adjustment_method <span class="op">=</span> <span class="st">"permFDP"</span>,</span></span>
 <span class="r-in"><span>  fdr_threshold <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
 <span class="r-in"><span>  n_perms <span class="op">=</span> <span class="fl">100</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Performing logit transformation of proportions</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Running permFDP with 100 permutations for diseaseA vs diseaseB (1 clusters, 10 samples)...</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘permFDP’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Running permFDP with 100 permutations for diseaseA vs diseaseB (3 clusters, 10 samples)...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   -&gt; Corrected threshold: 0.0744</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cluster PropMean.conditiondiseaseA PropMean.conditiondi…¹ PropRatio Tstatistic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 2                           0.041<span style="text-decoration: underline;">7</span>                  0.321     0.130    -<span style="color: #BB0000;">1.49</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 0                           0.667                   0.357     1.87      1.28  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 1                           0.292                   0.321     0.907    -<span style="color: #BB0000;">0.082</span><span style="color: #BB0000; text-decoration: underline;">3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ abbreviated name: ¹​PropMean.conditiondiseaseB</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: P.Value &lt;dbl&gt;, FDR &lt;dbl&gt;, log2ratio &lt;dbl&gt;, FDR_log &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   permFDP_sig &lt;lgl&gt;, permFDP_threshold &lt;dbl&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

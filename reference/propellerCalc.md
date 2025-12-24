@@ -112,7 +112,7 @@ propellerCalc(
 #> # ℹ abbreviated name: ¹​PropMean.conditiondiseaseB
 #> # ℹ 4 more variables: P.Value <dbl>, FDR <dbl>, log2ratio <dbl>, FDR_log <dbl>
 
-# With permFDP adjustment
+# With permFDP adjustment (use lower min_cells to have multiple clusters)
 propellerCalc(
   seu_obj1 = pbmc_small,
   condition1 = "diseaseA",
@@ -122,12 +122,21 @@ propellerCalc(
   lookup = lookup,
   sample_col = "patient",
   formula = "~ 0 + condition",
-  min_cells = 30,
+  min_cells = 5,
   adjustment_method = "permFDP",
   fdr_threshold = 0.1,
   n_perms = 100
 )
 #> Performing logit transformation of proportions
-#> Running permFDP with 100 permutations for diseaseA vs diseaseB (1 clusters, 10 samples)...
-#> Error in loadNamespace(x): there is no package called ‘permFDP’
+#> Running permFDP with 100 permutations for diseaseA vs diseaseB (3 clusters, 10 samples)...
+#>   -> Corrected threshold: 0.0744
+#> # A tibble: 3 × 11
+#>   cluster PropMean.conditiondiseaseA PropMean.conditiondi…¹ PropRatio Tstatistic
+#>   <chr>                        <dbl>                  <dbl>     <dbl>      <dbl>
+#> 1 2                           0.0417                  0.321     0.130    -1.49  
+#> 2 0                           0.667                   0.357     1.87      1.28  
+#> 3 1                           0.292                   0.321     0.907    -0.0823
+#> # ℹ abbreviated name: ¹​PropMean.conditiondiseaseB
+#> # ℹ 6 more variables: P.Value <dbl>, FDR <dbl>, log2ratio <dbl>, FDR_log <dbl>,
+#> #   permFDP_sig <lgl>, permFDP_threshold <dbl>
 ```

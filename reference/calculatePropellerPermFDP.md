@@ -12,6 +12,7 @@ calculatePropellerPermFDP(
   sample_col,
   cluster_col,
   meta_col,
+  lookup,
   cond1,
   cond2,
   fdr_threshold,
@@ -40,6 +41,10 @@ calculatePropellerPermFDP(
 - meta_col:
 
   A character representing the name of the condition column
+
+- lookup:
+
+  A dataframe containing sample to condition mapping
 
 - cond1:
 
