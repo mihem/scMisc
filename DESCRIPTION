@@ -51,6 +51,5 @@ Imports:
     forcats,
     permFDP
 Remotes: 
-    wjawaid/enrichR
+    wjawaid/enrichR,
     steven-shuken/permFDP
-
