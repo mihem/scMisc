@@ -1,6 +1,6 @@
 Package: scMisc
 Title: Utils for scRNA-seq
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: 
     person(given = "Michael",
            family = "Heming",
