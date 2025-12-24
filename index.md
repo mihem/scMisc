@@ -19,4 +19,4 @@ To find out how to use the package, please refer to the
 # Contact
 
 If you have any questions, please contact me via
-[mheming.de](https://osmzhlab.uni-muenster.de/mheming/#contact).
+[mheming.com](https://mheming.com/#contact).
