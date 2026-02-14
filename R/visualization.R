@@ -117,7 +117,8 @@ fPlot <- function(path,
 #'   object = pbmc_small,
 #'   markers = markers,
 #'   par = "B",
-#'   reduction = "tsne"
+#'   reduction = "tsne",
+#'   dir_output = "."
 #' )
 #' unlink("fp_pbmc_small_B.png")
 #' @export
@@ -311,7 +312,8 @@ pHeatmap <- function(matrix,
 #'   x_order = unique(sc_merge$pool),
 #'   y_order = cluster_order,
 #'   color = col_vector,
-#'   width = 4
+#'   width = 4,
+#'   dir_output = "."
 #' )
 #' }
 #' @export
@@ -1013,7 +1015,8 @@ plotSlingshot <- function(object, lineage, pt, curves) {
 #'   sample = "sample", 
 #'   condition = "condition",
 #'   width = 20,
-#'   height = 5
+#'   height = 5,
+#'   dir_output = "."
 #' )
 #' unlink("pbmc_small_condition_cluster.pdf")
 #' @export

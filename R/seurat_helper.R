@@ -123,7 +123,7 @@ findMarkersPresto <- function(
 #' @param dir_output target directory to save the results (default: .)
 #' @examples
 #' library(Seurat)
-#' abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
+#' abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents", dir_output = ".")
 #' unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
 #' @export
 
@@ -185,6 +185,7 @@ abundanceTbl <- function(object, row_var, col_var, dir_output = ".") {
 #'   sheet = "Sheet1",
 #'   dir_input = ".",
 #'   filename = "test_de",
+#'   dir_output = ".",
 #'   dbs = c("KEGG_2019_Human"),
 #'   fc_thresh = 1,
 #'   p_thresh = 0.001,
