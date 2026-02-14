@@ -30,6 +30,6 @@ abundanceTbl(object, row_var, col_var, dir_output = ".")
 
 ``` r
 library(Seurat)
-abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents")
+abundanceTbl(pbmc_small, row_var = "groups", col_var = "letter.idents", dir_output = ".")
 unlink("abundance_tbl_pbmc_small_letter.idents.xlsx")
 ```

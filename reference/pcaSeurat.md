@@ -83,7 +83,8 @@ pcaSeurat(
   sample = "sample", 
   condition = "condition",
   width = 20,
-  height = 5
+  height = 5,
+  dir_output = "."
 )
 #> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 #> ℹ Please use `linewidth` instead.

@@ -88,6 +88,7 @@ enrichrRun(
   sheet = "Sheet1",
   dir_input = ".",
   filename = "test_de",
+  dir_output = ".",
   dbs = c("KEGG_2019_Human"),
   fc_thresh = 1,
   p_thresh = 0.001,
