@@ -42,7 +42,8 @@ fPlotCustom(
   object = pbmc_small,
   markers = markers,
   par = "B",
-  reduction = "tsne"
+  reduction = "tsne",
+  dir_output = "."
 )
 unlink("fp_pbmc_small_B.png")
 }

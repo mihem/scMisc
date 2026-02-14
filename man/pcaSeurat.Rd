@@ -62,7 +62,8 @@ pcaSeurat(
   sample = "sample", 
   condition = "condition",
   width = 20,
-  height = 5
+  height = 5,
+  dir_output = "."
 )
 unlink("pbmc_small_condition_cluster.pdf")
 }

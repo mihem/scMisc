@@ -50,7 +50,8 @@ stackedPlot(
   x_order = unique(sc_merge$pool),
   y_order = cluster_order,
   color = col_vector,
-  width = 4
+  width = 4,
+  dir_output = "."
 )
 }
 }
